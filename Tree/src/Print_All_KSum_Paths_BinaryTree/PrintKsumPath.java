@@ -1,0 +1,59 @@
+package Print_All_KSum_Paths_BinaryTree;
+
+import java.util.ArrayList;
+import java.util.List;
+
+class Node {
+    int data;
+    Node left, right;
+
+    Node(int x) {
+        data = x;
+        left = right = null;
+    }
+}
+
+public class PrintKsumPath {
+    static List<Integer> path = new ArrayList<>();
+
+    static void printKPathUtil(Node root, int k) {
+        // empty node
+        if (root == null)
+            return;
+
+        // add current node to the path
+        path.add(root.data);
+
+        // check if there's any k sum path
+        // in the left sub-tree.
+        printKPathUtil(root.left, k);
+        printKPathUtil(root.right, k);
+
+        // check if there's any k sum path that
+        // terminates at this node
+        // Traverse the entire path as
+        // there can be negative elements too
+        int sum = 0;
+        for (int j = path.size() - 1; j >= 0; j--) {
+            sum += path.get(j);
+
+            // If path sum is k, print the path
+            if (sum == k)
+                printPath(path, j);
+        }
+
+        // Remove the current element from the path
+        path.remove(path.size() - 1);
+    }
+
+    static void printKPath(Node root, int k) {
+        path = new ArrayList<>();
+        printKPathUtil(root, k);
+    }
+
+    static void printPath(List<Integer> v, int i) {
+        for (int j = i; j < v.size(); j++)
+            System.out.print(v.get(j) + " ");
+        System.out.println();
+    }
+}

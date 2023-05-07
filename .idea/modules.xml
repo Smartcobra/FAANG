@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Algorithms/Algorithms.iml" filepath="$PROJECT_DIR$/Algorithms/Algorithms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Array/Array.iml" filepath="$PROJECT_DIR$/Array/Array.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BST/BST.iml" filepath="$PROJECT_DIR$/BST/BST.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BackTracking/BackTracking.iml" filepath="$PROJECT_DIR$/BackTracking/BackTracking.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BitwiseOperator/BitwiseOperator.iml" filepath="$PROJECT_DIR$/BitwiseOperator/BitwiseOperator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FAANG.iml" filepath="$PROJECT_DIR$/FAANG.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GRAPH/GRAPH.iml" filepath="$PROJECT_DIR$/GRAPH/GRAPH.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GREEDY/GREEDY.iml" filepath="$PROJECT_DIR$/GREEDY/GREEDY.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Hashing/Hashing.iml" filepath="$PROJECT_DIR$/Hashing/Hashing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Heaps/Heaps.iml" filepath="$PROJECT_DIR$/Heaps/Heaps.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Java8/Java8.iml" filepath="$PROJECT_DIR$/Java8/Java8.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LinkedList/LinkedList.iml" filepath="$PROJECT_DIR$/LinkedList/LinkedList.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MATH/MATH.iml" filepath="$PROJECT_DIR$/MATH/MATH.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Array/Other/Other.iml" filepath="$PROJECT_DIR$/Array/Other/Other.iml" />
+      <module fileurl="file://$PROJECT_DIR$/QUEUE/QUEUE.iml" filepath="$PROJECT_DIR$/QUEUE/QUEUE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Recursion/Recursion.iml" filepath="$PROJECT_DIR$/Recursion/Recursion.iml" />
+      <module fileurl="file://$PROJECT_DIR$/STACK/STACK.iml" filepath="$PROJECT_DIR$/STACK/STACK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/STRINGS/STRINGS.iml" filepath="$PROJECT_DIR$/STRINGS/STRINGS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Searching/Searching.iml" filepath="$PROJECT_DIR$/Searching/Searching.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Sorting/Sorting.iml" filepath="$PROJECT_DIR$/Sorting/Sorting.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Subsequences_Subsets/Subsequences_Subsets.iml" filepath="$PROJECT_DIR$/Subsequences_Subsets/Subsequences_Subsets.iml" />
+      <module fileurl="file://$PROJECT_DIR$/System_Design/System_Design.iml" filepath="$PROJECT_DIR$/System_Design/System_Design.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TRIES/TRIES.iml" filepath="$PROJECT_DIR$/TRIES/TRIES.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TWO_Pointer/TWO_Pointer.iml" filepath="$PROJECT_DIR$/TWO_Pointer/TWO_Pointer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Test/Test.iml" filepath="$PROJECT_DIR$/Test/Test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Tree/Tree.iml" filepath="$PROJECT_DIR$/Tree/Tree.iml" />
+    </modules>
+  </component>
+</project>

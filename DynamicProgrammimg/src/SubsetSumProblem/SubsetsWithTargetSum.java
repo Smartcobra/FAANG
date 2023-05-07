@@ -1,0 +1,43 @@
+package SubsetSumProblem;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
+
+public class SubsetsWithTargetSum {
+    public int getHalfSum(int arr[]) {
+        int n = arr.length;
+        int sum = 0;
+        for (int i = 0; i < n; i++) {
+            sum += arr[i];
+        }
+
+        int half_sum = sum / 2;
+
+        int dp[][] = new int[n + 1][half_sum + 1];
+
+        for (int i = 0; i <= n; i++) {
+            dp[i][0] = 1;
+        }
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= half_sum; j++) {
+                if (j>= arr[i - 1]) {  // j is the present sum and should be greater than the present value
+                    dp[i][j] = dp[i - 1][j] + dp[i - 1][j - arr[i-1]];  //include the element and reduce form the current sum
+                } else {
+                    dp[i][j] = dp[i - 1][j];  //exclude
+
+                }
+            }
+        }
+        //Stream.of(dp).flatMap(Stream::of).forEach(System.out::println);
+        Stream.of(dp).map(Arrays::toString).forEach(System.out::println);
+        return dp[n][half_sum];
+    }
+
+    public static void main(String[] args) {
+        //int arr[] = {1, 2, 4, 5, 8};
+        int arr[] = {2, 3, 7, 1, 4,5};
+        SubsetsWithTargetSum ssh = new SubsetsWithTargetSum();
+        System.out.println(ssh.getHalfSum(arr));
+    }
+}
