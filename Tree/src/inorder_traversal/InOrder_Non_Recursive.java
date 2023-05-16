@@ -1,4 +1,4 @@
-package inorder;
+package inorder_traversal;
 
 import create.CreateTree;
 import create.Node;
@@ -6,7 +6,7 @@ import create.Node;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-
+//https://leetcode.com/problems/binary-tree-inorder-traversal/
 public class InOrder_Non_Recursive {
     public static List<Integer> printInOrder(Node<Integer> root) {
         List<Integer> list = new ArrayList<>();
@@ -35,8 +35,8 @@ public class InOrder_Non_Recursive {
     }
 
     public static void main(String[] args) {
-        Node<Integer> node = CreateTree.buildTree();
+        Node<Integer> node = CreateTree.buildTree2();
         List<Integer> integers = printInOrder(node);
-        integers.stream().forEach(t-> System.out.print(t+"->"));
+        integers.forEach(t-> System.out.print(t+"->"));
     }
 }

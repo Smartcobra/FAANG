@@ -1,4 +1,4 @@
-package inorder;
+package inorder_traversal;
 
 import create.CreateTree;
 import create.Node;
