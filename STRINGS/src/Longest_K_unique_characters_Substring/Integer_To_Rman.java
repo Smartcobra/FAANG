@@ -1,11 +1,11 @@
-package LongestKuniquecharacterssubstring;
+package Longest_K_unique_characters_Substring;
 
 //https://practice.geeksforgeeks.org/problems/longest-k-unique-characters-substring0853/1
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Longest_K_unique_characters_substring {
+public class Integer_To_Rman {
 
     public static int getKUniqueSize(String str, int K) {
         int i = 0;

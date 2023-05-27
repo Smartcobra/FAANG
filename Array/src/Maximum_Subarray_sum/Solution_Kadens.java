@@ -1,4 +1,4 @@
-package Maximum_Subarray;
+package Maximum_Subarray_sum;
 
 public class Solution_Kadens {
 

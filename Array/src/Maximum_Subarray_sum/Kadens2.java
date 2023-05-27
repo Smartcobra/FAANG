@@ -1,4 +1,4 @@
-package Maximum_Subarray;
+package Maximum_Subarray_sum;
 ////But the catch here is that if at any point sum becomes negative then
 // no point keeping it because 0 is obviously greater than negative, so just make your sum 0.
 

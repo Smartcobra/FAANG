@@ -5,18 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="65405c74-2267-4213-a446-e37f65895364" name="Changes" comment="newnew">
-      <change afterPath="$PROJECT_DIR$/Tree/src/Convert_Sorted_Array_to_Binary_Search_Tree/SortedArrayToBST.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Tree/src/Same_Tree/SameTree.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Tree/src/Unique_Binary_Search_Trees/UniqueBST.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Tree/src/Unique_Binary_Search_Trees_II/UniqueBSTFromNumber.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Tree/src/create/TreeNode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Array/src/Number_Of_Subarray_Sum_Equals_K/NumberOfSubArray.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Java8/src/FIndMAX_Salary_Employee.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Java8/src/Find_2nd_Largest_in_List.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Java8/src/Find_All_Numbers_StartWith_1.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Java8/src/Find_Duplicate_Number.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Java8/src/Find_Max_Element.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Java8/src/ImmutableClass.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/STRINGS/src/Find_Permutation_of_a_String_in_Another/CheckInclusion.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Sorting/src/Sort_0_1_2/Sort012.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Test/src/Testt.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Tree/src/Bottom_View_Tree/BottomView.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Tree/src/Path_Sum_II/PathSumII.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Tree/src/Path_Sum_III/PathSumIII.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Tree/src/PrintNodes_K_Distance_From_Node/UsingSubtreeAndAncestor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Array/src/Count_Subarray_Sum_Equals_K/subarraySum_HashMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/Array/src/Count_Subarray_Sum_Equals_K/subarraySum_HashMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Array/src/Longest_Consecutive_Sequence/Solution_HAshSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/Array/src/Longest_Consecutive_Sequence/Solution_HAshSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Array/src/Maximum_Subarray/Kadens2.java" beforeDir="false" afterPath="$PROJECT_DIR$/Array/src/Maximum_Subarray_sum/Kadens2.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Array/src/Maximum_Subarray/Solution_2Loop.java" beforeDir="false" afterPath="$PROJECT_DIR$/Array/src/Maximum_Subarray_sum/Solution_2Loop.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Array/src/Maximum_Subarray/Solution_Kadens.java" beforeDir="false" afterPath="$PROJECT_DIR$/Array/src/Maximum_Subarray_sum/Solution_Kadens.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Leetcode Practice.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/Leetcode Practice.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tree/src/PathSum/PathSum_K.java" beforeDir="false" afterPath="$PROJECT_DIR$/Tree/src/PathSum/PathSum_K.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tree/src/create/CreateTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/Tree/src/create/CreateTree.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tree/src/inorder/InOrder_Non_Recursive.java" beforeDir="false" afterPath="$PROJECT_DIR$/Tree/src/inorder_traversal/InOrder_Non_Recursive.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tree/src/inorder/InOrder_Recursive.java" beforeDir="false" afterPath="$PROJECT_DIR$/Tree/src/inorder_traversal/InOrder_Recursive.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/Tree/create/CreateTree.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/Tree/create/CreateTree.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/STRINGS/src/LongestKuniquecharacterssubstring/Integer_To_Rman.java" beforeDir="false" afterPath="$PROJECT_DIR$/STRINGS/src/Longest_K_unique_characters_Substring/Integer_To_Rman.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/STRINGS/src/LongestKuniquecharacterssubstring/Longest_K_unique_characters_substring.java" beforeDir="false" afterPath="$PROJECT_DIR$/STRINGS/src/Longest_K_unique_characters_Substring/Longest_K_unique_characters_substring.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tree/src/printNodesKDistanceFromNode/NodesKDistanceFromNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/Tree/src/PrintNodes_K_Distance_From_Node/NodesKDistanceFromNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tree/src/printNodesKDistanceFromNode/printNodesKdistance.png" beforeDir="false" afterPath="$PROJECT_DIR$/Tree/src/PrintNodes_K_Distance_From_Node/printNodesKdistance.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tree/src/printNodesKdistanceFromRoot/PrintNodesKdistance_root.java" beforeDir="false" afterPath="$PROJECT_DIR$/Tree/src/Print_Nodes_K_Distance_From_Root/PrintNodesKdistance_root.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,7 +115,7 @@
       <recent name="Intersection_Of_Two_Arrays_II" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.InOrder_Non_Recursive">
+  <component name="RunManager" selected="Application.Testt">
     <configuration name="CreateTree" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="create.CreateTree" />
       <module name="Tree" />
@@ -128,21 +142,15 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MinimumJump_Greedy" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="minimum_Number_Of_jumps.MinimumJump_Greedy" />
-      <module name="FAANG" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="minimum_Number_Of_jumps.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
+    <configuration name="TestMe" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="TestMe" />
+      <module name="Test" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TestMe" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="TestMe" />
+    <configuration name="Testt" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Testt" />
       <module name="Test" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -163,11 +171,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Testt" />
         <item itemvalue="Application.InOrder_Non_Recursive" />
         <item itemvalue="Application.CreateTree" />
         <item itemvalue="Application.TestMe" />
         <item itemvalue="Application.WordBreak" />
-        <item itemvalue="Application.MinimumJump_Greedy" />
       </list>
     </recent_temporary>
   </component>
@@ -252,7 +260,16 @@
       <workItem from="1683948417428" duration="597000" />
       <workItem from="1684119731738" duration="1446000" />
       <workItem from="1684122880417" duration="597000" />
-      <workItem from="1684206194691" duration="2198000" />
+      <workItem from="1684206194691" duration="3597000" />
+      <workItem from="1684297643718" duration="2021000" />
+      <workItem from="1684378948062" duration="6119000" />
+      <workItem from="1684567652750" duration="595000" />
+      <workItem from="1684723933006" duration="1189000" />
+      <workItem from="1684807927849" duration="3583000" />
+      <workItem from="1684898350278" duration="3875000" />
+      <workItem from="1684903786341" duration="3068000" />
+      <workItem from="1685098008199" duration="5076000" />
+      <workItem from="1685155067916" duration="2536000" />
     </task>
     <task id="LOCAL-00001" summary="knapsack">
       <created>1633320905001</created>
