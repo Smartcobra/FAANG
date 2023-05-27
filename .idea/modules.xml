@@ -24,6 +24,7 @@
       <module fileurl="file://$PROJECT_DIR$/Sorting/Sorting.iml" filepath="$PROJECT_DIR$/Sorting/Sorting.iml" />
       <module fileurl="file://$PROJECT_DIR$/Subsequences_Subsets/Subsequences_Subsets.iml" filepath="$PROJECT_DIR$/Subsequences_Subsets/Subsequences_Subsets.iml" />
       <module fileurl="file://$PROJECT_DIR$/System_Design/System_Design.iml" filepath="$PROJECT_DIR$/System_Design/System_Design.iml" />
+      <module fileurl="file://$PROJECT_DIR$/System_Design_LLD/System_Design_LLD.iml" filepath="$PROJECT_DIR$/System_Design_LLD/System_Design_LLD.iml" />
       <module fileurl="file://$PROJECT_DIR$/TRIES/TRIES.iml" filepath="$PROJECT_DIR$/TRIES/TRIES.iml" />
       <module fileurl="file://$PROJECT_DIR$/TWO_Pointer/TWO_Pointer.iml" filepath="$PROJECT_DIR$/TWO_Pointer/TWO_Pointer.iml" />
       <module fileurl="file://$PROJECT_DIR$/Test/Test.iml" filepath="$PROJECT_DIR$/Test/Test.iml" />
