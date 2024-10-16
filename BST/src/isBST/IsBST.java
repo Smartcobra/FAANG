@@ -25,10 +25,7 @@ public class IsBST {
             return false;
         }
 
-        if (isBST(root.left) || isBST(root.right)) {
-            return false;
-        }
-        return true;
+        return !isBST(root.left) && !isBST(root.right);
     }
 
     private static int findMin(Node node) {

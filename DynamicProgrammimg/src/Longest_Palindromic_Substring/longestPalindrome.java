@@ -6,12 +6,12 @@ public class longestPalindrome {
 
         int n = s.length();
         boolean[][] dp = new boolean[n][n];
-       // int count = 0;
-        String result="";
+        // int count = 0;
+        String result = "";
 
         for (int g = 0; g < n; g++) {
             for (int i = 0, j = g; j < dp.length; j++, i++) {
-                boolean b=s.charAt(i) == s.charAt(j);
+                boolean b = s.charAt(i) == s.charAt(j);
                 if (g == 0) {
                     dp[i][j] = true;
                 } else if (g == 1) {
@@ -21,8 +21,8 @@ public class longestPalindrome {
                 }
 
                 if (dp[i][j]) {
-                   // count = 1 + g;
-                    result=s.substring(i,j+1);
+                    // count = 1 + g;
+                    result = s.substring(i, j + 1);
 
                 }
             }
@@ -31,7 +31,7 @@ public class longestPalindrome {
     }
 
     public static void main(String[] args) {
-        String s="cbbd";
+        String s = "cbbd";
 
         System.out.println(longestPalindrome(s));
     }

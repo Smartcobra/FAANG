@@ -10,13 +10,13 @@ public class MyUnderstanding {
 
             if (nums[mid] == target) return mid;
 
-            if (nums[mid] >= nums[l]) {  /// low to mid array is sorted
-                if (target >= nums[l] && target < nums[mid]) {
-                    h = mid - 1;
+            if (nums[mid] >= nums[l]) {  /// if arr[low] <= arr[mid]  , we are moving  left sorted array
+                if (target >= nums[l] && target < nums[mid]) {  // checking if my target is in left sorted array
+                    h = mid - 1;  // search restricted to low and move high to mid-1
                 } else {
                     l = mid + 1;
                 }
-            } else {   /// mid to high sorted
+            } else {   /// right sorted array
                 if (target > nums[mid] && target <= nums[h]) {   // target is between mid to high
                     l = mid + 1;   // change low
                 } else {

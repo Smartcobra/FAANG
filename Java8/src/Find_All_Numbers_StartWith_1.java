@@ -8,6 +8,6 @@ public class Find_All_Numbers_StartWith_1 {
 
         myList.stream().map(s -> s + " ")
                 .filter(s -> s.startsWith("1"))
-                .collect(Collectors.toList())
+                .collect(Collectors.toList());
     }
 }

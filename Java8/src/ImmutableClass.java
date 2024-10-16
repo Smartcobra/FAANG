@@ -13,7 +13,7 @@ public final class ImmutableClass {
  */
 
     private final int id;
-    private final String name;1    private final HashMap<String,String> testMap;
+    private final String name;   private final HashMap<String,String> testMap;
 
 
     public int getId() {

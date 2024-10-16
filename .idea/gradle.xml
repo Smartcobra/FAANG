@@ -4,10 +4,10 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/System_Design_LLD/BookMyShow" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/input" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/System_Design_LLD/BookMyShow" />
+            <option value="$PROJECT_DIR$/input" />
           </set>
         </option>
       </GradleProjectSettings>

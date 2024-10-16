@@ -16,8 +16,8 @@ public class Shortest_Unique_Prefix {
         String[] output = new String[A.length];
         TrieNode root = new TrieNode();
 
-        for (int i = 0; i < A.length; i++) {
-            insert(A[i], root);
+        for (String s : A) {
+            insert(s, root);
         }
 
         for (int i = 0; i < A.length; i++) {
