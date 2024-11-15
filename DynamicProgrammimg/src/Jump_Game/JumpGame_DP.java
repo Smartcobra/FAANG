@@ -4,20 +4,20 @@ import java.util.Arrays;
 
 public class JumpGame_DP {
     public boolean canJump(int[] nums) {
-        char[] memo = new char[nums.length];
-        Arrays.fill(memo, 'U');
-        memo[memo.length - 1] = 'G';
+        int n= nums.length;
+        boolean[] dp = new boolean[n];  //dp[i] = true: means mai i tak pahanch sakta hun
+                                        //dp[i] = false means mai i tak nehi pahanch sakta hun
+        dp[0] = true;
 
-        for (int i = nums.length - 2; i >= 0; i--) {
-            int furthestJump = i + nums[i];
-            for (int j = i + 1; j <= furthestJump; j++) {
-                if (memo[j] == 'G') {
-                    memo[i] = 'G';
+        for (int i=1;i<n;i++) {
+            for (int j = i - 1; j>=0; j--) {
+                if (dp[j] && j+nums[j] >=i) {
+                    dp[i] = true;
                     break;
                 }
             }
         }
 
-        return memo[0] == 'G';
+        return dp[n-1];
     }
 }

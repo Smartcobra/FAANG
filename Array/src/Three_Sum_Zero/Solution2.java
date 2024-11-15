@@ -3,6 +3,7 @@ package Three_Sum_Zero;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 
 public class Solution2 {
     public ArrayList<ArrayList<Integer>> threeSum(ArrayList<Integer> A) {
@@ -10,7 +11,7 @@ public class Solution2 {
         Collections.sort(A);
         for (int i = 0; i < A.size(); i++) {
             if (A.get(i) > 0) break;
-            if (i == 0 || A.get(i) != A.get(i - 1)) {
+            if (i == 0 || !Objects.equals(A.get(i), A.get(i - 1))) {
                 twoSum(A, i, result);
             }
         }

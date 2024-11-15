@@ -8,7 +8,7 @@ public class LongestCommonSubsequnce {
         int n1 = str1.length();
         int n2 = str2.length();
 
-        int[][] dp = new int[n1 + 1][n2 + 1];
+        int[][] dp = new int[n1 + 1][n2 + 1];   //dp[i][j] denotes str1 of length i , and str2 of length j
 
         for (int i = n1 - 1; i >= 0; i--) {
             for (int j = n2 - 1; j >= 0; j--) {
