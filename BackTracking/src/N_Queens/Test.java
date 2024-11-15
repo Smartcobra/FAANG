@@ -1,30 +1,93 @@
 package N_Queens;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Test {
-    private static ArrayList<String> createBoard(char[][] board) {
-        ArrayList<String> l = new ArrayList<>();
-        for (char[] chars : board) {
-            String s = new String(chars);
-            l.add(s);
-        }
-        return l;
-    }
-
-    public static void main(String[] args) {
-        char [][] board= new char [4][4];
-        for(int i=0;i<4;i++){
-            for(int j=0;j<4;j++){
-                board[i][j]='.';
+    public List<List<String>> solveNQueens(int n) {
+        char[][] board = new char[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                board[i][j] = '.';
             }
         }
-        board[0][1]='Q';
-        board[1][3]='Q';
-        board[2][1]='Q';
-        board[3][2]='Q';
-
-        System.out.println(createBoard((board)));
+        List<List<String>> ans = new ArrayList<>();
+        nQueen(board, 0, ans);
+        return ans;
     }
+
+    private void nQueen(char[][] board, int row, List<List<String>> ans) {
+        int n= board.length;
+        if(row==n){
+            List<String> l = new ArrayList<>();
+            for(int i=0;i<n;i++){
+                String str ="";
+                for(int j=0;j<n;j++){
+                    str = str+board[i][j];
+                }
+                l.add(str);
+            }
+
+            ans.add(l);
+            return;
+        }
+
+        for(int j=0;j<n;j++){
+            if(isSafe(board,ans,row,j)){
+                board[row][j]='Q';
+                nQueen(board,row+1,ans);
+                board[row][j]='.';
+            }
+        }
+    }
+
+    private boolean isSafe(char[][] board, List<List<String>> ans, int row, int col) {
+        int n=board.length;
+
+        //row
+        for(int j=0;j<n;j++){
+            if(board[row][j] == 'Q') return false;
+        }
+
+        //col
+        for(int i=0;i<n;i++){
+            if(board[i][col] == 'Q') return false;
+        }
+
+        //NW
+        int i=row;
+        int j=col;
+         while(i>=0 && j>=0){
+             if(board[i][j]=='Q') return false;
+             i--;j--;
+         }
+
+        //NE
+         i=row;
+         j=col;
+        while(i>=0 && j<n){
+            if(board[i][j]=='Q') return false;
+            i--;j++;
+        }
+
+        //SE
+        i=row;
+        j=col;
+        while(i<n && j<n){
+            if(board[i][j]=='Q') return false;
+            i++;j++;
+        }
+
+        //SW
+        i=row;
+        j=col;
+        while(i<n && j>=0){
+            if(board[i][j]=='Q') return false;
+            i++;j--;
+        }
+
+        return true;
+    }
+
 
 }

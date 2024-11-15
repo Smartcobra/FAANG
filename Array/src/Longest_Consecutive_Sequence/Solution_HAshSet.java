@@ -2,7 +2,7 @@ package Longest_Consecutive_Sequence;
 
 import java.util.HashSet;
 import java.util.Set;
-
+///https://leetcode.com/problems/longest-consecutive-sequence/
 public class Solution_HAshSet {
     public static int longestConsecutive(final int[] A) {
         int longestSequence = 0;
