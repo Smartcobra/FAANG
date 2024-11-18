@@ -6,5 +6,100 @@
    I-> Interface Segregation
    D-> Dependency Inversion
 
-Liskov Substitution:
+------------------Liskov Substitution:
 if class A is a subtype of class B, we should be able to replace B with A without disrupting the behavior of our program.
+
+class Bird {
+    public void fly() {
+        System.out.println("I can fly!");
+    }
+}
+
+// Subclass: Violates LSP
+class Penguin extends Bird {
+    @Override
+    public void fly() {
+        throw new UnsupportedOperationException("Penguins can't fly");
+    }
+}
+
+// Main class
+public class LiskovViolationExample {
+    public static void main(String[] args) {
+        Bird bird = new Penguin();
+        bird.fly(); // Causes runtime exception
+    }
+}
+
+// Capability interfaces
+interface Flyable {
+    void fly();
+}
+
+interface Walkable {
+    void walk();
+}
+
+// Base class for all birds
+abstract class Bird {
+    String name;
+
+    public Bird(String name) {
+        this.name = name;
+    }
+
+    public abstract void eat();
+}
+
+// Birds with flying capability
+class Sparrow extends Bird implements Flyable, Walkable {
+    public Sparrow(String name) {
+        super(name);
+    }
+
+    @Override
+    public void eat() {
+        System.out.println(name + " eats seeds.");
+    }
+
+    @Override
+    public void fly() {
+        System.out.println(name + " is flying.");
+    }
+
+    @Override
+    public void walk() {
+        System.out.println(name + " is walking.");
+    }
+}
+
+// Birds without flying capability
+class Penguin extends Bird implements Walkable {
+    public Penguin(String name) {
+        super(name);
+    }
+
+    @Override
+    public void eat() {
+        System.out.println(name + " eats fish.");
+    }
+
+    @Override
+    public void walk() {
+        System.out.println(name + " is waddling.");
+    }
+}
+
+// Main class to test
+public class BirdExample {
+    public static void main(String[] args) {
+        Bird sparrow = new Sparrow("Sparrow");
+        sparrow.eat();
+        ((Flyable) sparrow).fly();
+        ((Walkable) sparrow).walk();
+
+        Bird penguin = new Penguin("Penguin");
+        penguin.eat();
+        ((Walkable) penguin).walk();
+    }
+}

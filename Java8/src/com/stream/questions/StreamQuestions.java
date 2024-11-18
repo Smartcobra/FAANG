@@ -23,7 +23,7 @@ public class StreamQuestions {
 
         ///get Details for the heighest Salary Employee:
         Optional<Employees> heighestEmployee = employeesList.stream()
-                .collect(Collectors.maxBy(Comparator.comparingDouble(Employees::getSalary)));
+                .max(Comparator.comparingDouble(Employees::getSalary));
 
         ///Find the name of the employee who joined after 2015
         employeesList.stream().filter(e->e.getYearOfJoining()>2015).map(Employees::getName)
