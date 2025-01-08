@@ -1,0 +1,120 @@
+1.Difference Between @Component and @Configuration in Spring Boot
+
+1.@Component
+    Marks a class as a Spring-managed component.
+    Used for simple and generic bean definitions.
+    Beans created with @Component do not include any special behavior, like the ability to define other beans inside them.
+
+ 2.@Configuration
+     Specialized form of @Component.
+     Indicates that the class contains @Bean definitions.
+     Ensures that the beans defined in this class are created only once (Singleton) by enabling CGLIB proxying.
+     Supports bean factory methods, which can return other Spring beans.
+
+Key Difference:
+
+The primary difference lies in the behavior of bean definitions within the class:
+    A class annotated with @Configuration ensures that methods annotated with @Bean are executed only once per container.
+    If you use @Component, the @Bean methods inside it might create new instances every time they are called.
+
+ package com.example.demo;
+
+ import org.springframework.context.annotation.Bean;
+ import org.springframework.stereotype.Component;
+
+ @Component
+ public class ComponentExample {
+
+     @Bean
+     public String bean1() {
+         System.out.println("Creating bean1");
+         return "Bean1";
+     }
+
+     @Bean
+     public String bean2() {
+         System.out.println("Creating bean2");
+         return "Bean2 depends on " + bean1();
+     }
+ }
+
+Output:
+    You will see the bean1() method being called multiple times, indicating new instances are created.
+Creating bean1
+Creating bean1
+Creating bean2 depends on Bean1
+
+
+With @Configuration
+package com.example.demo;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ConfigurationExample {
+
+    @Bean
+    public String bean1() {
+        System.out.println("Creating bean1");
+        return "Bean1";
+    }
+
+    @Bean
+    public String bean2() {
+        System.out.println("Creating bean2");
+        return "Bean2 depends on " + bean1();
+    }
+}
+Output:
+    The bean1() method is called only once, and the same instance is reused in bean2()
+Creating bean1
+Creating bean2 depends on Bean1
+---
+Q. You need to load specific beans or configurations based on an environment variable. How do you achieve this?
+Use the @ConditionalOnProperty annotation:
+@Configuration
+@ConditionalOnProperty(name = "feature.enabled", havingValue = "true")
+public class FeatureConfig {
+    @Bean
+    public MyFeature myFeature() {
+        return new MyFeature();
+    }
+}
+---
+Q. You want to expose custom health check information through the /actuator/health endpoint. How do you achieve this?
+@Component
+public class MyHealthIndicator implements HealthIndicator {
+    @Override
+    public Health health() {
+        boolean serviceUp = checkMyService();
+        if (serviceUp) {
+            return Health.up().withDetail("Service", "Available").build();
+        } else {
+            return Health.down().withDetail("Service", "Unavailable").build();
+        }
+    }
+
+    private boolean checkMyService() {
+        // Custom logic to check service health
+        return true;
+    }
+}
+---
+Q. Your Spring Boot application needs to support HTTP/2 for better performance. How do you enable it?
+Enable HTTP/2 by configuring the embedded Tomcat server in application.properties
+server.http2.enabled=true
+---
+
+Q. Your application fails during startup due to an exception thrown while initializing a bean. How do you handle this to allow the application to start?
+Use the @ConditionalOnProperty or @Conditional annotation to conditionally load the bean.
+Catch the exception in a factory method and return a fallback implementation or null.
+
+Q.You are breaking a monolithic Spring Boot application into microservices. How do you manage configuration and communication?
+    Use Spring Cloud Config or AWS Parameter Store to manage distributed configurations.
+    Use a service discovery mechanism like Eureka or AWS App Runner.
+    For inter-service communication:
+    Use REST with Feign clients for synchronous communication.
+    Use message brokers like Kafka for asynchronous communication.
+
+Q.

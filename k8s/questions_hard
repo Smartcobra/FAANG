@@ -1,0 +1,48 @@
+1. Can you explain the different components of the Kubernetes control plane and their roles?
+API Server -- receives client requests (e.g., create a Pod).
+etcd stores -- the request as the desired state of the cluster.
+Scheduler -- assigns the Pod to a suitable node.
+Controller Manager -- ensures that the Pod is created and running on the assigned node.
+Cloud Controller Manager -- (if applicable) manages cloud-specific resources.
+Kubernetes continuously monitors and reconciles the cluster's actual state to match the desired state.
+
+2.How does the etcd datastore work within a Kubernetes cluster, and why is it crucial?
+etcd is a distributed key-value store that serves as the primary datastore for Kubernetes.
+It is designed to store and provide access to all the critical cluster data, making it an essential component of the Kubernetes control plane
+etcd is the backbone of Kubernetes, ensuring the cluster's configuration and state are stored, replicated,
+and consistently accessible. Its distributed, reliable, and consistent nature makes it critical for managing Kubernetes clusters effectively.
+Without etcd, the control plane cannot function, making its availability and integrity paramount to the cluster's health.
+
+3.How does the Kubernetes networking model work, especially the concepts of Pods, Services, and Ingress?
+Pod Networking:
+Each Pod in Kubernetes gets a unique IP address within the cluster.
+Pods communicate directly with each other using these IPs.
+Kubernetes ensures that every Pod can communicate with any other Pod without NAT
+Kubernetes relies on a Container Network Interface (CNI) plugin (e.g., Flannel, Calico, Cilium) to implement the Pod networking model.
+Pod IPs are temporary and change when Pods are recreated or rescheduled.(Ephemeral Nature)
+Services:
+Since Pod IPs are ephemeral, Kubernetes provides Services to create stable networking endpoints for accessing Pods.
+
+Services:
+Since Pod IPs are ephemeral, Kubernetes provides Services to create stable networking endpoints for accessing Pods.
+        Service Types:
+            ClusterIP
+            NodePort
+            LoadBalancer
+            ExternalName
+        Service Discovery:
+            Kubernetes assigns a DNS name to each Service, enabling Pods to use names like my-service.my-namespace.svc.cluster.local for communication.
+Ingress:
+While Services provide stable access to Pods, they don’t handle HTTP routing or advanced traffic management. Ingress addresses these limitations.
+Ingress is an API object that manages external HTTP/HTTPS access to Services in a cluster.
+
+4.Can you explain the difference between ClusterIP, NodePort, and LoadBalancer services?
+    ClusterIP (Default Service Type)
+        Internal to the Kubernetes cluster.
+        Accessible only from within the cluster (e.g., by other Pods).
+    NodePort:
+        Exposes the Service on a static port on each Kubernetes node.
+        Accessible from outside the cluster using <NodeIP>:<NodePort>.
+    LoadBalancer:
+        Exposes the Service to the external world using a cloud provider’s load balancer.
+        Available only in cloud environments (e.g., AWS, Azure, GCP).

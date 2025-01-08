@@ -47,15 +47,35 @@ public class NQueenLeetcode {
                 return false;
             }
         }
+// Check if there's a queen in the NW direction
+        /*
+Row:    0    1    2    3
+Col:    0    1    2    3
 
-        // Check if there's a queen in the NW direction
+        Q    .    .    .
+        .    .    .    .
+        .    .    ?    .   start from (2,2)
+        .    .    .    .
+         */
+
+
         for (int i = row, j = col; i >= 0 && j >= 0; i--, j--) {
             if (board[i][j] == 'Q') {
                 return false;
             }
         }
 
-        // Check if there's a queen in the NE direction
+        /*
+ // Check if there's a queen in the NE direction
+Row:    0    1    2    3
+Col:    0    1    2    3
+
+        .    .    Q    .
+        .    .    .    .
+        .    ?    .    .
+        .    .    .    .
+
+         */
         for (int i = row, j = col; i >= 0 && j < n; i--, j++) {
             if (board[i][j] == 'Q') {
                 return false;

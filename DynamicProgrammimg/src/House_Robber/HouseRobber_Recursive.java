@@ -10,15 +10,15 @@ package House_Robber;
 public class HouseRobber_Recursive {
 
     public static int rob(int[] nums) {
-        int n = nums.length;
-        return rob_helper(nums, n);
+        return rob_helper(nums, 0);
 
     }
 
     public static int rob_helper(int[] nums, int n) {
-        if (n == 0) return 0;
-        if (n == 1) return nums[0];
-        return Math.max(rob_helper(nums, n - 1), rob_helper(nums, n - 2) + nums[n - 1]);
+        if (n >= nums.length) return 0;
+        int steal = nums[n]+rob_helper(nums,n+2);
+        int skip = rob_helper(nums,n+1);
+        return Math.max(steal,skip);
 
     }
 

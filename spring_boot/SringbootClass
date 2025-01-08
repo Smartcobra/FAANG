@@ -1,0 +1,150 @@
+public class Springboot {
+    public ConfigurableApplicationContext run(String... args) {
+        long startTime = System.nanoTime();
+        DefaultBootstrapContext bootstrapContext = this.createBootstrapContext();
+        ConfigurableApplicationContext context = null;
+        this.configureHeadlessProperty();
+        SpringApplicationRunListeners listeners = this.getRunListeners(args);
+        listeners.starting(bootstrapContext, this.mainApplicationClass);
+
+        try {
+            ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+            ConfigurableEnvironment environment = this.prepareEnvironment(listeners, bootstrapContext, applicationArguments);
+            this.configureIgnoreBeanInfo(environment);
+            Banner printedBanner = this.printBanner(environment);
+            context = this.createApplicationContext();
+            context.setApplicationStartup(this.applicationStartup);
+            this.prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
+            this.refreshContext(context);
+            this.afterRefresh(context, applicationArguments);
+            Duration timeTakenToStartup = Duration.ofNanos(System.nanoTime() - startTime);
+            if (this.logStartupInfo) {
+                (new StartupInfoLogger(this.mainApplicationClass)).logStarted(this.getApplicationLog(), timeTakenToStartup);
+            }
+
+            listeners.started(context, timeTakenToStartup);
+            this.callRunners(context, applicationArguments);
+        } catch (Throwable var12) {
+            this.handleRunFailure(context, var12, listeners);
+            throw new IllegalStateException(var12);
+        }
+
+        try {
+            Duration timeTakenToReady = Duration.ofNanos(System.nanoTime() - startTime);
+            listeners.ready(context, timeTakenToReady);
+            return context;
+        } catch (Throwable var11) {
+            this.handleRunFailure(context, var11, (SpringApplicationRunListeners)null);
+            throw new IllegalStateException(var11);
+        }
+    }
+}
+
+
+///ConfigurableApplicationContext  =>> This interface is implemented directly or indirectly by all the Application Contexts .
+
+WebApplicationContext => decide which type of application ,
+AnnotationConfigServletWebServerApplicationContext  => servlet application
+AnnotationConfigReactiveWebServerApplicationContext => reactive application
+
+
+Spring Boot internally classifies web applications into two categories: Reactive and Servlet applications using the WebApplicationType enumeration.
+
+this.webApplicationType = WebApplicationType.deduceFromClasspath();
+
+
+spring-boot uses the deduceFromClasspath() method to determine the type of web application based on the presence of certain dependencies on the classpath.
+If it finds the spring-boot-starter-web dependency, it will assume that the application is a Servlet-based web application and set the webApplicationType
+attribute to SERVLET. Similarly, if it finds the spring-boot-starter-reactive dependency, it will assume that the application is a reactive web application
+and set the webApplicationType to REACTIVE. If none of these dependencies are found, they webApplicationType will be set to NONE.
+
+Based on this application type the createApplicationContext() appropriate application context using factory method.
+
+The this.refreshContext(context) method in the run() method of SpringApplication triggers a refresh of the application context.
+During the refresh process, Spring will scan the application’s classpath for all components that have been annotated with @Component
+or other annotations, and will create and configure instances of those components as necessary. It will also load and configure any other
+beans that are defined in the application context, such as those defined in XML configuration files or through Java configuration classes.
+
+
+
+
+////////////////////////////////
+Spring requires defining the dispatcher servlet, mappings, and other supporting configurations.
+public class MyWebAppInitializer implements WebApplicationInitializer {
+
+    @Override
+    public void onStartup(ServletContext container) {
+        AnnotationConfigWebApplicationContext context
+          = new AnnotationConfigWebApplicationContext();
+        context.setConfigLocation("com.baeldung");
+
+        container.addListener(new ContextLoaderListener(context));
+
+        ServletRegistration.Dynamic dispatcher = container
+          .addServlet("dispatcher", new DispatcherServlet(context));
+
+        dispatcher.setLoadOnStartup(1);
+        dispatcher.addMapping("/");
+    }
+}
+We also need to add the @EnableWebMvc annotation to a @Configuration class, and define a view-resolver to resolve the views returned from the controllers:
+@EnableWebMvc
+@Configuration
+public class ClientWebConfig implements WebMvcConfigurer {
+   @Bean
+   public ViewResolver viewResolver() {
+      InternalResourceViewResolver bean
+        = new InternalResourceViewResolver();
+      bean.setViewClass(JstlView.class);
+      bean.setPrefix("/WEB-INF/view/");
+      bean.setSuffix(".jsp");
+      return bean;
+   }
+}
+
+Spring requires both the standard spring-security-web and spring-security-config dependencies to set up Security in an application.
+
+Spring supports both the legacy web.xml way of bootstrapping as well as the latest Servlet 3+ method.
+Let’s see the web.xml approach in steps:
+
+    Servlet container (the server) reads web.xml.
+    The DispatcherServlet defined in the web.xml is instantiated by the container.
+    DispatcherServlet creates WebApplicationContext by reading WEB-INF/{servletName}-servlet.xml.
+    Finally, the DispatcherServlet registers the beans defined in the application context.
+
+Here’s how Spring bootstraps using the Servlet 3+ approach:
+
+    The container searches for classes implementing ServletContainerInitializer and executes.
+    The SpringServletContainerInitializer finds all classes implementing WebApplicationInitializer.
+    The WebApplicationInitializer creates the context with XML or @Configuration classes.
+    The WebApplicationInitializer creates the DispatcherServlet with the previously created context.
+
+By default, Spring Boot uses an embedded container to run the application. In this case, Spring Boot uses the public static void main entry point to launch an embedded web server.
+
+It also takes care of the binding of the Servlet, Filter, and ServletContextInitializer beans from the application context to the embedded servlet container.
+
+Another feature of Spring Boot is that it automatically scans all the classes in the same package or sub packages of the Main-class for components.
+
+Additionally, Spring Boot provides the option of deploying it as a web archive in an external container. In this case, we have to extend the SpringBootServletInitializer:
+
+@SpringBootApplication
+public class Application extends SpringBootServletInitializer {
+    // ...
+}
+
+Q6. How to Disable a Specific Auto-Configuration?
+@EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
+public class MyConfiguration { }
+
+Q17. What Basic Annotations Does Spring Boot Offer?
+
+    @EnableAutoConfiguration – to make Spring Boot look for auto-configuration beans on its classpath and automatically apply them
+    @SpringBootApplication – to denote the main class of a Boot Application. This annotation combines
+    @Configuration, @EnableAutoConfiguration and @ComponentScan annotations with their default attributes.
+
+ 4. What does the @SpringBootApplication annotation do?
+ @SpringBootApplication is a convenience annotation that combines three annotations: @Configuration (marks the class as a source of bean definitions),
+ @EnableAutoConfiguration (enables Spring Boot’s auto-configuration mechanism), and
+ @ComponentScan (scans the package of the annotated class for Spring components).
+
+

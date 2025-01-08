@@ -1,0 +1,8 @@
+Comparison in Java Notification System
+Aspect	                                Decorator Pattern	                                                        Strategy Pattern
+-------                     -----------------------------------------                                ------------------------------------------------
+Purpose	                    Dynamically add multiple notification layers.	                        Dynamically select one notification method at runtime.
+Use Case	                Combine notifications (e.g., Email + SMS + Push).	                    Choose only one notification method (e.g., Email only).
+Flexibility	                Stack behaviors (e.g., Email + SMS).	                                Swap algorithms (choose one behavior).
+Code Structure	             Layers behaviors using decorators.	                                    Encapsulates behavior in individual strategies.
+                                 structural                                                                     behavioral pattern

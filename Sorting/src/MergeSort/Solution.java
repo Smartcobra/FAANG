@@ -47,7 +47,7 @@ public class Solution {
         }
 
         for (int i = 0; i <= e - s; i++) {
-            A.set(i + s, tmp.get(i));
+            A.set(i + s, tmp.get(i));  // copy to original array
         }
 
     }

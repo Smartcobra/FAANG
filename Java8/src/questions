@@ -1,0 +1,76 @@
+1. What Happens If You Override a Private Method?
+Question:
+Can we override a private method in Java?
+Explanation:
+
+No, private methods cannot be overridden because they are not visible to subclasses. However,
+ if you define a method with the same name in a subclass, it is considered method hiding, not overriding.
+
+ 2. Can You Catch an Exception Thrown in a Static Block?
+ Exceptions thrown in a static block can only be caught within a static initializer block using a try-catch. Otherwise, the program will fail to load the class.
+
+ 3.What is the difference between calling run() and start() for a thread?
+ Explanation:
+     Calling start() creates a new thread and executes the run() method in that thread.
+     Calling run() directly executes the code in the current thread without starting a new thread.
+start()-----
+class MyThread extends Thread {
+    public void run() {
+        System.out.println("Thread is running...");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyThread thread = new MyThread();
+        thread.start(); // Starts a new thread
+        System.out.println("Main thread continues...");
+    }
+}
+
+--
+Main thread continues...
+Thread is running...
+--run()
+class MyThread extends Thread {
+    public void run() {
+        System.out.println("Thread is running...");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyThread thread = new MyThread();
+        thread.run(); // Calls run() in the main thread
+        System.out.println("Main thread continues...");
+    }
+}
+Thread is running...
+Main thread continues...
+4. What Happens If You Call Wait() Outside a Synchronized Block?
+Explanation:
+Calling wait() outside a synchronized block results in IllegalMonitorStateException because wait() must be called with a lock acquired.
+
+5. Can a Constructor Be Synchronized?
+Explanation:
+No, constructors cannot be synchronized because object locks do not exist until the object is created. However, synchronized blocks can be used inside constructors.
+
+6. What Happens If You Return From Try or Catch? Will Finally Execute?
+Explanation:
+Yes, the finally block always executes, even if there is a return statement inside try or catch. However, if finally also has a return, it overrides other return values.
+
+7. What Happens If an Exception Is Thrown in Finally?
+Explanation:
+Exceptions in the finally block suppress exceptions from the try or catch blocks.
+public class Test {
+    public static void main(String[] args) {
+        try {
+            int result = 10 / 0;
+        } catch (Exception e) {
+            System.out.println("Catch executed");
+        } finally {
+            throw new RuntimeException("Exception in finally");
+        }
+    }
+}
+--Exception in finally
