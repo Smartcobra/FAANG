@@ -1,0 +1,471 @@
+1. Promises:
+       The promises which are used to handle asynchronous operations in Java Script.
+       We can create promise, by creating an object for Promise class. (new Promise())
+       We can handle promise by using then(-,-).
+
+   Ex 1:
+
+
+                function f1(n){
+                    return new Promise(function(resolve,reject){
+                       if(n%2 == 0){
+                           resolve('even')
+                       }else{
+                           reject('odd');
+                       }
+                    })
+                }
+
+                f1(10)
+                .then(
+                    function(r){
+                     alert(r);
+                    },
+                    function(r){
+                     alert(r);
+                    })
+
+
+
+   Note:
+
+       If you observe, above example function f1 returns promise.
+       So at the time of calling that function, we have to handle that promsie with then(-,-).
+       Promise() takes one function as an argument, that function take max 2 arguments, functions(resolve,reject) as aruguments. Those are treated like success callback and error callback.
+       If we call first callback(resolve) function, that time .then function first argument is executed.
+       If we call second callback(reject) function, that time .then function second argument is executed or catch(-) is executed.
+
+   Ex 2:
+
+
+                function sendGetReq(url){
+                   return new Promise(function(resolve,reject){
+                       var obj=new XMLHttpRequest();
+                       obj.open('get',url,true);
+                       obj.send();
+                       obj.onload=function(){
+                        var res= obj.responseText;
+                        resolve(res);
+                       }
+                       obj.onerror=function(){
+                         reject('something went wrong');
+                       }
+                   });
+                }
+
+                sendGetReq('https://jsonplaceholder.typicode.com/posts')
+                   .then(
+                       function(res){
+                           console.log(res);
+                       }
+                       )
+                       .catch(function(res){
+                         console.log(res)
+                       })
+                       .then(function(){
+                           alert('done');
+                       })
+
+
+   Note:
+
+       In the above example if you observe, sendGetReq method handle asynchronous action and it returns a promise.
+       From sendGetReq method we send request to server, server processing request and send reponse, then reponse may be success or failure.
+       If it is success, calling resolve method with success response as an arugument to calling function.
+       If it is failure, calling reject method with failure response as an argument to calling function.
+       If we call resolve(-), that time my then(-,-) first function is executed.
+       If we call reject(-), that time my then(-,-) second argument or catch method argument is executed.
+       The last then() function executed always, to perform common operations.
+
+   callback vs promises:
+
+       To execute the callback functions we need to pass callback functions as an arguments to called function.
+       In the called function we can call all these callback functions with that argument reference.
+       Now all these callback functions are exected one by one like a stream.
+
+
+                   function f1(a,b,c){
+                       a(1);
+                       b(2);
+                       c(3);
+                   }
+
+                   f1(
+                       function(r){
+                           alert(r);
+                       },
+                       function(r){
+                           alert(r);
+                       },
+                       function(r){
+                           alert(r);
+                       }
+                   )
+
+
+   Note: Output is show 1,2,3 in the alert boxes.
+
+       In promises, we didn't pass any functions as an argument to called functoin like callback.
+       My promise method take one function as an arugument, that function default has two arguments, those are anonymous functions named like resolve and reject.
+       If we call resolve, that time my then first argument is executed.
+       If we call reject, that time my then second argument or catch argument is executed.
+       If we call both resolve and reject line by line, then only one call back event triggered i.e first calling function.
+
+
+                   function f1(){
+                      return new Promise(function(resolve,reject){
+                         resolve(1);
+                         reject(2);
+                      })
+                   }
+
+                   f1()
+                   .then(
+                       function(r){
+                           alert(r);
+                       },
+                       function(r){
+                           alert(r);
+                       }
+                   )
+
+
+   Note: Output is show only 1 alert box. But in the called function we are calling both resolve and reject, both by my promise always triggered only one callback event i.e. first calling function.
+
+   Promise.resolve('Success response data')
+
+       Promise.resolve('Success response data'), returns a promise..
+
+
+                  Promise.resolve('Success response data')
+                  .then((data)=>{
+                     alert(data);
+                  })
+                  .catch((err)=>{
+                     alert('error cb ' + err)
+                  })
+
+                   output: then callback menthod executed and  in the alert box "Success response data" printed
+
+
+   Promise.reject('error response data')
+
+       Promise.reject("error response data"), returns a promise with error response data.
+
+
+                  Promise.reject('error response data')
+                  .then((data)=>{
+                     alert( data);
+                  })
+                  .catch((err)=>{
+                     alert(err)
+                  })
+
+                  output: catch callback method executed and  in the alert box "error response data" printed
+
+
+   Promise.all([])
+
+       Promise.all([]), take array of promise as an argument and returns one new promise with array data.
+
+
+                  var promise1=Promise.resolve('1');
+                  var promise2=Promise.resolve('2');
+                  var promise3=Promise.resolve('3');
+
+                  Promise.all([promise1,promise2,promise3])
+                  .then((data)=>{
+                     console.log(data)
+                  })
+                  .catch((err)=>{
+                     debugger;
+                  })
+
+                  output: ["1", "2", "3"]
+
+
+
+
+2. async and await:
+    async:
+
+        async keyword is used to turn a function into async function.
+        async functions always returns "promise".
+        If we use "await" keyword inside function body, then that function should be "async" function.
+
+    Syntax for async function:
+
+
+                  async function f1(){
+                     return 10;
+                   }
+
+
+
+    How async function works:
+
+
+                   function f1(){
+                     return 10;
+                   }
+                   f1();
+                   output: 10
+
+
+
+        In the above code nothing new, just call f1 function , it returns 10.
+
+
+                  async function f1(){
+                     return 10;
+                   }
+                   f1();
+                   output: Promise {<fulfilled>: 10}
+
+
+
+        In the above code, f1 is an async method, if we call f1 it returns a "Promise"
+        If any method returns a promise, we can handle that promise with "then" and "catch".
+
+
+                  async function f1(){
+                     return 10;
+                   }
+
+                   f1()
+                   .then(
+                     (data)=>{
+                      console.log(data)
+                     }
+                   )
+                   .catch(
+                    (data)=>{
+                     console.log(data)
+                    }
+                  )
+
+                  output: 10
+
+
+    await:
+
+        await keyword always works inside async functions.
+        Have to put await keyword infront of any asynchronous function calls which returns Promise.
+
+
+                function fnAsynchronousOperation(){
+                         return new Promise(function(resolve,reject){
+                            setTimeout(function(){
+                                resolve(10)
+                            },5000)
+                         })
+                }
+
+                async function f1(){
+                    const data=await fnAsynchronousOperation();
+                    console.log(data);
+                }
+                 output(after 5 sec):
+                 10
+
+
+
+        "await" follows fnAsynchronousOperation.
+        In fnAsynchronousOperation we handle some asynchronous Operations like AJAX,setTimeout.
+        Once asynchronous Operation completed, it return Promise with success or failure data.
+        If asynchronous Operation take some time, in that time remaining statements will not execute, those are waiting.
+        The await keyword pauses the execution of the async function until the promise is resolved.
+        Once promise resolved, then remaining statements starts it's execution.
+///
+3. Observebles:
+        We can handle asynchronous action results by using
+            Callbacks
+            Promises
+            RxJS(ReactiveX API) Observables
+        We can create observable by create an object for Observable class.(new Observable())
+        If any method return observable, we can handle that observable by using subscribe method.
+        subscribe method take two callback functions as arguments, first callback is used to handle success response(emited by next()) and second callback is used to handle error response(emited by error()).
+        You can download RxJS lib from here
+
+    Ex:
+
+
+                 function sendGetReq(url){
+                    return new Observable(function(observer ){
+                        var obj=new XMLHttpRequest();
+                        obj.open('get',url,true);
+                        obj.send();
+                        obj.onload=function(){
+                         var res= obj.responseText;
+                         observer.next(res);
+                        }
+                        obj.onerror=function(){
+                          observer.error('something went wrong');
+                        }
+                    });
+                 }
+
+                 sendGetReq('https://jsonplaceholder.typicode.com/posts')
+                    .subscribe(
+                        function(res){
+                            console.log(res);
+                        },
+                        function(error){
+                          console.log(res);
+                        }
+                        )
+
+
+
+        In the above example , sendGetReq method handle asynchronous action and it returns a Observable.
+        From sendGetReq method we send request to server, server processing request and send reponse, then reponse may be success or failure.
+        If it is success, calling observer.next method with success response as an arugument.
+        If it is failure, calling observer.error method with failure response as an argument..
+        If we call observer.next(-), that time my subscribe(-,-) first function is executed.
+        If we call observer.error(-), that time my subscribe(-,-) second function is executed.
+
+4. Callbacks:
+        A callback function is passed to some other function as an argument and ask them to call with that reference.
+        Most of the times all anonymous functions, are executed like a callback functions.
+        Using callback functions, we can pass data from called function to calling function.
+
+    Ex 1:
+
+
+                 function f1(){
+                  alert('am called');
+                 }
+
+                 function f2(f){
+                    f();
+                 }
+
+                 f2(f1);
+
+    Note:
+
+        In the above we are passing f1 function as an argument to f2.
+        From f2 am calling f1, using aregument reference f.
+        So in this f1 is acting like a callback function. In the above code if you observe, we didn't call f1 function directly any where like f1(), but this method is executed indirectly from f2 function with some argument reference.
+
+    Ex 2:
+
+
+                 function f1(a,b,c){
+                    a(1);
+                    b(2);
+                    c(3);
+                 }
+
+                 f1(
+                   function(data){
+                       alert(data);
+                   },
+                   function(data){
+                      alert(data);
+                   },
+                   function(data){
+                      alert(data);
+                   }
+
+                 )
+
+    Note:
+
+        If you observe in the above example, my f1 method expect 3 arguments, whose type is functions.
+        At the time of calling f1, i passed three anonymous functions.
+        Now my a,b,c arguments contains three anonymous functions, and am calling a,b,c one by one by passing some data.
+        Now my callback functions are triggered one by one like a stream, and display output in alert box 1,2,3.
+
+5. Hoisting
+  Variable/Method hoisting:
+
+  Variable hoisting:
+
+      In some of programming languages like c, c++, java, c#, before declaring a variable we are not able to use that variable, if you use it will give error like that variable is not defined.
+
+
+                      // In java
+                      System.out.println(i);
+                      int i=10;
+
+
+  Note: If you execute above code, it will gives an error like variable i is not defiend.
+
+      But come to javascript, before declaring a variable we can use that variable, it doesn't gives any error.
+      If we declare the variable after it's using, in javascript it's going to check total page, any where this varible is declared or not, if we find some where, then it takes that varible declartion part, and keep that declaration as a first executable statement of the page.
+
+
+                      // In javascript
+                      console.log(i);
+                      var i=10;
+                      console.log(i);
+
+
+  At the time of execution, the above code is looks like below, because of javascript variable hoisting concept.
+
+
+                      // In javascript
+                      var i;
+                      console.log(i);
+                      var i=10;
+                      console.log(i);
+
+
+  Note: So the o/p is undefined 10 . why because i variable declared with out any initilization, so default value is undefined and the we initilize with 10.
+
+  Method hoisting:
+
+      In some of programming languages like c, c++, java, c#, before define a method we are not able to call that method, if we call, it will give error like that method is not defined.
+
+
+                      // In java
+                      f1();
+                      function f1(){
+                          System.out.println('helloo');
+                      }
+
+
+  Note: If you execute above code, it will gives an error like method f1 is not defiend.
+
+      But come to javascript, before define a method we can call that method, it doesn't gives any errors.
+      If we call method, first it's check already it's defined or not,if already defined it execute that method, if not it checks total page, any where that method is defined, it take that method definition and keep that one as a first executable statement of the page.
+
+
+                      // In javascript
+                     f1();
+                     function f1(){
+                         cosole.log('hellooo');
+                     }
+
+
+  At the time of execution, the above code is looks like below, because of javascript method hoisting concept.
+
+
+                      // In javascript
+                      // In javascript
+                      function f1(){
+                          cosole.log('hellooo');
+                      }
+                      f1();
+
+
+6. Throttling:
+       We are going to implement throttling to optimizing performance of your web application.
+       Using throttling we can limiting the no of times call a function, which achieves the performance of your webapplication.
+
+
+               sample.html
+
+               <script>
+                 function fnResize(){
+                    console.log('fnResize called')
+                  }
+                  window.addEventListener('resize',function(){
+                      fnResize();
+                  });
+
+
+               </script>
+
+

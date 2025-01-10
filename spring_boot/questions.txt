@@ -1,0 +1,242 @@
+1.Difference Between @Component and @Configuration in Spring Boot
+
+1.@Component
+    Marks a class as a Spring-managed component.
+    Used for simple and generic bean definitions.
+    Beans created with @Component do not include any special behavior, like the ability to define other beans inside them.
+
+ 2.@Configuration
+     Specialized form of @Component.
+     Indicates that the class contains @Bean definitions.
+     Ensures that the beans defined in this class are created only once (Singleton) by enabling CGLIB proxying.
+     Supports bean factory methods, which can return other Spring beans.
+
+Key Difference:
+
+The primary difference lies in the behavior of bean definitions within the class:
+    A class annotated with @Configuration ensures that methods annotated with @Bean are executed only once per container.
+    If you use @Component, the @Bean methods inside it might create new instances every time they are called.
+
+ package com.example.demo;
+
+ import org.springframework.context.annotation.Bean;
+ import org.springframework.stereotype.Component;
+
+ @Component
+ public class ComponentExample {
+
+     @Bean
+     public String bean1() {
+         System.out.println("Creating bean1");
+         return "Bean1";
+     }
+
+     @Bean
+     public String bean2() {
+         System.out.println("Creating bean2");
+         return "Bean2 depends on " + bean1();
+     }
+ }
+
+Output:
+    You will see the bean1() method being called multiple times, indicating new instances are created.
+Creating bean1
+Creating bean1
+Creating bean2 depends on Bean1
+
+
+With @Configuration
+package com.example.demo;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ConfigurationExample {
+
+    @Bean
+    public String bean1() {
+        System.out.println("Creating bean1");
+        return "Bean1";
+    }
+
+    @Bean
+    public String bean2() {
+        System.out.println("Creating bean2");
+        return "Bean2 depends on " + bean1();
+    }
+}
+Output:
+    The bean1() method is called only once, and the same instance is reused in bean2()
+Creating bean1
+Creating bean2 depends on Bean1
+---
+Q. You need to load specific beans or configurations based on an environment variable. How do you achieve this?
+Use the @ConditionalOnProperty annotation:
+@Configuration
+@ConditionalOnProperty(name = "feature.enabled", havingValue = "true")
+public class FeatureConfig {
+    @Bean
+    public MyFeature myFeature() {
+        return new MyFeature();
+    }
+}
+---
+Q. You want to expose custom health check information through the /actuator/health endpoint. How do you achieve this?
+@Component
+public class MyHealthIndicator implements HealthIndicator {
+    @Override
+    public Health health() {
+        boolean serviceUp = checkMyService();
+        if (serviceUp) {
+            return Health.up().withDetail("Service", "Available").build();
+        } else {
+            return Health.down().withDetail("Service", "Unavailable").build();
+        }
+    }
+
+    private boolean checkMyService() {
+        // Custom logic to check service health
+        return true;
+    }
+}
+---
+Q. Your Spring Boot application needs to support HTTP/2 for better performance. How do you enable it?
+Enable HTTP/2 by configuring the embedded Tomcat server in application.properties
+server.http2.enabled=true
+---
+
+Q. Your application fails during startup due to an exception thrown while initializing a bean. How do you handle this to allow the application to start?
+Use the @ConditionalOnProperty or @Conditional annotation to conditionally load the bean.
+Catch the exception in a factory method and return a fallback implementation or null.
+
+Q.You are breaking a monolithic Spring Boot application into microservices. How do you manage configuration and communication?
+    Use Spring Cloud Config or AWS Parameter Store to manage distributed configurations.
+    Use a service discovery mechanism like Eureka or AWS App Runner.
+    For inter-service communication:
+    Use REST with Feign clients for synchronous communication.
+    Use message brokers like Kafka for asynchronous communication.
+--
+Q.Why have a CompletableFuture when we have an ExecutorService?
+Consider the following example:
+public static Integer add(int a, int b) {
+        return a + b;
+
+    }
+public static Integer multiply(int result) {
+    return result * 15;
+}
+
+ static class Add implements Callable<Integer> {
+        int a;
+        int b;
+        Add(int a, int b) {
+            this.a = a;
+            this.b = b;
+        }
+        @Override
+        public Integer call() throws Exception {
+            return a + b;
+        }
+    }
+
+    static class Multiply implements Callable<Integer> {
+        int result;
+        Multiply(int result) {
+            this.result = result;
+        }
+        @Override
+        public Integer call() throws Exception {
+            return result * 10;
+        }
+    }
+  we will be submitting our task to this ExecutorService
+   public static void main(String[] args) throws ExecutionException, InterruptedException {
+          ExecutorService executor = Executors.newFixedThreadPool(3);
+          Future<Integer> futureResult = executor.submit(new Add(10, 20)); // 1
+          Integer intermediateResult = futureResult.get(); // 2
+          Future<Integer> finalResult = executor.submit(new Multiply(intermediateResult)); // 3
+          System.out.println(finalResult.get());
+          executor.shutdown();
+      }
+
+First, we have submitted Add task which will provide us with Future<Integer>.
+
+Now, at line number 2, we need to provide a blocking call to get() to fetch the result in the main thread. Now it’s the responsibility of the main thread to pass the result of this to another thread using ExecutorService submit method at line number 3.
+
+We get the Future<Integer>, and we finally print the result. To summarize, we require a main thread whose responsibility is to submit the task so that the task can be carried out in another thread(pool of threads). The main thread will call the blocking method to fetch the result and will then submit the intermediate result to the ExecutorService. Not interesting at all.
+
+Now, consider that I have 10 pairs of integers for which I have to add, and the result needs to be multiplied by 10 in another thread. My code will be like this:
+
+ExecutorService executor = Executors.newFixedThreadPool(3);
+        List<Future<Integer>> finalFutureList = new ArrayList<>();
+        List<Integer> finalResultList = new ArrayList<>();
+        for(int i=0; i<10; i++){
+            Future<Integer> futureResult = executor.submit(new Add(RandomUtils.nextInt(), RandomUtils.nextInt())); //1
+            Integer intermediateResult = futureResult.get(); // 2
+            Future<Integer> finalResult = executor.submit(new Multiply(intermediateResult));
+            finalFutureList.add(finalResult);
+        }
+        for(Future<Integer> future : finalFutureList){
+            finalResultList.add(future.get());
+        }
+        System.out.println(finalFutureList);
+        executor.shutdown();
+
+ We are able to achieve the above through looping. Consider i = 0, we are at line 2,
+ suppose this is taking time, and due to this, we cannot proceed to i = 1. Ideally, we would like all 10
+ processes to work in parallel, and inside each process, when one task is finished, without the help of the main thread,
+ the result should be pushed to another thread so that it can carry out its task for which it is dependent.
+
+ This is where CompletableFuture APIs come in. Consider the code below
+ public static void main(String[] args) throws ExecutionException, InterruptedException {
+     Integer finalResult = CompletableFuture.supplyAsync(() -> add(10, 20))
+             .thenApplyAsync(result -> multiply(result))
+             .get();
+     System.out.println(finalResult);
+ }
+ public static Integer add(int a, int b) {
+     return a + b;
+
+ }
+ public static Integer multiply(int result) {
+     return result * 15;
+ }
+
+ Simple and concise, We provided the first task with supplyAsync and chained it with thenApply. When the task in supplyAsync is finished, it will
+ automatically transfer the result to thenApply function. On top of it, we can also provide the Thread pool in which these tasks need to be run like below:
+ ExecutorService executorService = Executors.newFixedThreadPool(3);
+         Integer finalResult = CompletableFuture.supplyAsync(() -> add(10, 20),executorService)
+                 .thenApplyAsync(result -> multiply(result),executorService)
+                 .get();
+         System.out.println(finalResult);
+
+Let us consider that if we have 10 pairs of integers and we have to perform all these 10 processes in parallel,
+ each process contains two tasks performed in a separate thread, but task 2 depends on task 1.
+
+public static void main(String[] args) throws ExecutionException, InterruptedException {
+  ExecutorService executorService = Executors.newFixedThreadPool(3);
+  List<CompletableFuture> list = new ArrayList<>();
+  List<Integer> finalResult = new ArrayList<>();
+
+  for(int i=0; i < 10; i++){
+    list.add(CompletableFuture.supplyAsync(() -> add(RandomUtils.nextInt(), RandomUtils.nextInt()),executorService)
+       .thenApplyAsync(result -> multiply(result),executorService));
+
+  }
+  for(CompletableFuture<Integer> future : list){
+      finalResult.add(future.get()); //4
+  }
+
+  System.out.println(finalResult);
+  }
+  public static Integer add(int a, int b) {
+      return a + b;
+
+  }
+  public static Integer multiply(int result) {
+      return result * 15;
+  }
+
+ There is no external thread to orchestrate the switching of tasks from one thread to another. No blocking at any point until we just require the result, which is at line number 4. All 10 processes are happening in parallel, and under each process,
+ when the first task is finished by a thread, it is passed to another thread with the thenApplyAsync method.

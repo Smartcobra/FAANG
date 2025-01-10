@@ -1,0 +1,266 @@
+Promise Vs Observable:
+    How to create:
+    Promise:
+
+        We can create promise, by creating object for Promise class.
+
+
+function f1(){
+    return new Promise(function(resolve,reject){
+        //some code
+        resolve(10); //success response
+        //some code
+        reject('error')
+    })
+}
+
+
+
+Observable:
+    We can create observable, by creating object for Observable class.
+
+
+function f1(){
+    return new Observable(function(observer){
+        //some code
+        observer.next(10);
+        //some code
+        observer.error('error')
+    })
+}
+
+
+
+How to Use:
+    Promise:
+
+        By using then,catch we can handle promise.
+then(-,-), first argument handle success data(resolve())
+then(-,-), second argument or catch(-) handle error data(reject())
+
+
+function f1(){
+    return new Promise(function(resolve,reject){
+        //some code
+        resolve(10); //success response
+        //some code
+        reject('error')
+    })
+}
+
+f1()
+    .then(
+        function(data){
+            alert(data)
+        }
+    )
+    .catch(
+        function(data){
+            alert(data)
+        }
+    )
+
+
+
+Observable:
+    By using subscribe, we can handle Observables.
+subscribe(-,-), first argument handle success data(next())
+subscribe(-,-), second argument handle error data(error())
+
+
+function f1(){
+    return new Observable(function(observer){
+        //some code
+        observer.next(10);
+        //some code
+        observer.error('error')
+    })
+}
+
+f1()
+    .subscribe(
+        function(data){
+            alert(data)
+        },
+        function(data){
+            alert(data)
+        }
+    )
+
+
+
+Single Value vs Multiple Values:
+    Promise:
+
+        Promise can only emit single value
+In below example emits success data with resove 3 times, but promise only considered first value only.
+
+
+    function f1(){
+    return new Promise(function(resolve,reject){
+        //some code
+        resolve(10); //success response
+        resolve(20);
+        resolve(30)
+    })
+}
+
+f1()
+    .then(
+        function(data){
+            console.log(data)
+        }
+    )
+    .catch(
+        function(data){
+            console.log(data)
+        }
+    )
+
+output: 10
+
+
+
+Observable:
+
+    Observable can emit multiple values
+In below example emits success data with next() 3 times, my observable considered all 3 values.
+
+
+    function f1(){
+    return new Observable(function(observer){
+        observer.next(10);
+        observer.next(20)
+        observer.next(30);
+    })
+}
+
+f1()
+    .subscribe(
+        function(data){
+            console.log(data)
+        },
+        function(data){
+            console.log(data)
+        }
+    )
+
+output: 10 20 30
+
+
+
+Eager vs Lazy:
+    Promises:
+
+        Promises are eager, the Promise class callback method called as soon as the promise created.
+
+
+    var myPromises = new Promise(function(resolve){
+    console.log("callback");
+    resolve();
+});
+console.log("promise creation done");
+myPromises.then(() => console.log("Handling result"));
+
+output :
+
+    callback
+promise creation done
+Handling result
+
+
+the callback function is already being executed before anyone used that promise.
+
+    Observable:
+
+Observables are lazy, the Observable class callback method called, once anyone subscribe that observable only.
+
+
+    var myObservable = new Observable(function(observer){
+    console.log("callback");
+    observer.next();
+});
+console.log("Observable creation done");
+myObservable.subscribe(() => console.log("Handling result"));
+
+output :
+
+
+    Observable creation done
+callback
+Handling result
+
+
+The Observable class callback function is executed, once we subscribe that observable(myObservable.subscribe).
+
+    Non-Cancellable vs. Cancellable:
+Promises:
+
+
+    var myPromises = new Promise(function(resolve){
+        setTimeout(function(){
+            console.log("callback");
+            resolve();
+        },5000)
+    });
+
+myPromises.then(() => console.log("Handling result"));
+
+output(after 5sec) :
+
+callback
+Handling result
+
+
+
+Observable:
+
+
+    var myObservable = new Observable(function(observer){
+        setTimeout(function(){
+            console.log("callback");
+            observer.next();
+        },5000);
+    });
+
+var subscriber=myObservable.subscribe(() => console.log("Handling result"));
+subscriber.unsubscribe();
+
+output(after 5 sec) :
+callback
+
+
+
+Multicast vs. Unicast:
+Promises(Multicast):
+
+
+var myPromises = new Promise(function(resolve){
+    resolve(Math.random());
+});
+
+myPromises.then((data) => console.log(data));
+myPromises.then((data) => console.log(data));
+
+
+output :
+
+    callback
+0.3528379956367631
+0.3528379956367631
+
+
+
+Observable(Unicast):
+
+
+var myObservable = new Observable(function(observer){
+    observer.next(Math.random());
+});
+
+myObservable.subscribe((data) => console.log(data));
+myObservable.subscribe((data) => console.log(data));
+
+output :
+    0.7085038011309845
+0.19589577479445097

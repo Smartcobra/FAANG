@@ -1,0 +1,427 @@
+1.What is the difference between calling run() and start() for a thread?
+ Explanation:
+     Calling start() creates a new thread and executes the run() method in that thread.
+     Calling run() directly executes the code in the current thread without starting a new thread.
+start()-----
+class MyThread extends Thread {
+    public void run() {
+        System.out.println("Thread is running...");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyThread thread = new MyThread();
+        thread.start(); // Starts a new thread
+        System.out.println("Main thread continues...");
+    }
+}
+
+--
+Main thread continues...
+Thread is running...
+--run()
+class MyThread extends Thread {
+    public void run() {
+        System.out.println("Thread is running...");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyThread thread = new MyThread();
+        thread.run(); // Calls run() in the main thread
+        System.out.println("Main thread continues...");
+    }
+}
+Thread is running...
+Main thread continues...
+/////
+2. What Happens If You Call Wait() Outside a Synchronized Block?
+Explanation:
+Calling wait() outside a synchronized block results in IllegalMonitorStateException because wait() must be called with a lock acquired.
+///
+3. Can a Constructor Be Synchronized?
+Explanation:
+No, constructors cannot be synchronized because object locks do not exist until the object is created. However, synchronized blocks can be used inside constructors.
+///
+4. What Happens If You Return From Try or Catch? Will Finally Execute?
+Explanation:
+Yes, the finally block always executes, even if there is a return statement inside try or catch. However, if finally also has a return, it overrides other return values.
+///
+5. What Happens If an Exception Is Thrown in Finally?
+Explanation:
+Exceptions in the finally block suppress exceptions from the try or catch blocks.
+public class Test {
+    public static void main(String[] args) {
+        try {
+            int result = 10 / 0;
+        } catch (Exception e) {
+            System.out.println("Catch executed");
+        } finally {
+            throw new RuntimeException("Exception in finally");
+        }
+    }
+}
+--Exception in finally
+
+//
+6.Why have a CompletableFuture when we have an ExecutorService ?
+Consider the following example:
+
+public static Integer add(int a, int b) {
+        return a + b;
+
+    }
+public static Integer multiply(int result) {
+    return result * 15;
+}
+I want to add two numbers using add method in one thread and want to pass the result to another thread whose sole purpose
+is to multiply the number by 15 using the multiply method. When the first task is finished by the first thread, I want to pass the result of the first task to another thread. Let us see how we can achieve this with ExecutorService.
+
+ static class Add implements Callable<Integer> {
+        int a;
+        int b;
+        Add(int a, int b) {
+            this.a = a;
+            this.b = b;
+        }
+        @Override
+        public Integer call() throws Exception {
+            return a + b;
+        }
+    }
+
+    static class Multiply implements Callable<Integer> {
+        int result;
+        Multiply(int result) {
+            this.result = result;
+        }
+        @Override
+        public Integer call() throws Exception {
+            return result * 10;
+        }
+    }
+
+We would be requiring two tasks implementing Callable. Now, in the main method, we would be creating ExecutorService like the one below.
+
+public static void main(String[] args) throws ExecutionException, InterruptedException {
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+
+        // will write code here
+
+}
+
+Now, we will be submitting our task to this ExecutorService
+
+ public static void main(String[] args) throws ExecutionException, InterruptedException {
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+        Future<Integer> futureResult = executor.submit(new Add(10, 20)); // 1
+        Integer intermediateResult = futureResult.get(); // 2
+        Future<Integer> finalResult = executor.submit(new Multiply(intermediateResult)); // 3
+        System.out.println(finalResult.get());
+        executor.shutdown();
+    }
+
+First, we have submitted Add task which will provide us with Future<Integer>.
+
+Now, at line number 2, we need to provide a blocking call to get() to fetch the result in the main thread.
+Now it’s the responsibility of the main thread to pass the result of this to another thread using ExecutorService submit method at line number 3.
+
+We get the Future<Integer>, and we finally print the result. To summarize, we require a main thread whose responsibility is
+to submit the task so that the task can be carried out in another thread(pool of threads). The main thread will call the blocking method
+to fetch the result and will then submit the intermediate result to the ExecutorService. Not interesting at all.
+
+Now, consider that I have 10 pairs of integers for which I have to add, and the result needs to be multiplied by 10 in another thread. My code will be like this:
+
+  ExecutorService executor = Executors.newFixedThreadPool(3);
+        List<Future<Integer>> finalFutureList = new ArrayList<>();
+        List<Integer> finalResultList = new ArrayList<>();
+        for(int i=0; i<10; i++){
+            Future<Integer> futureResult = executor.submit(new Add(RandomUtils.nextInt(), RandomUtils.nextInt())); //1
+            Integer intermediateResult = futureResult.get(); // 2
+            Future<Integer> finalResult = executor.submit(new Multiply(intermediateResult));
+            finalFutureList.add(finalResult);
+        }
+        for(Future<Integer> future : finalFutureList){
+            finalResultList.add(future.get());
+        }
+        System.out.println(finalFutureList);
+        executor.shutdown();
+
+We are able to achieve the above through looping. Consider i = 0, we are at line 2, suppose this is taking time, and due to this,
+we cannot proceed to i = 1. Ideally, we would like all 10 processes to work in parallel, and inside each process, when one task is finished,
+
+without the help of the main thread, the result should be pushed to another thread so that it can carry out its task for which it is dependent.
+
+This is where CompletableFuture APIs come in. Consider the code below
+
+public static void main(String[] args) throws ExecutionException, InterruptedException {
+    Integer finalResult = CompletableFuture.supplyAsync(() -> add(10, 20))
+            .thenApplyAsync(result -> multiply(result))
+            .get();
+    System.out.println(finalResult);
+}
+public static Integer add(int a, int b) {
+    return a + b;
+
+}
+public static Integer multiply(int result) {
+    return result * 15;
+}
+
+Simple and concise, We provided the first task with supplyAsync and chained it with thenApply. When the task in supplyAsync is finished,
+it will automatically transfer the result to thenApply function. On top of it, we can also provide the Thread pool in which these tasks need to be run like below:
+
+ ExecutorService executorService = Executors.newFixedThreadPool(3);
+        Integer finalResult = CompletableFuture.supplyAsync(() -> add(10, 20),executorService)
+                .thenApplyAsync(result -> multiply(result),executorService)
+                .get();
+        System.out.println(finalResult);
+
+Let us consider that if we have 10 pairs of integers and we have to perform all these 10 processes in parallel,
+ each process contains two tasks performed in a separate thread, but task 2 depends on task 1.
+
+public static void main(String[] args) throws ExecutionException, InterruptedException {
+  ExecutorService executorService = Executors.newFixedThreadPool(3);
+  List<CompletableFuture> list = new ArrayList<>();
+  List<Integer> finalResult = new ArrayList<>();
+
+  for(int i=0; i < 10; i++){
+    list.add(CompletableFuture.supplyAsync(() -> add(RandomUtils.nextInt(), RandomUtils.nextInt()),executorService)
+       .thenApplyAsync(result -> multiply(result),executorService));
+
+  }
+  for(CompletableFuture<Integer> future : list){
+      finalResult.add(future.get()); //4
+  }
+
+  System.out.println(finalResult);
+  }
+  public static Integer add(int a, int b) {
+      return a + b;
+
+  }
+  public static Integer multiply(int result) {
+      return result * 15;
+  }
+
+There is no external thread to orchestrate the switching of tasks from one thread to another.
+No blocking at any point until we just require the result, which is at line number 4. All 10 processes are happening in parallel,
+and under each process, when the first task is finished by a thread, it is passed to another thread with the thenApplyAsync method.
+
+///
+7.What do you understand by inter-thread communication?
+inter-thread communication is nothing but the process of communication between synchronized threads.
+It is used to avoid thread polling in Java.
+inter-thread communication can be achieved by wait(), notify(), and notifyAll() methods.
+
+///
+8.What is the purpose of the wait() method in Java?
+It is the method provided by the Object class in Java. It is used for inter-thread communication in Java. java. lang.Object. wait(),
+this method is used to pause the current thread and wait until another thread does not call the notify() or notifyAll() method.
+
+///
+9.Why must the wait() method be called from the synchronized block
+We have to call the wait method otherwise it will throw java.lang.IllegalMonitorStateException type exception. Because of this, we need the wait() method for inter-thread communication with notify() and notifyAll() methods.
+Hence It must be present in the synchronized block for proper and correct communication
+
+//
+10.What are the states in the lifecycle of a Thread?
+    New:    In this state, a Thread class object is created using a new operator, but the thread is not alive. The thread doesn’t start until we call the start() method.
+    Runnable:   In this state, the thread is run after calling the start() method. However, the thread is not yet selected by the thread scheduler.
+    Running:    In this state, the thread scheduler picks the thread from the ready state.And the thread is running.
+    Waiting/Blocked:    In this state, a thread is not running but still alive, or it is waiting for the other thread to finish.
+    Dead/Terminated:    A thread is in terminated or dead state when the run() method exits.
+
+///
+11. What is context switching?
+It is the state of the process (or thread) is stored so that it can be restored.
+The execution can be resumed from the same point after that. Context switching provides multiple processes to share the same CPU.
+
+///
+12. Differentiate between the Thread class and Runnable interface for creating a Thread.
+    The thread can be created by extending the Thread class
+    The thread can be created by implementing the Runnable interface
+
+///
+13. What does join() method?
+This method waits for a thread to die. It occurred the currently running threads to stop executing until the thread it joins with completes its task.
+The join() method is overloaded in the Thread class in the following ways.
+
+    The public void join() method throws InterruptedException.
+    The public void join(long milliseconds) method throws InterruptedException.
+
+15. What is the difference between wait() and sleep() method?
+wait():
+
+    Used for inter-thread communication.
+    Causes the current thread to wait until it is notified (notify() or notifyAll()) by another thread.
+    Typically used within synchronized blocks or methods.
+
+sleep():
+
+    Pauses the execution of the current thread for a specified amount of time.
+    Does not involve synchronization or inter-thread communication.
+
+16.  What’s the difference between notify() and notifyAll()?
+notify():
+
+    It sends a notification and wakes up only a single thread instead of multiple threads that are waiting on the object’s monitor.
+    The notify() method is defined in the Object class, which is Java’s top-level class.
+    It’s used to wake up only one thread that’s waiting for an object, and that thread then begins execution.
+    The thread class notify() method is used to wake up a single thread.
+
+notifyAll():
+
+    It sends notifications wakes up all threads and allows them to compete for the object’s monitor instead of a single thread.
+    The notifyAll() wakes up all threads that are waiting on this object’s monitor.
+    A thread waits on an object’s monitor by calling one of the wait methods.
+    The awakened threads will not be able to proceed until the current thread relinquishes the lock on this object.
+
+17. What do you mean by the ThreadLocal variable in Java?
+ ThreadLocal variables are special kinds of variables created and provided by the Java ThreadLocal class. These variables are only allowed to be read and written by the same thread. Two threads cannot be able to see each other’s ThreadLocal variable,
+  so even if they will execute the same code, then there won’t be any race condition and the code will be thread-safe.
+
+18. What is the difference between 'synchronized method' and 'synchronized block'?
+A synchronized method locks on the object (this) if it is an instance method, or on the Class object if it is a static method.
+A synchronized block allows more granular control over the lock, enabling synchronization on any object or resource.
+public class Example {
+    private final Object lock = new Object();
+
+    // Synchronized method
+    public synchronized void syncMethod() {
+        // critical section
+    }
+
+    // Synchronized block
+    public void syncBlock() {
+        synchronized (lock) {
+            // critical section
+        }
+    }
+}
+19. What is a deadlock and how can you avoid it in Java?
+A deadlock is a situation where two or more threads are blocked forever, waiting for each other. It can be avoided by following practices like:
+
+    Avoiding nested locks.
+    Using a timeout to acquire locks.
+    Avoiding unnecessary locks.
+    Lock ordering (acquiring locks in a consistent order).
+
+20. What is the volatile keyword and how is it used in Java?
+The volatile keyword in Java is used to mark a Java variable as "being stored in main memory."
+It ensures that the value of the variable is always read from and written to the main memory, not from a thread's local cache.
+
+public class VolatileExample {
+    private volatile boolean flag = true;
+
+    public void method() {
+        while (flag) {
+            // do something
+        }
+    }
+
+    public void stop() {
+        flag = false;
+    }
+}
+
+21 .What is the ThreadLocal class and how is it used?
+ThreadLocal provides thread-local variables. Each thread accessing such a variable has its own,
+independently initialized copy of the variable. ThreadLocal can be used to avoid sharing state between threads.
+
+public class ThreadLocalExample {
+    private static final ThreadLocal<Integer> threadLocalValue = ThreadLocal.withInitial(() -> 1);
+
+    public int getValue() {
+        return threadLocalValue.get();
+    }
+
+    public void setValue(int value) {
+        threadLocalValue.set(value);
+    }
+
+    public static void main(String[] args) {
+        ThreadLocalExample example = new ThreadLocalExample();
+
+        Runnable task = () -> {
+            System.out.println(Thread.currentThread().getName() + " initial value: " + example.getValue());
+            example.setValue(example.getValue() * 2);
+            System.out.println(Thread.currentThread().getName() + " modified value: " + example.getValue());
+        };
+
+        Thread thread1 = new Thread(task);
+        Thread thread2 = new Thread(task);
+
+        thread1.start();
+        thread2.start();
+    }
+}
+
+22. Explain Callable and Future in Java.
+Callable is similar to Runnable but can return a result and throw a checked exception. Future represents the result of an asynchronous computation,
+ allowing you to check if the computation is complete, retrieve the result, and cancel the computation.
+
+ import java.util.concurrent.Callable;
+ import java.util.concurrent.ExecutionException;
+ import java.util.concurrent.ExecutorService;
+ import java.util.concurrent.Executors;
+ import java.util.concurrent.Future;
+
+ public class CallableFutureExample {
+     public static void main(String[] args) {
+         ExecutorService executor = Executors.newSingleThreadExecutor();
+
+         Callable<Integer> task = () -> {
+             // simulate long-running task
+             Thread.sleep(2000);
+             return 123;
+         };
+
+         Future<Integer> future = executor.submit(task);
+
+         try {
+             // do something else
+             System.out.println("Result: " + future.get()); // blocks until the result is available
+         } catch (InterruptedException | ExecutionException e) {
+             e.printStackTrace();
+         } finally {
+             executor.shutdown();
+         }
+     }
+ }
+
+23. Explain the ForkJoinPool and RecursiveTask in Java.
+ForkJoinPool is designed for parallel processing by breaking tasks into smaller pieces using the fork/join framework.
+RecursiveTask is a subclass of ForkJoinTask used to define tasks that return a result.
+
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
+
+public class ForkJoinExample {
+    static class FibonacciTask extends RecursiveTask<Integer> {
+        private final int n;
+
+        FibonacciTask(int n) {
+            this.n = n;
+        }
+
+        @Override
+        protected Integer compute() {
+            if (n <= 1) return n;
+            FibonacciTask f1 = new FibonacciTask(n - 1);
+            f1.fork(); // asynchronously execute
+            FibonacciTask f2 = new FibonacciTask(n - 2);
+            return f2.compute() + f1.join(); // wait for result
+        }
+    }
+
+    public static void main(String[] args) {
+        ForkJoinPool pool = new ForkJoinPool();
+        FibonacciTask task = new FibonacciTask(10);
+        int result = pool.invoke(task);
+        System.out.println("Fibonacci(10) = " + result);
+    }
+}
+

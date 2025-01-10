@@ -1,0 +1,708 @@
+1. What is the React Function Component Life-Cycle Method?
+    Mounting: This phase occurs when the component is initially rendered and added to the DOM.
+
+    Updating: This phase occurs when the component’s state or props change, causing a re-render. It receives new props or state, usually in response to an interaction.
+
+    Unmounting: This phase occurs when the component is removed from the DOM.
+
+    import React, { useEffect, useState } from 'react';
+
+    function MyComponent() {
+      const [count, setCount] = useState(0);
+
+      // Mounting phase (equivalent to componentDidMount)
+      useEffect(() => {
+        console.log('Component mounted');
+
+        // Cleanup function for unmounting phase (equivalent to componentWillUnmount)
+        return () => {
+          console.log('Component unmounted');
+        };
+      }, []);
+
+      // Updating phase (equivalent to componentDidUpdate)
+      useEffect(() => {
+        console.log('Component updated');
+
+        // Cleanup function for updating phase
+        return () => {
+          console.log('Component updated cleanup');
+        };
+      }, [count]);
+
+      // Rendering phase
+      return (
+        <div>
+          <button onClick={() => setCount(count + 1)}>Increment</button>
+          <p>Count: {count}</p>
+        </div>
+      );
+    }
+
+2. Explain the useEffect hooks.
+    The useEffect hook in React is used to perform side effects in function components. It allows you to handle lifecycle events and perform actions such as fetching data, subscribing to events, or manipulating the DOM.
+
+        The useEffect hook takes two arguments: a callback function and a dependency array.
+        The callback function is executed after every render of the component.
+        No dependency passed: Runs on every render
+3. What’s Hooks in ReactJS, explain the types of hooks?
+   Hooks are functions that allow you to use state and other React features in functional components.
+
+   Important: useState, useEffect, useContext, useReducer, useMemo, useRef, useCallback (other: useID, useTransition etc)
+
+   -->> useContext: Allows you to consume context in functional components. It accepts a context object (created with React.createContext) and returns the current context value for that context.
+   Context provides a way to pass data through the component tree without having to pass props manually at every level.
+   import React, { useContext } from 'react';
+   import MyContext from './MyContext';
+   function Example() {
+     const value = useContext(MyContext);
+     return <div>{value}</div>;
+   }
+
+   -->> useReducer: Alternative to useState for managing more complex state logic. It accepts a reducer function and an initial state, returning the current state and a dispatch function to trigger state updates.
+   import React, { useReducer } from 'react';
+   const initialState = { count: 0 };
+   function reducer(state, action) {
+     switch (action.type) {
+       case 'increment':
+         return { count: state.count + 1 };
+       case 'decrement':
+         return { count: state.count - 1 };
+       default:
+         throw new Error();
+     }
+   }
+   function Counter() {
+     const [state, dispatch] = useReducer(reducer, initialState);
+     return (
+       <>
+         Count: {state.count}
+         <button onClick={() => dispatch({ type: 'increment' })}>+</button>
+         <button onClick={() => dispatch({ type: 'decrement' })}>-</button>
+       </>
+     );
+   }
+
+   -->> useMemo: The useMemo hook is used to memoize the result of a function. It takes a function and an array of dependencies and returns a memoized value.
+   This is particularly useful when you have expensive computations or calculations that you want to avoid repeating unnecessarily.
+
+   import React, { useMemo } from 'react';
+
+   function ExpensiveCalculation({ a, b }) {
+     const result = useMemo(() => {
+       // Expensive computation
+       return a * b;
+     }, [a, b]); // Dependencies array
+
+     return <div>Result: {result}</div>;
+   }
+
+   -->>useCallback: The useCallback hook is used to memoize callbacks. It takes a callback function and an array of dependencies and returns a memoized callback.
+   This is beneficial in scenarios where passing callbacks to child components might cause unnecessary re-renders.
+   import React, { useState, useCallback } from 'react';
+
+   function ParentComponent() {
+     const [count, setCount] = useState(0);
+
+     const handleClick = useCallback(() => {
+       setCount(count + 1);
+     }, [count]); // Dependency array
+
+     return (
+       <div>
+         <p>Count: {count}</p>
+         <ChildComponent handleClick={handleClick} />
+       </div>
+     );
+   }
+
+   function ChildComponent({ handleClick }) {
+     return <button onClick={handleClick}>Increment</button>;
+   }
+
+
+4. What is custom Hooks in Reactjs?
+   Custom hooks in React.js are functions that allow you to extract component logic into reusable functions.
+   They are a way to share logic between components without having to duplicate code or rely on higher-order components or render props.
+
+   import { useState, useEffect } from 'react';
+
+   function useCustomHook(initialValue) {
+     const [value, setValue] = useState(initialValue);
+
+     useEffect(() => {
+       // Do something when value changes
+       console.log('Value changed:', value);
+     }, [value]);
+
+     const handleChange = (newValue) => {
+       setValue(newValue);
+     };
+
+     return { value, handleChange };
+   }
+
+   export default useCustomHook;
+
+   use::
+   import React from 'react';
+   import useCustomHook from './useCustomHook';
+
+   function MyComponent() {
+     const { value, handleChange } = useCustomHook('');
+
+     return (
+       <div>
+         <input
+           type="text"
+           value={value}
+           onChange={(e) => handleChange(e.target.value)}
+         />
+         <p>Value: {value}</p>
+       </div>
+     );
+   }
+
+   export default MyComponent;
+
+3. What are higher-order components?
+    Higher-order components (HOCs) are a pattern in React that allows you to reuse component logic by wrapping components with other components.
+
+    Use Case:
+
+        Code Reusability: Extract common logic and reuse it across multiple components.
+        Props Manipulation: Modify or pass additional props to the wrapped component.
+        Rendering Control: Conditionally render the wrapped component based on specific conditions. (Render hijacking)
+        Performance Optimization: Optimize rendering by implementing memorization or caching techniques.
+        Context Manipulation: Provide or consume context to share data or behavior between components. State abstraction and manipulation.
+        Wrap and enhance functionality from third-party libraries.
+4. What is virtual DOM?
+   Virtual DOM provides an abstraction of the actual HTML DOM.
+   It is a lightweight copy or representation of the real DOM, maintained by React, which allows for efficient updates and rendering of components.
+
+5. How the Virtual DOM works in React:
+  React update the state changes in Virtual DOM first and then it syncs with Real DOM. Virtual DOM is just like a blueprint of a machine, can do changes in the blueprint but those changes will not directly apply to the machine.
+
+      React creates a lightweight copy of the actual HTML DOM called the Virtual DOM.
+      When a component is rendered, React creates a corresponding Virtual DOM representation in memory.
+      When state or props change, React creates a new Virtual DOM representation.
+      React compares the new Virtual DOM with the previous one to determine the differences or updates that need to be made.
+      By identifying the minimal set of changes, React optimizes performance by minimizing unnecessary updates to the actual DOM.
+      React updates the real DOM with the minimal modifications required to reflect the new Virtual DOM.
+
+6. How VDOM improves performance compared to directly manipulating the real DOM.
+        React batches multiple updates together before applying them to the real DOM, reducing unnecessary re-renders.
+        It only updates the specific components or elements that have changed, minimizing DOM manipulations.
+        React’s efficient diffing algorithm identifies the minimal set of changes needed between the previous and new Virtual DOM representations.
+        React’s reconciliation process optimizes updates by reusing existing DOM elements when possible.
+
+7. What are controlled components and uncontrolled components?
+   Controlled (via props), and which information should be uncontrolled (via state).
+
+   Controlled Components:
+   - State is managed by React through props.
+   - Values and changes are handled through props and event handlers.
+   - Provides a single source of truth.
+   - Examples: input fields, checkboxes, select dropdowns.
+
+   Uncontrolled Components:
+   - State is managed internally by the DOM.
+   - Values and changes are accessed directly from the DOM using techniques like `ref`.
+   - Offers more flexibility and direct access to the DOM.
+   - Examples: file inputs, certain form fields.
+
+8. What are Pure components?
+    Pure components in React are components that only re-render when their props or state change.
+
+        It minds its own business. It should not change any objects or variables that existed before rendering.
+        Same inputs, same output. Given the same inputs, a component should always return the same JSX.
+
+    React.memo:
+
+        Pure function components are regular function components that only re-render when their props change.
+        You can use the React.memo function to memorize a function component and optimize its rendering.
+        React.memo performs a shallow comparison of the component’s props to determine if a re-render is necessary.
+
+    import React from 'react';
+    const MyComponent = React.memo((props) => {
+      // Component rendering logic here
+    });
+    export default MyComponent;
+
+    Pure functions only perform a calculation and nothing more. It makes your code easier to understand,
+    debug, and allows React to automatically optimize your components and hooks correctly.
+
+9. What is the callback function?
+   A callback function is a function that is passed as an argument to another function and is intended to be called or executed at a later point in time. It allows for communication between different components in React.
+
+       Used as event handlers to respond to user interactions.
+       They enable communication between parent and child components.
+       Handle the results of asynchronous operations.
+       Conditional rendering of components or elements.
+
+      import React from 'react';
+      const MyComponent = ({ onClick }) => {
+        const handleClick = () => {
+          // Execute the callback function passed as prop
+          onClick('Button clicked!');
+        };
+        return <button onClick={handleClick}>Click me</button>;
+      };
+      const App = () => {
+        const handleButtonClick = (message) => {
+          console.log(message);
+        };
+        return <MyComponent onClick={handleButtonClick} />;
+      };
+
+      export default App;
+
+10. How to pass state data from one component to another component?
+
+    Passing state data from one component to another in React can be done in several ways, depending on the relationship between the components.
+
+    1. Parent to Child (via props)
+    A parent component can pass its state down to its children as properties, commonly referred to as “props”.
+    import React, { useState } from 'react';
+
+    function ParentComponent() {
+      const [data, setData] = useState('some data');
+
+      return <ChildComponent data={data} />;
+    }
+
+    function ChildComponent({ data }) {
+      return <div>{data}</div>;
+    }
+
+    2. Child to Parent (via callback functions)
+    To pass data from a child component up to a parent, you can pass a callback function from the parent to the child as a prop.
+    The child then calls this function with the data as an argument.
+
+    import React, { useState } from 'react';
+
+    function ParentComponent() {
+      const [data, setData] = useState('');
+
+      const handleData = (childData) => {
+        setData(childData);
+      };
+
+      return <ChildComponent onData={handleData} />;
+    }
+
+    function ChildComponent({ onData }) {
+      const sendData = () => {
+        onData('some data');
+      };
+
+      return <button onClick={sendData}>Send Data</button>;
+    }
+
+    3. Sibling to Sibling
+    When two components are siblings and they need to share state, you can’t pass the data directly between them. Instead, you lift the state up to their closest common ancestor,
+    which then manages the state and passes it down to both siblings.
+
+    import React, { useState } from 'react';
+
+    function ParentComponent() {
+      const [data, setData] = useState('');
+
+      return (
+        <>
+          <ChildComponentA onData={setData} />
+          <ChildComponentB data={data} />
+        </>
+      );
+    }
+
+    function ChildComponentA({ onData }) {
+      const sendData = () => {
+        onData('some data from A');
+      };
+
+      return <button onClick={sendData}>Send Data</button>;
+    }
+
+    function ChildComponentB({ data }) {
+      return <div>{data}</div>;
+    }
+
+   4. Using Context API
+   React’s Context API allows you to share values like state between components without having to explicitly pass a prop through every level of the tree.
+   import React, { useState, useContext, createContext } from 'react';
+
+   // Create a Context for the data
+   const DataContext = createContext();
+
+   function ParentComponent() {
+     const [data, setData] = useState('some data');
+
+     return (
+       <DataContext.Provider value={data}>
+         <ChildComponent />
+       </DataContext.Provider>
+     );
+   }
+
+   function ChildComponent() {
+     // Use the useContext hook to access the data
+     const data = useContext(DataContext);
+     return <div>{data}</div>;
+   }
+
+   5. Using State Management Libraries
+   import React from 'react';
+   import { useSelector, useDispatch } from 'react-redux';
+
+   // Assuming you have a Redux store and a slice of state called 'dataState'
+   function Component() {
+     // Access state from the Redux store
+     const data = useSelector((state) => state.dataState.data);
+     const dispatch = useDispatch();
+
+     // Dispatch an action to update the state
+     const updateData = (newData) => {
+       dispatch({ type: 'UPDATE_DATA', payload: newData });
+     };
+
+     return (
+       <div>
+         <div>{data}</div>
+         <button onClick={() => updateData('new data')}>Update Data</button>
+       </div>
+     );
+   }
+
+11. What is the Prop drilling in reactjs?
+    Prop drilling is a term used in React to describe the process of passing data from a part of a component tree to another part by going through other
+    components that do not necessarily need the data, but only pass it down the tree.
+
+    To avoid prop drilling, you can use React’s Context API or state management libraries like Redux which allow you to access the state from anywhere
+    in your component tree without having to pass it down through every level.
+
+    import React, { useState } from 'react';
+
+    // This is the top-level component
+    function App() {
+      const [user, setUser] = useState({ name: 'Alice', age: 30 });
+
+      // The user object is passed through multiple components
+      return (
+        <div>
+          <Header user={user} />
+        </div>
+      );
+    }
+
+    // Header doesn't need the user object, but it passes it down to Profile
+    function Header({ user }) {
+      return (
+        <div>
+          <Nav user={user} />
+        </div>
+      );
+    }
+
+    // Nav doesn't need the user object either, but it passes it down to UserProfile
+    function Nav({ user }) {
+      return (
+        <div>
+          <UserProfile user={user} />
+        </div>
+      );
+    }
+
+    // UserProfile is the component that actually needs the user object
+    function UserProfile({ user }) {
+      return (
+        <div>
+          <p>Name: {user.name}</p>
+          <p>Age: {user.age}</p>
+        </div>
+      );
+    }
+
+12. How do you pass data using props between components?
+    1. Props: React components use props to communicate with each other.
+    Every parent component can pass some information to its child components by giving them props.
+    The child component can then access and use the passed data within its own scope.
+
+    //Parent component
+    const App = () => {
+        const [count, setCount] = useState(0);
+        return <Counter count={count} setCount={setCount} />;
+    };
+    //Child component
+    const Counter = (props) => {
+    return (
+        <div>
+            <h1>Count: {props.count}</h1>
+            <button onClick={() => props.setCount(props.count + 1)}>
+                Increment
+            </button>
+        </div>
+        );
+    };
+
+    2. State Management: If the data needs to be shared and updated among multiple components or if the data needs to be
+    changed within the component itself, you can use state management.
+    //Parent Component:
+    import React, { useState } from 'react';
+    import ChildComponent from './ChildComponent';
+    const ParentComponent = () => {
+      const [message, setMessage] = useState('Hello from Parent');
+      return <ChildComponent message={message} setMessage={setMessage} />;
+    };
+    export default ParentComponent;
+
+    //Child Component:
+    import React from 'react';
+    const ChildComponent = (props) => {
+      const handleClick = () => {
+        props.setMessage('Updated message from Child');
+      };
+      return (
+        <div>
+          <p>{props.message}</p>
+          <button onClick={handleClick}>Update Message</button>
+        </div>
+      );
+    };
+    export default ChildComponent;
+
+13. What is an Event in React?
+   Events are triggered whenever certain actions occur — such as pressing a key, a mouse click, hovering, focusing form inputs, typing in an input field, or scrolling the page and so on,
+    which then fire off callback functions so that appropriate responses can be made accordingly.
+
+14. What are the Event Handlers in React ?
+   Event handlers are your own functions that is called when an event occurs. Event handlers are typically defined as props on React components. (To handle an event in React)
+
+       You can handle events by passing a function as a prop to an element like <button>.
+       Event handlers are defined inside a component, so they can access props.
+       You can declare an event handler in a parent and pass it as a prop to a child.
+
+   export default function Button() {
+     function handleClick() {
+       alert('You clicked me!');
+     }
+
+     return (
+       <button onClick={handleClick}>
+         Click me
+       </button>
+     );
+   }
+
+15. How to Handle Errors in React Applications?
+       Try/Catch in Event Handlers: Use try/catch blocks within event handlers to handle exceptions that occur during events.
+       Error State in Hooks: Manage error state using the useState hook and catch errors in asynchronous operations within useEffect.
+
+   function MyComponent() {
+     const [error, setError] = useState(null);
+
+     useEffect(() => {
+       const fetchData = async () => {
+         try {
+           // Fetch data
+         } catch (error) {
+           setError(error);
+         }
+       };
+
+       fetchData();
+     }, []);
+
+     if (error) {
+       return <div>Error: {error.message}</div>;
+     }
+
+     // Render component
+   }
+
+   3. PropTypes: Validate prop types using PropTypes to prevent errors related to incorrect props.
+
+   import PropTypes from 'prop-types';
+
+   function MyComponent({ name }) {
+     // Component logic
+   }
+
+   MyComponent.propTypes = {
+     name: PropTypes.string.isRequired,
+   };
+
+   4. Strict Mode: Utilize React’s StrictMode in development to identify potential problems in components.
+
+   function App() {
+     return (
+       <React.StrictMode>
+         <MyComponent />
+       </React.StrictMode>
+     );
+   }
+
+   5. Error Boundaries: Wrap components with a class component that implements componentDidCatch() or static getDerivedStateFromError() to catch errors in the component tree and display a fallback UI.
+
+16. Explain conditional rendering in React?
+    Conditional rendering in React allows you to display different content or components based on certain conditions. you can conditionally render JSX using JavaScript syntax like if statements, &&, and ? : operators..
+
+    Here’s it works:
+
+    a. Using if statements or ternary operators:
+
+    function MyComponent({ isLoggedIn }) {
+      if (isLoggedIn) {
+        return <p>Welcome, user!</p>;
+      } else {
+        return <p>Please log in.</p>;
+      }
+    }
+
+    b. Using logical && operator:
+
+    function MyComponent({ showContent }) {
+      return (
+        <div>
+          {showContent && <p>Content to be shown</p>}
+        </div>
+      );
+    }
+
+    c. Using switch statements:
+
+    function MyComponent({ status }) {
+      switch (status) {
+        case 'loading':
+          return <p>Loading...</p>;
+        case 'success':
+          return <p>Data loaded successfully!</p>;
+        case 'error':
+          return <p>Error occurred while loading data.</p>;
+        default:
+          return null;
+      }
+    }
+
+    d. Using variables and functions:
+
+    function MyComponent({ count }) {
+      const shouldRender = count > 0;
+    return (
+        <div>
+          {shouldRender && <p>Count: {count}</p>}
+        </div>
+      );
+    }
+
+
+17. What is the difference between == and === operators ?
+    == (Loose Equality Operator): This operator performs type coercion, which means it converts the operands to the same type before making the comparison. It checks if the values are equal without considering their data types. For example, 1 == '1' will return true because JavaScript converts the string '1' to a number before comparison.
+
+    === (Strict Equality Operator): This operator performs a strict comparison without type coercion. It checks if both the values and their data types are equal. For example, 1 === '1' will return false because the data types are different (number and string).
+
+    In summary, == checks for equality after type coercion, whereas === checks for strict equality, considering both the values and their data types.
+
+    Execution of == will be fast as compared to the === statement.
+
+18. What is rest and spread operator?
+   The rest operator, represented by three dots (...), is used in function parameters to collect a variable number of arguments into an array. It allows you to pass an arbitrary number of arguments to a function without explicitly defining them as named parameters.
+   function sum(...numbers) {
+       return numbers.reduce((total, num) => total + num, 0);
+   }
+   console.log(sum(1, 2, 3, 4)); // Outputs 10
+
+   The spread operator, also denoted by three dots (...), is used to spread the elements of an array or object into another array or object. It allows you to easily clone arrays, concatenate arrays, and merge objects.
+   const array1 = [1, 2, 3];
+   const array2 = [4, 5, 6];
+   const mergedArray = [...array1, ...array2];
+   // mergedArray is [1, 2, 3, 4, 5, 6]
+   const obj1 = { a: 1, b: 2 };
+   const obj2 = { b: 3, c: 4 };
+   const mergedObject = { ...obj1, ...obj2 };
+   // mergedObject is { a: 1, b: 3, c: 4 }
+
+19. What is Closure? What are the use cases of Closures?
+   Closure is a feature that allows the function to capture the environment (or to retain access to variables from the scope ) where it is defined, even after that scope has closed.
+
+   We can say the closure is a combination of a function and lexical environment where that function is defined.
+
+   In other words, a closure gives a function access to its own scope, the scope of its outer function, and the global scope, allowing it to "remember" and continue to access variables and parameters from these scopes.
+
+   function outerFunction() {
+     let outerVariable = 'I am from the outer function';
+
+     return innerFunction() {
+       console.log(outerVariable); // Accessing outerVariable from the outer function's scope
+     }
+
+   }
+
+   let myFunction = outerFunction();
+   myFunction(); // Output: I am from the outer function
+
+   Closures have several important use cases in JavaScript:
+
+       Data Privacy and Encapsulation: Closures can be used to create private data and encapsulate functionality within a limited scope. By defining functions within another function, the inner functions have access to the outer function's variables, but these variables are inaccessible from outside the outer function. This allows for the creation of private data and methods that are not directly accessible from the outside, thereby enhancing data privacy and encapsulation.
+       Maintaining State: Closures are often used to maintain state in asynchronous operations and event handling. For example, when handling asynchronous tasks, closures can capture and retain the state of variables across multiple asynchronous operations, ensuring that the correct variables are accessed when the asynchronous tasks complete.
+       Currying and Partial Application: Closures facilitate functional programming techniques such as currying and partial application. By using closures to capture and remember specific parameters and return a new function that uses these captured parameters, currying and partial application can be achieved. This allows for the creation of specialized functions with pre-set arguments, providing flexibility and reusability.
+       Module Pattern: Closures are essential in implementing the module pattern in JavaScript. By using closures to create private variables and expose only the necessary public methods, developers can create modular and organized code, preventing unwanted access and modification of internal module data.
+       Callback Functions: Closures are often employed when working with callback functions. A closure can be used to capture and maintain the state of variables within the context of an asynchronous operation, ensuring that the correct variables are accessible when the callback function is invoked.
+
+
+20. What is a Temporal dead zone?
+   The Temporal Dead Zone (TDZ) is a concept in JavaScript related to variable declarations using let and const.
+
+   When you declare a variable with let or const, it is hoisted to the top of its containing scope, However, unlike var, variables declared with let and const remain uninitialized in the TDZ.
+
+   Any attempt to access or use the variable before its actual declaration within the scope will result in a ReferenceError. This is to prevent the use of variables before they have been properly defined.
+
+   Understanding the Temporal Dead Zone is important because it helps prevent bugs related to variable usage before initialization. It also promotes best practices in JavaScript coding by encouraging proper variable declarations before use.
+
+21. What is the difference between Call, Apply, and Bind methods?
+    Call: The call() method invokes a function with a specified this value and individual arguments passed as comma-separated values
+
+       const person1 = { name: 'John' };
+       const person2 = { name: 'Jane' };
+
+       function greet(greeting) {
+           console.log(greeting + ' ' + this.name);
+       }
+
+       greet.call(person1, 'Hello'); // Output: Hello John
+       greet.call(person2, 'Hi'); // Output: Hi Jane
+
+    With call() method an object can use a method belonging to another object.
+
+    const o1 = {
+      name: 'ravi',
+      getName: function(){
+        console.log(`Hello, ${this.name}`)
+      }
+    }
+
+    const o2 = {
+      name: 'JavaScript Centric'
+    }
+
+    o1.getName.call(o2) // Hello, JavaScript Centric
+
+    Apply: Invokes the function with a given this value but it accepts arguments as an array. It is useful when the number of arguments to be passed is not known in advance or when the arguments are already in an array.
+
+       const numbers = [1, 2, 3, 4, 5];
+
+       const max = Math.max.apply(null, numbers);
+       console.log(max); // Output: 5
+
+    bind: instead of invoking it returns a new function and allows you to pass any number of arguments. bind() method takes an object as first argument and create a new function.
+
+       const module = {
+           x: 42,
+           getX: function() {
+               return this.x;
+           }
+       };
+
+
+       const boundGetX = unboundGetX.bind(module);
+       console.log(boundGetX()); // Output: 42

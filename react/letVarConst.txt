@@ -1,0 +1,143 @@
+1. Scope
+var
+
+    Function-scoped: var is accessible throughout the function in which it is declared.
+    If declared outside any function, it becomes a global variable.
+
+function testVar() {
+    if (true) {
+        var x = 10;
+    }
+    console.log(x); // 10
+}
+testVar();
+
+let
+
+    Block-scoped: let is only accessible within the block {} where it is defined.
+
+function testLet() {
+    if (true) {
+        let x = 10;
+    }
+    console.log(x); // ReferenceError: x is not defined
+}
+testLet();
+
+const
+
+    Block-scoped: Similar to let, const is also block-scoped.
+
+function testConst() {
+    if (true) {
+        const x = 10;
+    }
+    console.log(x); // ReferenceError: x is not defined
+}
+testConst();
+
+2. Re-declaration
+var
+
+    Can be re-declared within the same scope.
+
+var x = 5;
+var x = 10; // No error
+console.log(x); // 10
+
+let
+
+    Cannot be re-declared in the same scope.
+
+let x = 5;
+let x = 10; // SyntaxError: Identifier 'x' has already been declared
+
+const
+
+    Cannot be re-declared in the same scope.
+
+const x = 5;
+const x = 10; // SyntaxError: Identifier 'x' has already been declared
+
+3. Re-assignment
+var
+
+    Can be reassigned.
+
+var x = 5;
+x = 10;
+console.log(x); // 10
+
+let
+
+    Can be reassigned.
+
+let x = 5;
+x = 10;
+console.log(x); // 10
+
+const
+
+    Cannot be reassigned. The value remains constant.
+
+const x = 5;
+x = 10; // TypeError: Assignment to constant variable
+
+However, if the const holds an object or array, the object or array itself can be modified (but the reference cannot change).
+
+const obj = { a: 1 };
+obj.a = 2; // Allowed
+console.log(obj); // { a: 2 }
+obj = {}; // TypeError: Assignment to constant variable
+
+4. Hoisting
+var
+
+    Variables declared with var are hoisted to the top of their scope and initialized with undefined.
+
+console.log(x); // undefined
+var x = 5;
+
+let
+
+    Variables declared with let are hoisted but are not initialized. Accessing them before declaration results in a ReferenceError due to the "temporal dead zone."
+
+console.log(x); // ReferenceError: Cannot access 'x' before initialization
+let x = 5;
+
+const
+
+    Similar to let, variables declared with const are hoisted but are not initialized, leading to a ReferenceError if accessed before declaration.
+
+console.log(x); // ReferenceError: Cannot access 'x' before initialization
+const x = 5;
+
+5. Default Initialization
+var
+
+    Initialized to undefined by default.
+
+let
+
+    Not initialized by default. It remains in the temporal dead zone until explicitly initialized.
+
+const
+
+    Must be initialized at the time of declaration. It does not have a default value.
+
+const x; // SyntaxError: Missing initializer in const declaration
+
+6. Usage and Best Practices
+                Feature	                 var	                 let	                const
+                Scope	                Function-scoped	      Block-scoped	    Block-scoped
+                Re-declaration	        Allowed	              Not allowed	    Not allowed
+                Re-assignment	        Allowed	              Allowed	        Not allowed
+                Hoisting	            Hoisted 	          Hoisted 	        Hoisted
+                            (initialized to undefined) (temporal dead zone) (temporal dead zone)
+                Default Initialization	undefined	            None	        Must initialize
+        When to Use?
+    var: Avoid using var as it can lead to unexpected behavior due to its function-scoped nature and hoisting.
+    let: Use let when the value of the variable will change during its lifecycle.
+    const: Use const by default for variables that won’t change, as it provides immutability for the reference and helps avoid accidental reassignment.
+
+

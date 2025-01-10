@@ -1,7 +1,7 @@
 /////--------SOLID-----------//////////
 
    S-> Single Responsibility
-   O-> Open/Closed
+   O-> Open for extension/ Closed for modification
    L-> Liskov Substitution
    I-> Interface Segregation
    D-> Dependency Inversion

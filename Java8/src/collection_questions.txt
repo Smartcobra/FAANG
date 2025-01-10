@@ -1,0 +1,298 @@
+1. What are the main interfaces in the Collection Framework?
+The core interfaces are:
+- `Collection`: The root interface representing a group of objects.
+- `List`: An ordered collection (sequence) that allows duplicate elements.
+- `Set`: A collection that does not allow duplicate elements.
+- `Queue`: A collection used to hold multiple elements prior to processing.
+- `Map`: An object that maps keys to values.
+
+2. What is the difference between `List`, `Set`, and `Map`?
+- `List` allows duplicate elements and maintains the insertion order.
+- `Set` does not allow duplicate elements and does not maintain any order (unless it is a `SortedSet`).
+- `Map` stores key-value pairs, does not allow duplicate keys, and keys are unique.
+
+3. What are the differences between `ArrayList` and `LinkedList`?
+- `ArrayList` uses a dynamic array to store elements, providing fast random access but slower insertions and deletions in the middle of the list.
+- `LinkedList` uses a doubly-linked list, providing faster insertions and deletions but slower random access.
+
+4. What is the difference between `HashSet` and `TreeSet`?
+ `HashSet` uses a hash table for storage and does not guarantee any order of elements.
+- `TreeSet` uses a red-black tree and guarantees that elements are sorted in natural order or by a specified comparator.
+
+5. What are the differences between `HashMap`, `LinkedHashMap`, and `TreeMap`?
+- `HashMap` does not maintain any order of its elements.
+- `LinkedHashMap` maintains the order of elements in which they were inserted.
+- `TreeMap` stores elements in a sorted order, either by natural ordering or a specified comparator.
+
+6. How does `HashMap` work internally?
+`HashMap` uses an array of buckets, where each bucket is a linked list. The key’s hash code determines the bucket. In case of collisions, new entries are added to the linked list in the bucket.
+From Java 8, linked lists are replaced by balanced trees when the bucket size exceeds a certain threshold for better performance.
+
+7. What is the difference between `HashMap` and `Hashtable`?
+- `HashMap` is unsynchronized and allows one null key and multiple null values.
+- `Hashtable` is synchronized and does not allow null keys or values.
+
+8. What is a `ConcurrentHashMap` and how is it different from `HashMap`?
+`ConcurrentHashMap` is a thread-safe implementation of `HashMap`. It allows concurrent read and write operations by dividing the map into segments, reducing lock contention.
+
+9. What are the differences between `Comparable` and `Comparator`?
+- `Comparable` is an interface that defines a natural ordering of objects by implementing the `compareTo()` method.
+- `Comparator` is an interface used to define an external comparison method by implementing the `compare()` method.
+
+10. What is the difference between `ArrayList` and `Vector`?
+- `ArrayList` is unsynchronized, making it faster but not thread-safe.
+- `Vector` is synchronized, making it thread-safe but slower.
+
+11. What is the `Collection` interface?
+`Collection` is the root interface in the collection hierarchy. It represents a group of objects known as elements and includes methods for adding, removing, and querying elements.
+
+12. How do you synchronize a collection in Java?
+You can use synchronized wrappers provided by the `Collections` class, such as `Collections.synchronizedList()`, `Collections.synchronizedSet()`, etc., or use concurrent collections from the `java.util.concurrent` package.
+
+13. What is the `Queue` interface and its main implementations?
+`Queue` represents a collection designed for holding elements prior to processing. Main implementations include `LinkedList`, `PriorityQueue`, and `ArrayBlockingQueue`.
+
+14. What is the `Set` interface and its main implementations?
+`Set` represents a collection that does not allow duplicate elements. Main implementations include `HashSet`, `LinkedHashSet`, and `TreeSet`.
+
+15. What is the difference between `Iterator` and `ListIterator`?
+- `Iterator` can traverse the collection in one direction (forward) and allows removal of elements during iteration.
+- `ListIterator` extends `Iterator` and can traverse the list in both directions (forward and backward) and allows modification of elements during iteration.
+
+16. What is the `fail-fast` behavior of an iterator?
+`Fail-fast` iterators throw a `ConcurrentModificationException` if the collection is modified after the iterator is created, except through the iterator’s own remove method.
+
+17. How can you create a synchronized collection from a non-synchronized collection?
+Use `Collections.synchronizedList()`,`Collections.synchronizedSet()`, or `Collections.synchronizedMap()` to create synchronized versions of non-synchronized collections.
+
+18. What are `BlockingQueue` and its main implementations?
+`BlockingQueue` is a type of queue that supports operations that wait for the queue to become non-empty when retrieving an element and wait for space to become available when storing an element.
+ Main implementations include `ArrayBlockingQueue`, `LinkedBlockingQueue`, and `PriorityBlockingQueue`.
+
+ 19. What are the advantages of using the `NavigableMap` and `NavigableSet` interfaces?
+ They provide methods for navigation, such as getting the closest matches for keys or elements. For example, `floorEntry()`, `ceilingEntry()`, `lowerEntry()`, and `higherEntry()` in `NavigableMap`.
+
+ 20. How does `TreeSet` ensure that elements are sorted?
+ `TreeSet` uses a `NavigableMap` (specifically a `TreeMap`) to store elements. Elements are sorted according to their natural ordering or by a comparator provided at set creation time.
+
+ 26. Explain the concept of `immutability` in collections. How can you create an immutable collection?
+ An immutable collection cannot be modified after it’s created. Use `Collections.unmodifiableList()`, `Collections.unmodifiableSet()`, etc., or use the `List.of()`, `Set.of()`, and `Map.of()` methods introduced in Java 9.
+
+ 27. What are `WeakHashMap` and its use cases?
+ `WeakHashMap` uses weak references for its keys, allowing them to be garbage collected when there are no other strong references. It is useful for implementing memory-sensitive caches.
+
+ 28. Use the `stream()` method and `filter()`:
+ List<String> list = Arrays.asList("A", "B", "C", "D");
+ List<String> filteredList = list.stream()
+  .filter(s -> s.startsWith("A"))
+  .collect(Collectors.toList());
+
+29. What is a `PriorityQueue` and how does it work?
+`PriorityQueue` is a queue that orders elements based on their natural ordering or by a comparator provided at queue construction time. It provides O(log(n)) time complexity for the enqueuing and dequeuing methods.
+
+30. What is the difference between `peek()`, `poll()`, and `remove()` in a `Queue`?
+- `peek()`: Retrieves, but does not remove, the head of the queue, returning `null` if the queue is empty.
+- `poll()`: Retrieves and removes the head of the queue, returning `null` if the queue is empty.
+- `remove()`: Retrieves and removes the head of the queue, throwing an exception if the queue is empty.
+
+31. What is the role of the ListIterator interface?
+ListIterator is an interface that extends the Iterator interface and is used to iterate over the elements of a list. It allows bidirectional traversal of a list (forward and backward). Key methods include:
+
+- hasNext(): Returns true if there are more elements when moving forward.
+- next(): Returns the next element.
+- hasPrevious(): Returns true if there are more elements when moving backward.
+- previous(): Returns the previous element.
+- add(E e): Inserts the specified element into the list.
+- remove(): Removes the last element returned by next() or previous().
+- set(E e): Replaces the last element returned by next() or previous() with the specified element.
+
+32. How does a HashMap work internally?
+HashMap works using an array of nodes, where each node represents a key-value pair (entry). Key steps involved:
+
+- Hashing: HashMap uses the hashCode() method of the key to compute an index for storing the key-value pair in the array.
+- Buckets: Each index in the array (bucket) may contain multiple entries (due to hash collisions), which are stored in a linked list or a balanced tree (in Java 8 and later, if the list size exceeds a threshold).
+- Operations:
+— put(): Computes the bucket index, places the entry in the appropriate bucket. If an entry with the same key exists, it replaces the old value.
+— get(): Computes the bucket index, searches the bucket for the entry with the matching key, and returns the associated value.
+— remove(): Computes the bucket index, searches and removes the entry with the matching key.
+
+33. What is the purpose of IdentityHashMap?
+IdentityHashMap is a Map implementation that uses reference equality (==) instead of object equality (equals()) for comparing keys and values. Its purposes include:
+
+- Identity-based Comparison: Used when distinct instances of keys are required, even if they are logically equivalent.
+- Memory-sensitive Caches: Suitable for scenarios where key identity is important.
+
+34. How does ConcurrentHashMap ensure thread safety?
+ConcurrentHashMap ensures thread safety through several mechanisms:
+
+- Segmented Locking: Initially divided the map into segments, each of which could be locked independently (in Java 7 and earlier). In Java 8 and later, segments are replaced by finer-grained internal data structures and algorithms.
+- Non-blocking Algorithms: Utilizes CAS (Compare-And-Swap) and other non-blocking algorithms to manage concurrent access.
+- Concurrency Level: Allows specifying the concurrency level, determining the number of threads that can concurrently modify the map.
+
+35. What is the WeakHashMap class used for?
+WeakHashMap is a map-based implementation that uses weak references for its keys. Entries in a WeakHashMap can be garbage collected when their keys are no longer in use. It is useful for:
+
+- Memory-sensitive Caches: Automatically removes entries when the keys are no longer referenced elsewhere.
+- Preventing Memory Leaks: Avoids holding strong references to keys, allowing them to be garbage collected.
+
+36. What are CopyOnWriteArrayList and CopyOnWriteArraySet?
+- CopyOnWriteArrayList: A thread-safe variant of ArrayList where all mutative operations (add, set, remove) are implemented by making a fresh copy of the underlying array. Suitable for scenarios where reads are more frequent than writes.
+- CopyOnWriteArraySet: A thread-safe Set implementation backed by a CopyOnWriteArrayList. It shares the same properties and use cases as CopyOnWriteArrayList.
+
+37. How does HashMap handle collisions internally?
+HashMap uses buckets to store key-value pairs. A bucket can contain multiple entries if multiple keys hash to the same index. Initially, these entries are stored as a linked list.
+If the number of entries in a bucket exceeds a threshold (default 8), the list is converted into a balanced tree to optimize retrieval times.
+HashMap uses buckets to store key-value pairs. A bucket can contain multiple entries if multiple keys hash to the same index. Initially, these entries are stored as a linked list.
+ If the number of entries in a bucket exceeds a threshold (default 8), the list is converted into a balanced tree to optimize retrieval times.
+
+38. Can you implement a custom Comparator to sort a list of objects by multiple fields?
+import java.util.*;
+class Employee {
+    String name;
+    int age;
+    double salary;
+    Employee(String name, int age, double salary) {
+        this.name = name;
+        this.age = age;
+        this.salary = salary;
+    }
+    @Override
+    public String toString() {
+        return name + " (Age: " + age + ", Salary: " + salary + ")";
+    }
+}
+public class ComparatorChainingExample {
+    public static void main(String[] args) {
+        List<Employee> employees = Arrays.asList(
+            new Employee("Alice", 30, 70000),
+            new Employee("Bob", 25, 50000),
+            new Employee("Charlie", 30, 80000)
+        );
+        employees.sort(Comparator
+            .comparing((Employee e) -> e.age)
+            .thenComparing((Employee e) -> e.salary, Comparator.reverseOrder()));
+        System.out.println("Sorted Employees: " + employees);
+    }
+}
+
+39 .How would you detect and handle ConcurrentModificationException in a multithreaded environment?
+import java.util.ArrayList;
+import java.util.Iterator;
+public class ConcurrentModificationExample {
+    public static void main(String[] args) {
+        ArrayList<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        Thread thread1 = new Thread(() -> {
+            Iterator<Integer> iterator = list.iterator();
+            while (iterator.hasNext()) {
+                System.out.println(iterator.next());
+                list.add(3); // This will throw ConcurrentModificationException
+            }
+        });
+        Thread thread2 = new Thread(() -> list.add(4));
+        thread1.start();
+        thread2.start();
+    }
+}
+//Code Solution:
+import java.util.concurrent.CopyOnWriteArrayList;
+public class ConcurrentCollectionExample {
+    public static void main(String[] args) {
+        CopyOnWriteArrayList<Integer> list = new CopyOnWriteArrayList<>();
+        list.add(1);
+        list.add(2);
+        Thread thread1 = new Thread(() -> {
+            for (Integer i : list) {
+                System.out.println(i);
+                list.add(3); // No exception here
+            }
+        });
+        Thread thread2 = new Thread(() -> list.add(4));
+        thread1.start();
+        thread2.start();
+    }
+}
+
+40. What is the difference between IdentityHashMap and HashMap?
+IdentityHashMap uses reference equality (==) to compare keys, while HashMap uses equals() for comparison.
+
+41. How does TreeMap handle null keys and values?
+    TreeMap does not allow null keys.
+    It allows multiple null values.
+
+    import java.util.TreeMap;
+    public class TreeMapNullKeyExample {
+        public static void main(String[] args) {
+            TreeMap<String, String> map = new TreeMap<>();
+            map.put("A", null);
+            map.put("B", null);
+            System.out.println("TreeMap: " + map);
+        }
+    }
+
+42. How does LinkedHashMap maintain insertion order? Can you override this behavior?
+LinkedHashMap uses a doubly linked list to maintain insertion order. By setting accessOrder to true in its constructor, it can order entries based on access.
+
+Code Example:
+
+import java.util.LinkedHashMap;
+public class LinkedHashMapExample {
+    public static void main(String[] args) {
+        LinkedHashMap<String, Integer> map = new LinkedHashMap<>(16, 0.75f, true);
+        map.put("A", 1);
+        map.put("B", 2);
+        map.put("C", 3);
+        map.get("A"); // Access "A"
+        System.out.println("LinkedHashMap: " + map);
+    }
+}
+
+43. What happens when you try to modify a collection during iteration?
+Answer: You will get a ConcurrentModificationException if the collection is modified structurally (e.g., adding/removing elements) during iteration using a non-concurrent collection.
+
+Solution: Use Iterator.remove() for safe removal.
+
+Code Example:
+
+import java.util.ArrayList;
+import java.util.Iterator;
+public class FailFastExample {
+    public static void main(String[] args) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("A");
+        list.add("B");
+        Iterator<String> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            iterator.next();
+            iterator.remove(); // Safe removal
+        }
+        System.out.println("Modified List: " + list);
+    }
+}
+
+44. What is the default load factor of HashMap, and why is it set to 0.75?
+Answer: The load factor of 0.75 strikes a balance between time (rehashing) and space (extra buckets).
+
+Follow-up: What happens when the load factor is set to a higher value?
+
+Answer to Follow-up: If the load factor is higher, the HashMap will rehash less frequently, saving time during insertions but potentially leading to longer retrieval times due to higher bucket collisions.
+
+44. How does PriorityQueue implement its internal structure?
+Answer: PriorityQueue is implemented as a binary heap, where the priority determines the heap order (min-heap by default).
+
+Code Example:
+
+import java.util.PriorityQueue;
+public class PriorityQueueExample {
+    public static void main(String[] args) {
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        pq.add(10);
+        pq.add(5);
+        pq.add(15);
+        while (!pq.isEmpty()) {
+            System.out.println(pq.poll()); // Prints in sorted order
+        }
+    }
+}
+
