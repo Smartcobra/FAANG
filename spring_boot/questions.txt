@@ -240,3 +240,18 @@ public static void main(String[] args) throws ExecutionException, InterruptedExc
 
  There is no external thread to orchestrate the switching of tasks from one thread to another. No blocking at any point until we just require the result, which is at line number 4. All 10 processes are happening in parallel, and under each process,
  when the first task is finished by a thread, it is passed to another thread with the thenApplyAsync method.
+
+ Q6. How to Disable a Specific Auto-Configuration?
+ @EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
+ public class MyConfiguration { }
+
+ Q17. What Basic Annotations Does Spring Boot Offer?
+
+     @EnableAutoConfiguration – to make Spring Boot look for auto-configuration beans on its classpath and automatically apply them
+     @SpringBootApplication – to denote the main class of a Boot Application. This annotation combines
+     @Configuration, @EnableAutoConfiguration and @ComponentScan annotations with their default attributes.
+
+  4. What does the @SpringBootApplication annotation do?
+  @SpringBootApplication is a convenience annotation that combines three annotations: @Configuration (marks the class as a source of bean definitions),
+  @EnableAutoConfiguration (enables Spring Boot’s auto-configuration mechanism), and
+  @ComponentScan (scans the package of the annotated class for Spring components).

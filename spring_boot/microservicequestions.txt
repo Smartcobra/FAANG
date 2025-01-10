@@ -1,0 +1,26 @@
+1. How do you handle distributed transactions in in your architecture- Microservices or Service based architecture?
+    Ans — Distributed transactions are the transactions that can span across multiple services. These type of transactions might introduce complexity
+    and tight coupling amongst the services. One way is to avoid these transactions and keep those as set of local transactions for each service.
+    SAGA pattern can be used here to handle it cleanly — There are two ways to use it -Choreography-based saga, Orchestration-based saga.
+
+    Choreography — Post local transaction(which is actually some DB transaction with a flag to denote it is still to be fully committed,
+    first participating service publishes an event to next service in the workflow which again executes a local transaction — post transaction,
+    the second service either returns a success or error code based on failure of some business rules, based on the returned event , the first service either change the initial local transaction as final approved transaction or deletes(invalidates) initial transaction. There can be multiple services in a business flow. It gives a scope of enhanced scalability but at the expense of simplicity(which makes this implementation complex). It requires some additional resources such as Message broker etc.
+
+    Orchestration — Instead of local transactions interacting with each other directly with events , in case of orchestration ,
+    there is an Orchestrator object which co-ordinates between these local transactions and it is responsible for compensating/reversing all the
+    previous local transactions if one of the transactions fail. It somewhere has somewhere tight coupling wrapped within implementation along with
+    single point of failure. It doesn’t need other additional resources .
+
+2. What is Command Query Response Segregation Pattern in Microservices and when do we use it?
+    After adopting Microservices architecture ,having applied database per service, when we try to get join data from multiple services, it becomes very complicated . There could be multiple options to service such requests. One of this is Command Query Response Segregation Pattern where we create a new view database , which is a read-only replica that is designed to support that query.
+    This database is updated on the domain events published by the individual services. For details, please refer :
+
+3. What is the difference between cohesion and coupling ?
+  Cohesion refers to association and relationship within a module, highly cohesive means the component of module are tightly couple , changing one needs a change in other .
+  This can be considered as one the factors while designing microservices. Something which changes together should be packaged together.
+
+  Coupling refers to association and relationship of one module with another. Usually a loosely coupled relationship is preferred for
+  separate module so that those could change independently without impacting other.
+
+4.
