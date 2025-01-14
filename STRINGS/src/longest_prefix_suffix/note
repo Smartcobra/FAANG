@@ -1,0 +1,44 @@
+Algo -
+1. Initialize lps[0] to 0 and assume that our string or pattern is stored in a variable named P.
+2. Maintain 2 pointers : len and index. len maintains the length of the longest prefix found so far
+   and index is used to iterate over the string.
+3. initialize the len to 0 and index to 1.
+4. if p[index] = p[len] this means that we found a new and longer prefix that matches to the suffix,
+   so p[index] = len (length of last prefix) +1
+5. if p[index] != p[len] , this means that for the string p [0...index] the length of the longest prefix
+   must be lesser than the len , so we try to find a lower value for len that might satisfy the prefix
+   criteria . For now lets say that the next smaller possible value of len that could be a potential match
+   would be p[len-1] if len>0 otherwise p[index]=0.
+
+   example -
+
+    len
+     a    a    c    a    a    a    a    c    lps[],
+     0    1    2    3    4    5    6    7
+   index
+
+    len
+     a    a    c    a    a    a    a    c      p[index] = p[len] so so len = len + 1  and  lps[index] = len and index = index + 1
+     0    1    2    3    4    5    6    7     lps[index] = len, lps[1] = 1 ,
+        index
+
+
+     len
+     a    a    c    a    a    a    a    c   p[index] != p[len] , len = lps[len-1]  = 0
+     0    1    2    3    4    5    6    7
+             index
+
+     len
+     a    a    c    a    a    a    a    c   p[index] = p[len] , len = len+1 , lps[index] = len , index = index + 1
+     0    1    2    3    4    5    6    7   lps[index] = 1 => lps[3] =1,
+                  index
+
+         len
+     a    a    c    a    a    a    a    c   p[index] = p[len] , len = len+1 , lps[index] = len , index = index + 1
+     0    1    2    3    4    5    6    7   lps[index] = 2 => lps[4] =2,
+                       index
+
+              len
+     a    a    c    a    a    a    a    c   p[index] != p[len] , len = lps[len-1] => len = lps[2-1] => len = lps[1] , len = 1
+     0    1    2    3    4    5    6    7
+                            index

@@ -6,6 +6,7 @@ Explanation:
 No, private methods cannot be overridden because they are not visible to subclasses. However,
  if you define a method with the same name in a subclass, it is considered method hiding, not overriding.
 
- 2. Can You Catch an Exception Thrown in a Static Block?
- Exceptions thrown in a static block can only be caught within a static initializer block using a try-catch. Otherwise, the program will fail to load the class.
+2. Can You Catch an Exception Thrown in a Static Block?
+ Exceptions thrown in a static block can only be caught within a static initializer block using a try-catch. Otherwise,
+ the program will fail to load the class.
 

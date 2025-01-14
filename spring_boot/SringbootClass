@@ -132,19 +132,5 @@ public class Application extends SpringBootServletInitializer {
     // ...
 }
 
-Q6. How to Disable a Specific Auto-Configuration?
-@EnableAutoConfiguration(exclude = DataSourceAutoConfiguration.class)
-public class MyConfiguration { }
-
-Q17. What Basic Annotations Does Spring Boot Offer?
-
-    @EnableAutoConfiguration – to make Spring Boot look for auto-configuration beans on its classpath and automatically apply them
-    @SpringBootApplication – to denote the main class of a Boot Application. This annotation combines
-    @Configuration, @EnableAutoConfiguration and @ComponentScan annotations with their default attributes.
-
- 4. What does the @SpringBootApplication annotation do?
- @SpringBootApplication is a convenience annotation that combines three annotations: @Configuration (marks the class as a source of bean definitions),
- @EnableAutoConfiguration (enables Spring Boot’s auto-configuration mechanism), and
- @ComponentScan (scans the package of the annotated class for Spring components).
 
 

@@ -542,10 +542,12 @@
      );
    }
 
-   5. Error Boundaries: Wrap components with a class component that implements componentDidCatch() or static getDerivedStateFromError() to catch errors in the component tree and display a fallback UI.
+   5. Error Boundaries: Wrap components with a class component that implements componentDidCatch() or static getDerivedStateFromError()
+   to catch errors in the component tree and display a fallback UI.
 
 16. Explain conditional rendering in React?
-    Conditional rendering in React allows you to display different content or components based on certain conditions. you can conditionally render JSX using JavaScript syntax like if statements, &&, and ? : operators..
+    Conditional rendering in React allows you to display different content or components based on certain conditions.
+    you can conditionally render JSX using JavaScript syntax like if statements, &&, and ? : operators..
 
     Here’s it works:
 
@@ -623,11 +625,13 @@
    // mergedObject is { a: 1, b: 3, c: 4 }
 
 19. What is Closure? What are the use cases of Closures?
-   Closure is a feature that allows the function to capture the environment (or to retain access to variables from the scope ) where it is defined, even after that scope has closed.
+   Closure is a feature that allows the function to capture the environment (or to retain access to variables from the scope )
+   where it is defined, even after that scope has closed.
 
    We can say the closure is a combination of a function and lexical environment where that function is defined.
 
-   In other words, a closure gives a function access to its own scope, the scope of its outer function, and the global scope, allowing it to "remember" and continue to access variables and parameters from these scopes.
+   In other words, a closure gives a function access to its own scope, the scope of its outer function, and the global scope,
+   allowing it to "remember" and continue to access variables and parameters from these scopes.
 
    function outerFunction() {
      let outerVariable = 'I am from the outer function';
@@ -706,3 +710,23 @@
 
        const boundGetX = unboundGetX.bind(module);
        console.log(boundGetX()); // Output: 42
+
+22. How do you iterate over objects in JavaScript?
+    You can iterate over objects using for...in loop or Object.keys(), Object.values(), or Object.entries() methods.
+
+23. What are the differences between arrays and objects in JavaScript?
+    Arrays are ordered collections of data stored with numeric indices, while objects are collections of key-value pairs with no inherent order.
+
+24. Explain Array.map(), Array.filter(), and Array.reduce() methods.
+
+    map(): Creates a new array with the results of calling a provided function on every element in the calling array.
+    filter(): Creates a new array with all elements that pass the test implemented by the provided function.
+    reduce(): Executes a reducer function on each element of the array, resulting in a single output value.
+
+25. How do you merge two arrays in JavaScript?
+    You can use the concat() method, the spread operator ([...array1, ...array2]), or the push() method in a loop.
+
+26 .What is memoization and how can it be implemented in JavaScript?
+    Memoization is a technique used to cache the results of expensive function calls and return the cached result when the same inputs occur again.
+     It can be implemented using a simple object or a Map to store cached results.
+

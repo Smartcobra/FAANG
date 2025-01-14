@@ -1,0 +1,75 @@
+1. forward vs reverse proxy?
+    Forward Proxy:
+    A server that sits in front of one or more client computers and serves between the clients and the internet.
+    The forward proxy receives the request before sending it on from the client machine to the internet resource.
+    On behalf of the client machine, the forward proxy then sends the request to the internet and returns the response.
+
+    Reverse Proxy:
+    A server that sits in front of one or more web servers and serves as a go-between for the web servers and the Internet
+    is known as a reverse proxy. The reverse proxy receives the request before sending it on to the internet resource for the client.
+    After sending the request to one of the web servers, the reverse proxy receives the response from that server.
+    The response is then sent back to the client by the reverse proxy.
+
+2. horizontal vs vertical scaling?
+    Scalability describes your system’s ability to adapt to change and demand. Good scalability protects you
+    from future downtime and ensures the quality of your service.
+
+    Horizontal scaling refers to adding additional nodes or machines to your infrastructure to cope with new demands.
+    If you are hosting an application on a server and find that it no longer has the capacity or capabilities to handle traffic,
+    adding a server may be your solution.
+
+    vertical scaling describes adding more power to your current machines. For instance, if your server requires more processing power,
+    vertical scaling would mean upgrading the CPUs. You can also vertically scale the memory, storage, or network speed.
+
+    Use vertical scaling when:
+
+        Increasing machine capability i.e increasing CPUs and memory capacity, will deliver the price-performance level your workloads require
+        If you’re just starting out; you don’t know how consistent the traffic is or how many users you’ll get
+        Want to use your existing system internally and a cloud provider services for the bulk of customer-facing solutions
+        You know redundancy is not feasible or required to operate optimally
+        Upgrades are few and far between, so there is little downtime to worry about
+        You have a legacy app that doesn’t require distributed or high scalability
+
+    Use horizontal scaling when:
+
+        Providing high-quality service requires high performance
+        Backup machines are necessary to reduce single points of failure
+        You want more flexibility to configure your machines in different ways in order to increase efficiency, such as price-performance ratio
+        You need to run your application or services across different geographical locations at low latency
+        Updating, upgrading, and optimizing your system regularly is imperative — all without increasing downtime
+        You are sure that your usage, users, or traffic are consistently high or will be growing exponentially soon
+        You have the people and resources to buy, install, and maintain additional hardware and software
+        You are using a micro-services architecture or containerized applications, which achieve better performance on a distributed system
+
+3. gateway vs load balancer
+    The main difference between AWS load balancer and API gateway is that load balancers distribute incoming requests, while API
+    gateways authenticate and provide access to data sources or other applications. Load balancers are usually deployed as dedicated physical
+    devices or software running on a set of virtual servers, while API gateways are usually implemented as a service — organizations often deploy
+    an API gateway as a container or VM instance.
+
+    load balancer can function as a gateway by routing traffic to healthy virtual appliances, centralizing traffic, and enforcing consistent policies
+    across appliances. This capability is particularly useful for high performance and high availability scenarios.
+
+    If transaction volume is less than 500k per day, the API gateway is effective, but if it’s more than 500k, ALB may be a more affordable solution
+
+4. CDN-content delivery network
+    A content delivery network (CDN) is a geographically distributed group of servers that caches content close to end users.
+    A CDN allows for the quick transfer of assets needed for loading Internet content, including HTML pages, JavaScript files, stylesheets, images, and videos.
+
+    Benefits of using CDN:
+
+        Improving website load times — By distributing content closer to website visitors by using a nearby CDN server (among other optimizations), visitors experience faster page loading times.
+        Reducing bandwidth costs — Bandwidth consumption costs for website hosting is a primary expense for websites. Through caching and other optimizations, CDNs are able to reduce the amount of data an origin server must provide, thus reducing hosting costs for website owners.
+        Increasing content availability and redundancy — Large amounts of traffic or hardware failures can interrupt normal website function. Thanks to their distributed nature, a CDN can handle more traffic and withstand hardware failure better than many origin servers.
+        Improving website security — A CDN may improve security by providing DDoS mitigation, improvements to security certificates, and other optimizations.
+
+5. Virtualisation vs Dockerisation
+    Virtualization is used to create software-based or virtual versions of a computer resource which computing devices, storage, networks, servers, or even
+    applications.
+    This allows to partition a single physical computer or server into several virtual machines (VM). Each VM can then interact independently and run different
+    operating systems or applications while sharing the resources of a single computer.
+
+    Containerization is a lightweight alternative to virtualization. This involves encapsulating an application in a container with its own operating environment.
+    Thus, instead of installing an OS for each virtual machine, containers use the host OS.
+
+6.

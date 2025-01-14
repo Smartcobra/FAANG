@@ -23,4 +23,63 @@
   Coupling refers to association and relationship of one module with another. Usually a loosely coupled relationship is preferred for
   separate module so that those could change independently without impacting other.
 
-4.
+4. What are the key benefits of using microservices?
+        Independent deployment and scaling
+        Fault isolation (one service failure doesn't crash the entire system)
+        Better team autonomy
+        Easy technology adoption (different services can use different stacks)
+
+5. What are the main challenges of microservices?
+      Complex testing and debugging
+      Distributed system complexities (latency, network issues)
+      Increased deployment and monitoring effort
+      Data consistency issues
+
+6. What is Domain-Driven Design (DDD), and why is it important for
+    microservices? DDD focuses on modeling software based on business domains. It helps microservices
+    because it ensures services are aligned with business logic, reducing coupling and improving maintainability
+
+7. What is a service registry in microservices?
+    A service registry is a database where microservices register themselves and discover other services. Examples: Eureka, Consul, Zookeeper.
+
+8. What is API Gateway, and why is it important in microservices?
+    Gateway is an entry point that handles requests, routes them to the appropriate microservice, and manages cross-cutting concerns like authentication,
+    rate-limiting, and logging.
+
+9. What is eventual consistency in microservices, and how is it achieved?
+    Eventual consistency means that all services in a distributed system will eventually have consistent data, even if they're temporarily out of sync.
+    It's achieved using techniques like event sourcing, message queues, and replication.
+
+10. What is Circuit Breaker Pattern in microservices?
+    The circuit breaker pattern is used to prevent cascading failures in microservices. If a service is failing repeatedly,
+    the circuit breaker trips and stops requests to that service until it recovers. Tools like Hystrix implement this.
+
+11. How do you handle database design in microservices?
+    Each microservice should ideally have its own database (database per service pattern) to ensure loose coupling. Shared databases are discouraged.
+
+12. How do you manage distributed transactions in microservices?
+        Using SAGA Pattern (orchestration or choreography-based).
+        Leveraging event-driven architectures.
+
+13. How do you monitor and log microservices?
+    monitoring tools like:
+
+        ELK Stack (Elasticsearch, Logstash, Kibana)
+        Prometheus + Grafana
+        Jaeger or Zipkin for distributed tracing.
+
+14. What is Kubernetes, and why is it important for microservices?
+    Kubernetes automates deployment, scaling, and management of containerized applications. It's essential for microservices as it simplifies orchestration in distributed systems.
+
+15. What are sidecars, and how are they used in microservices?
+    Sidecars are helper containers that run alongside a service to handle cross-cutting concerns like monitoring, logging, or service communication. Example: Envoy in a service mesh.
+
+16. What is a Service Mesh, and how does it improve microservices architecture?
+    A Service Mesh (e.g., Istio, Linkerd) manages service-to-service communication, security, and observability in a microservices environment without changing the application code.
+
+17. How do you secure microservices?
+        Use OAuth2 and OpenID Connect for authentication.
+        Secure communication using TLS/SSL.
+        Validate and sanitize inputs to prevent injection attacks.
+        Use API gateways for security.
+18.

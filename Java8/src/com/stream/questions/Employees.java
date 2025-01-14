@@ -1,22 +1,39 @@
 package com.stream.questions;
 
 public class Employees {
-    int id;
-    int age;
-    String name;
-    String gender;
-    String dept;
-    int yearOfJoining;
-    double salary;
+    private int id;
+    private String name;
+    private int age;
+    private long salary;
+    private String gender;
+    private String deptName;
+    private String city;
+    private int yearOfJoining;
 
-    public Employees(int id, int age, String name, String gender, String dept, int yearOfJoining, double salary) {
+    public Employees(int id, String name, int age, long salary, String gender,
+                    String deptName, String city, int yearOfJoining) {
         this.id = id;
-        this.age = age;
         this.name = name;
-        this.gender = gender;
-        this.dept = dept;
-        this.yearOfJoining = yearOfJoining;
+        this.age = age;
         this.salary = salary;
+        this.gender = gender;
+        this.deptName = deptName;
+        this.city = city;
+        this.yearOfJoining = yearOfJoining;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", salary=" + salary +
+                ", gender='" + gender + '\'' +
+                ", deptName='" + deptName + '\'' +
+                ", city='" + city + '\'' +
+                ", yearOfJoining='" + yearOfJoining + '\'' +
+                '}';
     }
 
     public int getId() {
@@ -27,6 +44,14 @@ public class Employees {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getAge() {
         return age;
     }
@@ -35,12 +60,12 @@ public class Employees {
         this.age = age;
     }
 
-    public String getName() {
-        return name;
+    public long getSalary() {
+        return salary;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSalary(long salary) {
+        this.salary = salary;
     }
 
     public String getGender() {
@@ -51,12 +76,20 @@ public class Employees {
         this.gender = gender;
     }
 
-    public String getDept() {
-        return dept;
+    public String getDeptName() {
+        return deptName;
     }
 
-    public void setDept(String dept) {
-        this.dept = dept;
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public int getYearOfJoining() {
@@ -65,13 +98,5 @@ public class Employees {
 
     public void setYearOfJoining(int yearOfJoining) {
         this.yearOfJoining = yearOfJoining;
-    }
-
-    public double getSalary() {
-        return salary;
-    }
-
-    public void setSalary(double salary) {
-        this.salary = salary;
     }
 }

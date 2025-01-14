@@ -1,0 +1,280 @@
+1. Difference between Truncate, Drop, Delete.
+    DROP statement can be used to remove any database objects like tables, views, functions, procedures, triggers etc.
+    Delete is a DML statement hence we will need to commit the transaction in order to save the changes to database. Whereas truncate and drop are DDL statements hence no commit is required.
+
+    For example: Below statement will delete only the records from employee table where the name is ‘Tanya’
+
+    DELETE FROM employee WHERE name = ‘Tanya’;
+    COMMIT;
+
+    Below statement will delete all records from the employee table.
+    DELETE FROM employee;
+    COMMIT;
+
+    Below statement will also delete all the records from the employee table. No commit is required here.
+
+    TRUNCATE TABLE employee;
+
+2. Difference between RANK, DENSE_RANK and ROW_NUMBER window function.
+    RANK() function will assign a rank to each row within each partitioned result set. If multiple rows have the same value then each of these rows will share the same rank. However the rank of the following (next) rows will get skipped. Meaning for each duplicate row, one rank value gets skipped.
+
+    DENSE_RANK() function will assign a rank to each row within each partitioned result set. If multiple rows have the same value then each of these rows will share the same rank. However the dense_rank of the following (next) rows will NOT get skipped. This is the only difference between rank and dense_rank. RANK() function skips a rank if there are duplicate rows whereas DENSE_RANK() function will never skip a rank.
+
+    ROW_NUMBER() function will assign a unique row number to every row within each partitioned result set. It does not matter if the rows are duplicate or not.
+
+    By using the managers table, let’s write a query to get the rank, dense rank and row number for each manager based on their salary.
+
+    SELECT *
+    , RANK() OVER(ORDER BY salary DESC) AS ranks
+    , DENSE_RANK() OVER(ORDER BY salary DESC) AS dense_ranks
+    , ROW_NUMBER() OVER(ORDER BY salary DESC) AS row_numbers
+    FROM managers;
+
+    Table Name: MANAGERS
+    Contains salary details of 5 different managers.
+
+    id	name	    department	    salary
+    1	Alice	    HR	            80000
+    2	Bob	        IT	            95000
+    3	Charlie	    IT	            95000
+    4	Dave	    Finance	        85000
+    5	Eve	        HR	            75000
+
+    output--
+    id	    name	        department	    salary	  ranks	  dense_ranks	row_numbers
+    2	    Bob	            IT	            95000	    1	    1	            1
+    3	    Charlie	        IT	            95000	    1	    1	            2
+    4	    Dave	        Finance	        85000	    3	    2	            3
+    1	    Alice	        HR	            80000	    4	    3	            4
+    5	    Eve	            HR	            75000	    5	    4	            5
+
+ 3. Difference between Unique, primary keys, foreign keys.
+    Primary key, unique key and foreign key are constraints we can create on a table.
+
+    When you make a column in the table as primary key then this column will always have unique or distinct values.
+    Duplicate values and NULL value will not be allowed in a primary key column. A table can only have one primary key.
+    Primary key can be created either on one single column or a group of columns.
+
+    When you make a column in the table as unique key then this column will always have unique or distinct values.
+    Duplicate values will not be allowed. However, NULL values are allowed in a column which has unique key constraint.
+    This is the major difference between primary and unique key.
+
+    Foreign key is used to create a master child kind of relationship between two tables.
+    When we make a column in a table as foreign key, this column will then have to be referenced from another column from some other table.
+
+4. Difference between “WHERE ” and “HAVING”clause.
+    WHERE clause is used to filter records from the table. We can also specify join conditions between two tables in the WHERE clause.
+    If a SQL query has both WHERE and GROUP BY clause then the records will first get filtered based on the conditions mentioned in
+    WHERE clause before the data gets grouped as per the GROUP BY clause.
+    Conditions specified in the WHERE clause are applied to individual rows in the table.
+
+    Whereas HAVING clause is used to filter records returned from the GROUP BY clause. So if a SQL query has WHERE, GROUP BY
+    and HAVING clause then first the data gets filtered based on WHERE condition, only after this grouping of data takes place.
+    Finally based on the conditions in HAVING clause the grouped data again gets filtered.
+    Conditions specified in the HAVING clause are applied to aggregated values, not individual rows.
+
+
+5. Difference between PARTITION BY and GROUP BY.
+        The GROUP BY clause is used in combination with aggregate functions to group rows based on one or more columns.
+        It is typically used in queries where you want to perform aggregate calculations (such as SUM, COUNT, AVG, etc.) on groups of rows that share common
+        values in specified columns.
+        The GROUP BY clause is applied before the SELECT clause in the query execution.
+
+        -- Using GROUP BY
+        SELECT department, AVG(salary) AS avg_department_salary
+        FROM employees
+        GROUP BY department;
+        | department | avg_department_salary |
+        |------------|-----------------------|
+        | HR         | 52500.00              |
+        | IT         | 65000.00              |
+
+    The PARTITION BY clause is used with window functions, which are a set of functions that perform calculations across a specific range of rows related to the current row within the result set.
+    PARTITION BY divides the result set into partitions to which the window function is applied separately. It doesn't group the rows in the same way as GROUP BY.
+    The PARTITION BY clause is applied after the window function in the query execution.
+
+    -- Using PARTITION BY
+    SELECT employee_id, department, salary,
+           AVG(salary) OVER (PARTITION BY department) AS avg_department_salary
+    FROM employees;
+
+    | employee_id | department | salary   | avg_department_salary |
+    |-------------|------------|----------|-----------------------|
+    | 1           | HR         | 50000.00 | 52500.00              |
+    | 2           | HR         | 55000.00 | 52500.00              |
+    | 3           | IT         | 60000.00 | 65000.00              |
+    | 4           | IT         | 65000.00 | 65000.00              |
+    | 5           | IT         | 70000.00 | 65000.00              |
+
+6. Imagine there is a FULL_NAME column in a table which has values like “Elon Musk“, “Bill Gates“, “Jeff Bezos“ etc. So each full name has a first name,
+a space and a last name. Which functions would you use to fetch only the first name from this FULL_NAME column? Give example.
+
+    SELECT
+        SUBSTR(full_name, 1, POSITION(' ' IN full_name) - 1) as first_name
+    FROM
+        your_table_name;
+
+7. How can you convert a text into date format? Consider the given text as “31–01–2021“
+  In SQL, the TO_DATE function is commonly used to convert a text representation of a date into an actual date format. The syntax of the TO_DATE function varies across database systems, but you provided an example that looks like it's intended for a system using the 'DD-MM-YYYY' format.
+
+  Here’s an explanation of the SQL query you provided:
+
+  SELECT TO_DATE('31-01-2023', 'DD-MM-YYYY') as date_value;
+
+
+8. Why do we use CASE Statement in SQL? Give example
+    CASE statement is similar to IF ELSE statement from any other programming languages. We can use it to fetch or show a particular value based on certain condition.
+    CASE statement in SQL is used to perform conditional logic within a query.
+
+    Here’s a simple example of using the CASE statement in a SELECT query:
+
+    SELECT
+        employee_name,
+        salary,
+        CASE
+            WHEN salary > 50000 THEN 'High Salary'
+            WHEN salary > 30000 THEN 'Medium Salary'
+            ELSE 'Low Salary'
+        END AS salary_category
+    FROM
+        employees;
+
+    In this example, the CASE statement is used to categorize employees based on their salary. If the salary is greater than 50,000, the category is 'High Salary.'
+     If the salary is between 30,000 and 50,000, the category is 'Medium Salary.' Otherwise, the category is 'Low Salary.'
+
+9. Can we use aggregate function as window function? If yes then how do we do it?
+    Yes, we can use aggregate function as a window function by using the OVER clause. Aggregate function will reduce the number of rows or records since they perform calculation of a set of row values to return a single value. Whereas window function does not reduce the number of records.
+
+    Now, let’s use the SUM function as a window function to calculate the running total salary within each department based on the order of salaries:
+
+    SELECT
+        employee_id,
+        employee_name,
+        department,
+        salary,
+        SUM(salary) OVER (PARTITION BY department ORDER BY salary) AS running_total_salary
+    FROM
+        employees;
+
+    | employee_id | employee_name | department | salary   | running_total_salary |
+    |-------------|---------------|------------|----------|-----------------------|
+    | 1           | John          | HR         | 50000.00 | 50000.00              |
+    | 3           | Bob           | HR         | 55000.00 | 105000.00             |
+    | 2           | Jane          | IT         | 60000.00 | 60000.00              |
+    | 4           | Alice         | IT         | 70000.00 | 130000.00             |
+
+
+10.What is the difference between cross join and full/outer join?
+    Cross join don’t have a ON clause as everything is joined with everything. WHEREAS, outer join is combination of left outer join and right outer join.
+    Outer join returns those rows that matches the where clause and show null values for the rows, the ON conditions isn’t met.
+
+11. What is normalization? What are all the different normalizations?
+    Normalization is the process of minimizing repetition and dependency, by organizing fields and table of a database in a more efficient way. It helps us to remove null, duplicate values and enables efficient indexing.
+
+    Different types of normalization are:
+
+        1NF — Removes duplicated attributes, Attribute data should be atomic, and of same kind.
+        2NF — Should be in 1NF and each non-key field is fully dependent on the primary key.
+        3NF — Should be in 2NF and all the non-key attributes which are not dependent on the primary key should be removed.
+             All the attributes which are dependent on the other non-key attributes should also be removed.
+
+12. What is a View? Can I update data in the table using a view?
+    A view is a virtual table which consists of a subset of data contained in one or more real database table.
+
+    View is used when we need to give access to limited amount of data. We can give permission to query a view for a table while denied access to the original table.
+    It acts as a security measure.
+
+    Yes, you can update data in the table using a view by using a simple update statements.
+
+13. What is an Index? What are all the different types of indexes?
+    Indexes are special lookup tables that are used by database search engine for faster retrieval of the data. Simply put, an index is a pointer to data in a table. It is like an Index page of a book
+
+    Clustered: It stores the data rows in a table in sorted order. When a table has a clustered index, the table is called a clustered table. If a table has no clustered index, its data rows are stored in an unordered structure called a heap. You can only have one clustered index on a table. And if you have a PK on the table it automatically creates a clustered index.
+
+    Non-clustered: The non-clustered index is created to improve the performance of frequently used queries not covered by clustered index. Non-clustered index is built using the B-tree structure. The data and the Non-clustered index are stored separately thus claiming more storage space. You can have multiple non clustered index on a table or view.
+
+    Following differences between clustered and non-clustered indexes.
+
+        There can be only one clustered index per table. However, you can create multiple non-clustered indexes on a single table.
+        Clustered indexes only sort tables. Therefore, they do not consume extra storage. Non-clustered indexes are stored in a separate place from the actual table claiming more storage space.
+
+    3. Clustered indexes are faster than non-clustered indexes since they don’t involve any extra lookup step
+
+14. What is a Cursor?
+    A SQL query produce a complete result set, but there are times when the results are best processed one row at a time. Opening a cursor on a result set allows processing the result set one row at a time.
+
+    Performance of Cursor:
+
+    When you write a SELECT statement (that returns 1051 rows) to fetch a bunch of data from that database the system receives the statement and creates or uses an existing query plan, then it uses indexes to locate the data on the disk,
+    fetches the data in one foul swoop and returns the data as a set.
+
+    But, cursor does it on a row by row basis, and it takes longer to do so. This is because the set-based logic for which RDBMS systems like SQL Server are optimized
+    is completely broken and the entire query process is repeated for each row.
+
+15. What is a trigger?
+    A trigger is a special type of store d procedure that automatically runs when an event occurs in the database server. There are 3 types of triggers
+
+    a) DDL (Data Definition Language) triggers: We can create triggers on DDL statements (like CREATE, ALTER, and DROP) and certain system-defined stored
+    procedures that perform DDL-like operations. DDL trigger can be used to observe and control actions performed on the server, and to audit these operations.
+
+    b) DML (Data Modification Language) triggers: In SQL Server we can create triggers on DML statements (like INSERT, UPDATE, and DELETE) and stored procedures
+    that perform DML-like operations. These triggers are of two types:
+
+    · After Trigger: This type of trigger fires after SQL Server finishes the execution of the action successfully that fired it. If you insert record/row in a table then the trigger
+    related/associated with the insert event on this table will fire only after the row passes all the constraints,
+    like as primary key constraint, and some rules. If the record/row insertion fails, SQL Server will not fire the After Trigger.
+
+    · Instead of Trigger: An INSTEAD OF trigger is a trigger that allows you to skip an INSERT, DELETE, or UPDATE statement to a table or a view and execute
+    other statements defined in the trigger instead.
+
+    c) Logon Triggers: Logon triggers are a special type of trigger that fire when LOGON event of SQL Server is raised. We can use these triggers to audit and to
+    track login activity or limit the number of sessions for a specific login.
+
+16. What are advantages and Disadvantages of Stored Procedure?
+    Advantages:
+    Stored procedure can be used as a modular programming — means create once, store and call for several times whenever required.
+
+    This facilitates faster execution instead of executing multiple queries.
+
+    This reduces network traffic: The commands inside the SP are executed as a single batch of code. This means only the call to execute the procedure is sent over a network instead of every single line of code being sent individually.
+
+    Disadvantage:
+    utilizes more memory in the database server
+
+17. Can we perform insert/ update/ delete operations from function in database?
+    No, because functions only have READ-ONLY Database Access.
+
+18. Why functions are useful in database?
+        User-defined functions help to decompose a large program into small segments
+        makes program easy to understand, maintain and debug.
+        Code can be reused by creating functions and execute them when needed by calling that function.
+
+19.What is the difference between Union, Unionall?
+    The UNION command combines the result set of two or more SELECT statements (only distinct values). The UNION ALL command combines the result set of two or more SELECT statements (allows duplicate values)
+
+    Q20) What is Coalesce() and IsNull()?
+
+    Coalesce: Returns the first non-null value passed into the param list.
+
+    SELECT COALESCE(NULL, NULL, NULL, ‘HelloSQL’, NULL, ‘sql.com’); returns ‘HelloSQL’.
+
+    IsNull(): Returns the specified value if the passed expression is null, otherwise returns the expression.
+
+    SELECT ISNULL(NULL, ‘helloWorld’); returns ‘helloWorld’
+
+20. How to find the name of the process that is blocking database resource?
+    1) Activity Manager: You can use Activity Monitor to view information about the current processes and locks held on SQL Server resources.
+
+    2) Use stored procedure like sp_who2
+
+    3) Using DMVs like: sys.dm_exec_requests/sys.dm_tran_locks/sys.dm_os_waiting_tasks
+
+    Q22) How do I make sure that a column in Employee table only accepts values greater than zero?
+
+    Ans: We can use the “CHECK” constraint while creating the column in the table.
+
+    CREATE Table Employee(
+
+    id int,
+    Age int CHECK (Age>0)
+    )

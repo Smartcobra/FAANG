@@ -70,6 +70,8 @@ Output:
     The bean1() method is called only once, and the same instance is reused in bean2()
 Creating bean1
 Creating bean2 depends on Bean1
+
+
 ---
 Q. You need to load specific beans or configurations based on an environment variable. How do you achieve this?
 Use the @ConditionalOnProperty annotation:
@@ -81,6 +83,8 @@ public class FeatureConfig {
         return new MyFeature();
     }
 }
+
+
 ---
 Q. You want to expose custom health check information through the /actuator/health endpoint. How do you achieve this?
 @Component
@@ -100,6 +104,7 @@ public class MyHealthIndicator implements HealthIndicator {
         return true;
     }
 }
+
 ---
 Q. Your Spring Boot application needs to support HTTP/2 for better performance. How do you enable it?
 Enable HTTP/2 by configuring the embedded Tomcat server in application.properties

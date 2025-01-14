@@ -1,4 +1,4 @@
-package Shortest_Palindrome_214;
+package Shortest_Palindrome_adding_characters_in_front;
 
 public class SolutionBruteForce {
     public String shortestPalindrome(String s) {

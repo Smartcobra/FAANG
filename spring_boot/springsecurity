@@ -1,0 +1,248 @@
+Spring Security Components
+    Security Filter Chain
+        Filter Chain is the object that is provided by the Servlet Container to the developer to chain the filters and invoke as needed.
+        Filters uses the Filter Chain object to invoke the next filter.
+
+        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+                filterChain.doFilter(request, response);
+        }
+
+    Delegating Filter Proxy
+            The servlet and spring application context both has their own life cyle. To bridge this gap, Spring provides an implementation of
+            Filter called as DelegatingFilterProxy.
+            The DelegatingFilterProxy can be registered using standard Servlet container mechanism but delegates all the work to a Spring Bean that
+            implements Filter.
+
+    Filter Chain Proxy
+       This is a special Filter provided by Spring Security. It is a bean(an object that is instantiated, assembled and managed by Spring IOC)
+       that is wrapped into the Delegating Filter Proxy. Filter Chain Proxy basically delegates to Security Filter Chain to execute different Security Filters that are applied by Spring Security.
+
+       //Sample security filter chain implementation
+       public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+               http.csrf(AbstractHttpConfigurer::disable)
+                       .authorizeHttpRequests(requests ->
+                                   .anyRequest().authenticated()
+                       )
+                       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+               return http.build();
+           }
+
+    Authentication Filters
+
+        UsernamePasswordAuthenticationFilter — Username password based logins
+        BasicAuthenticationFilter — HTTP Basic Authentication Headers
+        RememberMeAuthenticationFilter — Remember me functionality for automatic authentication
+        AnonymousAuthenticationFilter — Anonymous authentication if no authentication mechanism is available
+        OAuth2LoginAuthenticationFilter — Authentication via OAuth2.0 providers such as Google, Facebook
+        Saml2WebSsoAuthenticationFilter — SAML 2.0 Single Sign On
+
+    Authorization Filters
+
+        FilterSecurityInterceptor — Access control rules based on user roles and permission
+        AuthorizationFilter — customizable filter for authorization logic.
+
+    Other Filters
+
+        CsrfFilter — Cross Site Request Forgery Attacks protection
+        LogoutFilter — User logout functionality
+        ExceptionTranslationFilter — Translates exceptions into HttpResponses or redirects
+        SessionManagementFilter — Manages user session and prevent concurrent behavior
+
+
+------
+  Security Context Holder
+        Spring Security Context Holder is a store where Spring Security stores the details of who is authenticated.
+        By default, The context uses the ThreadLocal to store these details. It means even if the context is not passed around between
+        different methods as an argument, the methods will still be able access the same context for the particular thread.
+
+  //Accessing the security context to retrieve relevant information for current request.
+  SecurityContext securityContext = SecurityContextHolder.getContext();
+  Authentication authentication = securityContext.getAuthentication();
+  Object principal = authentication.getPrincipal();
+  String username = authentication.getName();
+  Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+      Thread Local — Default
+      Global — Not recommended due to security vulnerabilities and thread-safety concerns.
+      Inheritable Thread Local — Can be used if the application is using asynchronous operations and want child threads to inherit the security context. Consider using dedicated thread pools for tasks that require a specific security context.
+
+  // Setting spring security context holder strategy
+   @PostConstruct
+      public void setSecurityContextHolderStrategy() {
+          SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+      }
+
+-----
+
+Security Context
+
+Security Context is obtained by the Security Context Holder which contains the Authentication Instance. Security context consists of the following
+
+    principal — User Identity
+    credentials — Primarily password or related information which is then cleared once authenticated.
+    authorities — High Level permission provided to the principal for accessing the system resources.
+
+
+----
+Authentication Interface
+  The authentication interface serves an input to the Authentication Manager to provide the credentials that the user has provided for authentication as
+  well post authentication has been completed it contains the information associated to the authenticated entity.
+
+--
+ Authentication Manager
+
+----
+ Authentication Provider
+
+---
+ DaoAuthenticationProvider
+    /Sample Bean for Authentication Provider
+    // Registering User Detail Service and Password Encoder.
+      @Bean
+        public AuthenticationProvider authenticationProvider() {
+            DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+            authProvider.setUserDetailsService(userDetailsService());
+            authProvider.setPasswordEncoder(passwordEncoder());
+            //Deprecated
+    //      authProvider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
+            return authProvider;
+        }
+
+---
+ Password Encoder
+
+ @Bean
+     public PasswordEncoder passwordEncoder(){
+         return new BCryptPasswordEncoder();
+     }
+
+---
+ User Detail Service
+ User detail service is an interface implemented to retrieve username, password and other information that aids in authenticating the user.
+
+ There are few default implementations that are provided by the Spring Security
+
+     InMemoryUserDetailsManager — provides support for username and password stored in the memory
+     JDBCUserDetailsManager — provides support for username and password stored in the database and retrieved via JDBC. There is a default schema that is applied when this implementation is used and hence if using this implementation, then default schema must be followed to use it to full potential.
+     CachingUserDetailsService — provides support for caching the user information using username and password. For this implementation, make sure to disable the credentials erasure for the Spring Security for credential container.
+
+
+
+----------------------------------------------------------------
+
+Security Configuration class :
+        @Configuration
+        @EnableWebSecurity
+        public class SpringSecurityConfiguration {
+            @Bean
+            public UserDetailsService singleUser() {
+              InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+              manager.createUser(
+              User.withDefaultPasswordEncoder().username("user").password("password").roles("USER").build());
+            return manager;
+          }
+             @Bean
+             public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+               httpSecurity.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                  .formLogin(withDefaults()).httpBasic(withDefaults());
+              return httpSecurity.build();
+            }
+
+
+        // We can also create multiple users and give role based access to them
+         @Bean
+         public UserDetailsService multipleUsers() {
+          /*
+           * Note: do not use withDefaultPasswordEncoder() method in production since its
+           * not recommended and its not safe. This is used only for development and learning purpose ,
+           * use your own password generating methods.
+           */
+            UserBuilder user = User.withDefaultPasswordEncoder();
+            InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+            manager.createUser(user.username("faiz").password("user_password").roles("USER").build());
+            manager.createUser(user.username("Pradeep").password("admin_password").roles("ADMIN").build());
+
+          return manager;
+         }
+
+        @Bean
+         public SecurityFilterChain configureMultipleUserRoles(HttpSecurity httpSecurity) throws Exception {
+          httpSecurity.csrf((csrf) -> csrf.disable()).securityMatcher("/bookstore/api/v1/admin**")
+            .authorizeHttpRequests(auth -> auth.anyRequest().hasRole("ADMIN")).httpBasic(withDefaults());
+
+          return httpSecurity.build();
+
+         }
+
+
+////////////////////JWT-------------
+@Component
+@EnableMethodSecurity
+@AllArgsConstructor
+public class SecurityConfig {
+
+    private UserDetailsService userDetailsService;
+
+    private JwtAuthenticationEntryPoint authenticationEntryPoint;
+
+    private JwtAuthenticationFilter authenticationFilter;
+
+    @Bean
+    public static PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        http.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests((authorize) -> {
+                    authorize.requestMatchers("/api/auth/**").permitAll();
+                    authorize.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                    authorize.anyRequest().authenticated();
+                }).httpBasic(Customizer.withDefaults());
+
+        http.exceptionHandling( exception -> exception
+                .authenticationEntryPoint(authenticationEntryPoint));
+
+        http.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+}
+
+
+---------------------
+Improvement in spring security 6:
+ --> WebSecurityConfigurerAdapter Removed
+        In previous versions of Spring Security, you had to extend the WebSecurityConfigurerAdapter class to configure security settings.
+        This class has been deprecated and removed in Spring Security 6. Instead, you should now take a more component-based approach
+        and create a bean of type SecurityFilterChain
+ --> Authorize Http Requests
+        Instead of using authorizeRequests, which has been deprecated, you should now use authorizeHttpRequests.
+        This method is part of the HttpSecurity configuration and allows you to configure fine-grained request matching for access control. Here's an example of how to use authorizeHttpRequests:
+
+ --> RequestMatchers Replacing AntMatcher, MvcMatcher, and RegexMatcher
+    AntMatcher, MvcMatcher, and RegexMatcher have been deprecated and replaced by requestMatchers or securityMatchers for path-based access control.
+    This allows you to match requests based on patterns or other criteria without relying on specific matchers.
+    Here's an example that permits access to the /greet endpoint without authentication while requiring authentication for all other requests:
+    @EnableWebSecurity
+    @Configuration
+    public class SecurityConfig {
+
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+            return http.authorizeHttpRequests(auth -> auth
+                .requestMatchers("/greet").permitAll()
+                .anyRequest().authenticated())
+                .formLogin()
+                .build();
+        }
+    }
+
+ -->
