@@ -132,5 +132,168 @@ public class Application extends SpringBootServletInitializer {
     // ...
 }
 
+----
+Q. You have a circular dependency between two beans (ServiceA and ServiceB). This results in a BeanCurrentlyInCreationException. How do you handle this?
+            Refactor the dependency: Avoid direct dependencies between ServiceA and ServiceB by introducing a mediator or using an interface.
+            Use @Lazy on one of the beans:
 
+        @Service
+        public class ServiceA {
+            private final ServiceB serviceB;
+
+            public ServiceA(@Lazy ServiceB serviceB) {
+                this.serviceB = serviceB;
+            }
+        }
+
+            Use setter-based injection:
+
+        @Service
+        public class ServiceA {
+            private ServiceB serviceB;
+
+            @Autowired
+            public void setServiceB(ServiceB serviceB) {
+                this.serviceB = serviceB;
+            }
+        }
+
+----
+Q. You need to inject a value into a bean dynamically based on a condition (e.g., environment variable). How would you achieve this?
+            Use @Value with a fallback:
+
+        @Value("${custom.value:defaultValue}")
+        private String customValue;
+
+            Use a @Configuration class and create beans conditionally:
+
+        @Configuration
+        public class AppConfig {
+            @Bean
+            @ConditionalOnProperty(name = "feature.enabled", havingValue = "true")
+            public MyFeatureBean myFeatureBean() {
+                return new MyFeatureBean();
+            }
+        }
+
+Q. You have a prototype-scoped bean that you need to inject into a singleton bean. However, the singleton always uses the same instance of the prototype bean. How do you fix this?
+            Use ObjectProvider to request a new instance of the prototype bean each time:
+
+        @Service
+        public class SingletonService {
+            private final ObjectProvider<MyPrototypeBean> prototypeBeanProvider;
+
+            public SingletonService(ObjectProvider<MyPrototypeBean> prototypeBeanProvider) {
+                this.prototypeBeanProvider = prototypeBeanProvider;
+            }
+
+            public MyPrototypeBean getPrototypeBean() {
+                return prototypeBeanProvider.getObject();
+            }
+        }
+
+            Alternatively, use a @Scope-aware proxy:
+
+        @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
+        @Component
+        public class MyPrototypeBean { }
+
+Q. You have a non-Spring-managed class (e.g., an external library class), and dependency injection fails for this class. How do you inject dependencies into it?
+        Manually inject dependencies using the ApplicationContext:
+
+    @Component
+    public class NonSpringService {
+        private final SomeDependency dependency;
+
+        public NonSpringService(ApplicationContext context) {
+            this.dependency = context.getBean(SomeDependency.class);
+        }
+    }
+
+        Use @Configurable with AspectJ weaving:
+
+    @Configurable
+    public class NonSpringClass {
+        @Autowired
+        private SomeDependency dependency;
+    }
+
+Q. Your team uses field injection (@Autowired) throughout the codebase, but it causes issues during testing. How would you refactor this?
+        Replace field injection with constructor injection:
+
+    @Service
+    public class MyService {
+        private final MyDependency dependency;
+
+        public MyService(MyDependency dependency) {
+            this.dependency = dependency;
+        }
+    }
+
+        Why? Constructor injection:
+        Ensures immutability.
+        Makes dependencies explicit.
+        Works better with testing frameworks like Mockito.
+
+
+Q. You need to inject different beans based on the active Spring profile (e.g., dev or prod). How do you handle this?
+            Use @Profile on the bean definitions:
+
+        @Configuration
+        @Profile("dev")
+        public class DevConfig {
+            @Bean
+            public MyService myService() {
+                return new DevService();
+            }
+        }
+
+        @Configuration
+        @Profile("prod")
+        public class ProdConfig {
+            @Bean
+            public MyService myService() {
+                return new ProdService();
+            }
+        }
+
+Q. You need to inject a value from a custom property file, not application.properties. How would you configure this?
+            Load the custom property file using @PropertySource:
+
+        @Configuration
+        @PropertySource("classpath:custom.properties")
+        public class AppConfig {
+            @Value("${custom.property}")
+            private String customProperty;
+        }
+
+            Alternatively, use a @ConfigurationProperties class:
+
+        @ConfigurationProperties(prefix = "custom")
+        @Component
+        public class CustomProperties {
+            private String property;
+            // getters and setters
+        }
+
+
+Q. You have a dependency that may or may not be present in the application context. How do you handle this?
+        Use @Autowired(required = false):
+
+    @Autowired(required = false)
+    private MyOptionalDependency optionalDependency;
+
+        Use Optional:
+
+    @Autowired
+    private Optional<MyOptionalDependency> optionalDependency;
+
+        Use ObjectProvider:
+
+    @Autowired
+    private ObjectProvider<MyOptionalDependency> provider;
+
+    public void useDependency() {
+        MyOptionalDependency dependency = provider.getIfAvailable();
+    }
 

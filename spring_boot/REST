@@ -1,3 +1,94 @@
 1. @RequestParam vs @QueryParam vs @PathParam vs @PathVariable in REST
     @PathParam & @QueryParam are NOT Spring Annotations. They are JAX-RS annotation. Whereas only @RequestParam & @PathVariable are SPRING Annotations!!
 
+1. @RequestParam(Spring)
+
+@RequestParam is used to extract query parameters from the URL. It is typically used to handle parameters that are part of the URL query string.
+
+Example URL Usage:
+
+http://example.com/api/users?id=123&name=John
+
+Controller REST Call:
+
+@RestController
+@RequestMapping("/api")
+public class UserController {
+
+@GetMapping("/users")
+    public ResponseEntity<String> getUserByIdAndName(
+            @RequestParam("id") String id,
+            @RequestParam("name") String name) {
+
+        return ResponseEntity.ok("User ID: " + id + ", Name: " + name);
+    }
+}
+
+2. @PathVariable (Spring)
+
+@PathVariable is used to extract values from URI templates. These values are part of the path segment of the URL.
+
+Example URL Usage:
+
+http://example.com/api/users/123/John
+
+Controller REST Call:
+
+@RestController
+@RequestMapping("/api")
+public class UserController {
+
+@GetMapping("/users/{id}/{name}")
+    public ResponseEntity<String> getUserByIdAndName(
+            @PathVariable("id") String id,
+            @PathVariable("name") String name) {
+
+        return ResponseEntity.ok("User ID: " + id + ", Name: " + name);
+    }
+}
+
+3. @QueryParam (JAX-RS's equivalent of Spring's @RequestParam)
+
+@QueryParam is used in JAX-RS (Java API for RESTful Web Services) for extracting query parameters from the URL. It is not a Spring annotation but can be used in JAX-RS implementations. In Spring, @RequestParam is the equivalent.
+
+Example URL Usage:
+
+http://example.com/api/users?id=123&name=John
+
+Controller REST Call (JAX-RS):
+
+@Path("/api")
+public class UserResource {
+
+@GET
+    @Path("/users")
+    public ResponseEntity<String> getUserByIdAndName(
+            @QueryParam("id") String id,
+            @QueryParam("name") String name) {
+
+        return ResponseEntity.ok("User ID: " + id + ", Name: " + name);
+    }
+}
+
+4. @PathParam (JAX-RS's equivalent of Spring's @PathVariable)
+
+Binds a path parameter from the URI to a method parameter.
+
+It is used to extract path parameters from the URI in JAX-RS (Java API for RESTful Web Services) implementations like Jersey or RESTEasy.
+
+Example URL Usage:
+
+http://example.com/api/users/123
+
+Controller REST Call:
+
+@Path("/api")
+public class UserResource {
+
+    @GET
+    @Path("/users/{id}")
+    public ResponseEntity<String> getUserById(
+            @PathParam("id") String id) {
+        return ResponseEntity.ok("User ID: " + id);
+    }
+}

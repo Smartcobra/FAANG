@@ -1,0 +1,118 @@
+Here's how you can recover and process missed data in RabbitMQ using Java with the RabbitMQ
+
+Setup Durable Queue and Persistent Messages::
+    import com.rabbitmq.client.*;
+
+    import java.io.IOException;
+    import java.nio.charset.StandardCharsets;
+    import java.util.concurrent.TimeoutException;
+
+    public class RabbitMQExample {
+
+        private static final String QUEUE_NAME = "my_durable_queue";
+
+        public static void main(String[] args) throws IOException, TimeoutException {
+            // Connect to RabbitMQ server
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.setHost("localhost"); // Update with your RabbitMQ host
+            Connection connection = factory.newConnection();
+            Channel channel = connection.createChannel();
+
+            // Declare a durable queue
+            boolean durable = true; // Queue survives broker restart
+            channel.queueDeclare(QUEUE_NAME, durable, false, false, null);
+
+            // Publish a persistent message
+            String message = "Hello, durable RabbitMQ!";
+            AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
+                    .deliveryMode(2) // Make the message persistent
+                    .build();
+
+            channel.basicPublish("", QUEUE_NAME, properties, message.getBytes(StandardCharsets.UTF_8));
+            System.out.println(" [x] Sent: '" + message + "'");
+
+            channel.close();
+            connection.close();
+        }
+    }
+
+Enable Acknowledgments::
+    Consumers must acknowledge messages to ensure that RabbitMQ knows they have been processed.
+    import com.rabbitmq.client.*;
+
+    import java.io.IOException;
+    import java.nio.charset.StandardCharsets;
+    import java.util.concurrent.TimeoutException;
+
+    public class ConsumerExample {
+
+        private static final String QUEUE_NAME = "my_durable_queue";
+
+        public static void main(String[] args) throws IOException, TimeoutException {
+            // Connect to RabbitMQ server
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.setHost("localhost");
+            Connection connection = factory.newConnection();
+            Channel channel = connection.createChannel();
+
+            // Declare the queue (must match producer's configuration)
+            boolean durable = true;
+            channel.queueDeclare(QUEUE_NAME, durable, false, false, null);
+
+            // Define consumer
+            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+                String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
+                System.out.println(" [x] Received: '" + message + "'");
+
+                try {
+                    // Simulate message processing
+                    System.out.println("Processing message...");
+                    Thread.sleep(1000);
+
+                    // Acknowledge message after successful processing
+                    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+                    System.out.println(" [x] Message processed and acknowledged");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            };
+
+            // Listen to the queue with manual acknowledgment
+            boolean autoAck = false; // Enable manual acknowledgment
+            channel.basicConsume(QUEUE_NAME, autoAck, deliverCallback, consumerTag -> {});
+        }
+    }
+
+
+Recover Missed Messages Using Dead-Letter Queue (DLQ)::
+    Set up a Dead-Letter Queue (DLQ) to capture unprocessed messages.
+
+        Declare the main queue with DLQ binding:
+
+    Map<String, Object> args = new HashMap<>();
+    args.put("x-dead-letter-exchange", "");
+    args.put("x-dead-letter-routing-key", "dlq_queue");
+
+    channel.queueDeclare("main_queue", true, false, false, args);
+
+    Declare the DLQ:
+
+    channel.queueDeclare("dlq_queue", true, false, false, null);
+
+    Handle messages in the DLQ:
+
+    channel.basicConsume("dlq_queue", false, deliverCallback, consumerTag -> {});
+
+Recover from Network or Consumer Failures::
+    Use message acknowledgments (basicAck).
+
+    Enable QoS (prefetch) to limit unacknowledged messages:
+
+    channel.basicQos(1); // One message at a time
+
+    Use manual retries for failed messages by re-queuing them or send to a retry queue.
+
+Requeue Missed Messages::
+    If the consumer fails to process a message, you can requeue it:
+
+    channel.basicNack(delivery.getEnvelope().getDeliveryTag(), false, true);

@@ -10,3 +10,106 @@ No, private methods cannot be overridden because they are not visible to subclas
  Exceptions thrown in a static block can only be caught within a static initializer block using a try-catch. Otherwise,
  the program will fail to load the class.
 
+3. Class Loader :
+    A class loader is a tool that Java uses to load different classes (pieces of code) into the memory of your computer when a Java program is running. It’s like a librarian who helps the computer to find and “read” the right books (classes) that the program needs to use.
+
+    There are three built-in class loaders in Java
+
+        Bootstrap class loader: this is the first class loader that starts working when you run a Java program.
+        It loads the most basic classes that Java needs to run, such as classes for working with numbers or strings.
+        These classes are located in the <JAVA_HOME>/lib directory.
+        Extension class loader: this class loader loads additional classes that extend the functionality of Java,
+         such as classes for working with databases or XML files. These classes are located in the <JAVA_HOME>/lib/ext directory.
+        System class loader: Also know as application class loader. This class loader loads classes from the classpath
+        specified by the CLASSPATH environment variable or the -classpath command-line option. It loads classes that you or other
+        developers have created for your program.
+
+
+3. Interface VS Abstract class:
+    Abstract class :
+         Cannot be instantiated: You cannot create an object of an abstract class directly.
+         Abstract methods: It can have abstract methods, which must be implemented by any subclass.
+         Concrete methods: It can also contain fully implemented methods, giving subclasses some default behavior.
+         Single inheritance: Like any other class, an abstract class can be extended by only one subclass at a time.
+
+     abstract class Animal {
+         abstract void sound();  // Abstract method
+
+         public void eat() {     // Concrete method
+             System.out.println("This animal is eating.");
+         }
+     }
+
+     class Dog extends Animal {
+         @Override
+         void sound() {
+             System.out.println("The dog barks.");
+         }
+     }
+
+   Interface :
+    An interface in Java is like a contract for classes. It is a completely abstract class, meaning all of its methods are abstract (until Java 8, when default and static methods were introduced). Interfaces are used to specify behaviors that a class must implement, but they don’t provide any concrete behavior themselves.
+    Key Features of Interfaces:
+
+        All methods are abstract by default.
+        A class can implement multiple interfaces, which provides a workaround for Java’s lack of multiple inheritance.
+        Interfaces do not have instance variables, though they can have static final constants.
+
+    interface Flyable {
+        void fly();  // Abstract method
+    }
+
+    interface Swimmable {
+        void swim(); // Abstract method
+    }
+
+    class Duck implements Flyable, Swimmable {
+        @Override
+        public void fly() {
+            System.out.println("The duck flies.");
+        }
+
+        @Override
+        public void swim() {
+            System.out.println("The duck swims.");
+        }
+    }
+
+4.  Multiple Inheritance in Java and How It Is Achieved via Interfaces
+
+   Java doesn’t support multiple inheritance (a class cannot extend more than one class). This restriction exists to avoid the “diamond problem”, which arises when a class inherits from two classes that both provide different implementations of the same method. This could create ambiguity about which method to use.
+
+   However, Java provides a solution to this problem through interfaces. Since a class can implement multiple interfaces, Java developers can achieve the functionality of multiple inheritance without its complications.
+   Why Multiple Inheritance Is Not Allowed in Java:
+
+       Ambiguity: Multiple inheritance can lead to ambiguity when two or more parent classes have methods with the same signature.
+       Complexity: The code becomes harder to maintain and debug.
+       Diamond Problem: In languages that support multiple inheritance (like C++), the “diamond problem” can occur, leading to confusion over which inherited method to execute.
+
+   Achieving Multiple Inheritance with Interfaces:
+
+   Since interfaces provide no method implementations (before Java 8), there’s no risk of conflicting method implementations, allowing a class to implement as many interfaces as it needs.
+
+   interface Printable {
+       void print();
+   }
+
+   interface Showable {
+       void show();
+   }
+
+   class Document implements Printable, Showable {
+       @Override
+       public void print() {
+           System.out.println("Printing document.");
+       }
+
+       @Override
+       public void show() {
+           System.out.println("Showing document.");
+       }
+   }
+
+   Here, Document implements both Printable and Showable interfaces, thereby achieving multiple inheritance behavior without ambiguity.
+
+5.
