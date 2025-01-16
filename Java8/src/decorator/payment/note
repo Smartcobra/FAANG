@@ -1,0 +1,8 @@
+The Decorator Pattern is a Structural design pattern that dynamically allows behavior to be added to an individual object.
+This pattern is often used to adhere to the Open/Closed Principle, as it allows extending the functionality of classes without modifying their code.
+
+In the context of an online payment system, we might have different types of payment methods, such as Credit Card, PayPal, or Bank Transfer.
+Each payment type might need additional features such as fraud detection, discount offer, or payment logging. Using inheritance to add these
+features could lead to an explosion of subclasses for each combination of payment types and features. Instead, the Decorator Pattern allows us to
+wrap these features around existing payment objects in a flexible way.
+

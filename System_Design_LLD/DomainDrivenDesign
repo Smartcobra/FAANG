@@ -52,9 +52,12 @@ Integration and Bounded Context, and the use of Event Sourcing and CQRS.
 
 Integration and Bounded Context
 
-One of the cornerstones of DDD is the concept of Bounded Context. This concept refers to the clear delimitation of functionality within the domain model where specific rules and business logic apply. In a large system, different bounded contexts can coexist, each with its own domain model that is valid only within that context.
+One of the cornerstones of DDD is the concept of Bounded Context.
+This concept refers to the clear delimitation of functionality within the domain model where specific rules and business logic apply.
+In a large system, different bounded contexts can coexist, each with its own domain model that is valid only within that context.
 
-Mapping between Contexts: In complex systems where different teams work on different parts of the system, it is crucial to establish clear mappings between bounded contexts. This is achieved through integration patterns that define how models interact and communicate with each other. Some common patterns include:
+Mapping between Contexts:
+In complex systems where different teams work on different parts of the system, it is crucial to establish clear mappings between bounded contexts. This is achieved through integration patterns that define how models interact and communicate with each other. Some common patterns include:
 
     Anti-Corruption Layer (ACL): A pattern used to prevent changes in an external context from directly affecting the internal context. It acts as an adapter that translates between two domain models.
     Client/Server: Where one context is a client making requests to another context acting as a server.

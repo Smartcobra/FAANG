@@ -391,7 +391,7 @@ Callable is similar to Runnable but can return a result and throw a checked exce
          }
      }
  }
-
+////
 23. Explain the ForkJoinPool and RecursiveTask in Java.
 ForkJoinPool is designed for parallel processing by breaking tasks into smaller pieces using the fork/join framework.
 RecursiveTask is a subclass of ForkJoinTask used to define tasks that return a result.
@@ -424,4 +424,475 @@ public class ForkJoinExample {
         System.out.println("Fibonacci(10) = " + result);
     }
 }
+///
+24. What is Future in Java?
+    Future is a mechanism to represent the result of an asynchronous computation in Java. It is part of the java.util.concurrent package
+    How It Works
 
+        You submit a task to an ExecutorService.
+        The ExecutorService runs the task in the background.
+        A Future object is returned immediately to represent the result of the task
+
+    Common Methods of Future::
+        1. get()
+        Explanation:
+
+        The get() method blocks the calling thread until the computation represented by the Future is complete. Once the task completes,
+        get() retrieves the result. If the task completes exceptionally (i.e., an exception is thrown during execution), it will throw an ExecutionException.
+
+            When to Use: You would use get() when you need the result of a computation, and you are okay with the calling thread being
+            blocked while waiting for the result.
+            Blocking Behavior: The calling thread will wait and block at future.get() until the task finishes, and the result is returned.
+
+        Real-Time Example:
+        In this scenario, you're performing a computation that involves fetching data from a remote service.
+        You want to block the calling thread and wait for the result of the computation to proceed further
+            import java.util.concurrent.*;
+
+            public class FutureExample {
+                public static void main(String[] args) throws InterruptedException, ExecutionException {
+                    ExecutorService executor = Executors.newFixedThreadPool(1);
+                    Future<String> future = executor.submit(() -> {
+                        Thread.sleep(2000); // Simulating a delay (e.g., waiting for a remote service)
+                        return "Data from remote service";
+                    });
+
+                    // Blocks and waits until the result is ready
+                    String result = future.get();
+                    System.out.println(result); // Output: "Data from remote service"
+
+                    executor.shutdown();
+                }
+            }
+        Output:
+
+        Data from remote service
+        Explanation: The thread waits for the computation to finish.
+        After 2 seconds of simulated processing (representing a delay, like fetching data), the result is returned and printed
+
+        2. isDone()
+           Explanation:
+
+           The isDone() method checks if the task is completed. It returns true if the computation is finished, either through normal completion,
+           cancellation, or failure (exception).
+
+           When to Use: This method is useful when you want to check the progress of a task without blocking the thread. For example,
+           you may have multiple tasks running concurrently, and you want to check if they have completed
+
+           Real-Time Example:
+
+           You have multiple tasks running concurrently, and you want to periodically check if any of them are finished without blocking the calling thread.
+           The isDone() method is useful for this.
+           import java.util.concurrent.*;
+
+           public class FutureExample {
+               public static void main(String[] args) throws InterruptedException, ExecutionException {
+                   ExecutorService executor = Executors.newFixedThreadPool(1);
+                   Future<String> future = executor.submit(() -> {
+                       Thread.sleep(2000); // Simulating a delay
+                       return "Data from remote service";
+                   });
+
+                   // Continuously checking if the task is done
+                   while (!future.isDone()) {
+                       System.out.println("Task is still running...");
+                       Thread.sleep(500); // Check every 500ms
+                   }
+
+                   // Once isDone() returns true, we can get the result
+                   String result = future.get();
+                   System.out.println(result); // Output: "Data from remote service"
+
+                   executor.shutdown();
+               }
+           }
+           Output::
+
+           Task is still running...
+           Task is still running...
+           Task is still running...
+           Data from remote service
+
+           Explanation: The thread checks if the task is done every 500 milliseconds.
+           The message "Task is still running..." is printed multiple times before the task completes (after 2 seconds).
+           Once the task is done, the result is printed.
+
+        3. cancel(boolean mayInterrupt)
+            Explanation:
+
+            The cancel() method attempts to cancel the task. If the task is running, it may attempt to interrupt the task (if mayInterrupt is true).
+            If the task is already completed or canceled, the method does nothing and returns false. If the task is successfully canceled, it returns true.
+
+            When to Use: This method is useful when you want to cancel a task that is taking too long or is no longer necessary.
+                Interrupting the Task: If mayInterrupt is true, it tries to interrupt the running task. If the task is a long-running I/O operation
+                or computation, this will stop the task if it's designed to handle interrupts.
+
+            Real-Time Example:
+            Imagine you're running a long-running computation, and after some time, you decide it should be canceled
+            (e.g., due to a timeout or change in business requirements). This is how you can cancel it
+
+            import java.util.concurrent.*;
+
+            public class FutureExample {
+                public static void main(String[] args) throws InterruptedException, ExecutionException {
+                    ExecutorService executor = Executors.newFixedThreadPool(1);
+                    Future<String> future = executor.submit(() -> {
+                        Thread.sleep(5000); // Simulating a long-running task
+                        return "Data from remote service";
+                    });
+
+                    // Trying to cancel the task if it takes too long
+                    if (!future.cancel(true)) {
+                        System.out.println("Task could not be canceled");
+                    } else {
+                        System.out.println("Task was successfully canceled");
+                    }
+
+                    executor.shutdown();
+                }
+            }
+
+        Output::
+        Task was successfully canceled
+        Explanation::
+        The task is canceled after 1 second, even though it was supposed to run for 5 seconds.
+        The cancel(true) attempts to interrupt the task, which succeeds in this case.
+        The cancellation is confirmed with the message "Task was successfully canceled"
+
+        4. isCancelled()
+        Explanation:
+
+        The isCancelled() method checks if the task was successfully canceled before it completed. It returns true if the task was canceled, otherwise false.
+
+        When to Use: After attempting to cancel a task, you can use isCancelled() to confirm whether the task was successfully canceled or not.
+            Use Case: If you're monitoring multiple tasks and one of them was canceled, this method helps you confirm the cancellation.
+
+        Real-Time Example::
+        You attempt to cancel a task and then check whether the cancellation was successful using isCancelled()
+            import java.util.concurrent.*;
+
+            public class FutureExample {
+                public static void main(String[] args) throws InterruptedException, ExecutionException {
+                    ExecutorService executor = Executors.newFixedThreadPool(1);
+                    Future<String> future = executor.submit(() -> {
+                        Thread.sleep(5000); // Simulating a long-running task
+                        return "Data from remote service";
+                    });
+
+                    // Attempting to cancel the task
+                    future.cancel(true);
+
+                    if (future.isCancelled()) {
+                        System.out.println("Task was successfully canceled");
+                    } else {
+                        System.out.println("Task was not canceled");
+                    }
+
+                    executor.shutdown();
+                }
+            }
+        Output:
+        Task was successfully canceled
+
+        Explanation:
+        The task is canceled before it finishes running (after 1 second).
+        The cancellation is confirmed using isCancelled(), which prints the message "Task was successfully canceled"
+
+25. What is CompletableFuture?
+    CompletableFuture is a part of Java's concurrency framework introduced in Java 8, in the java.util.concurrent package.
+    It represents an asynchronous computation that can be manually completed (or "set") at a later time, and it provides a
+    flexible way to handle asynchronous tasks.
+
+    In simpler terms, it allows you to write code that executes asynchronously while providing you with easy ways to manage and
+    combine multiple asynchronous tasks. It extends the Future interface but adds more powerful capabilities to handle asynchronous
+    tasks in a non-blocking and more readable manner.
+
+    Key Features of CompletableFuture:
+
+        Non-blocking Operations: Allows you to perform multiple tasks concurrently without blocking the main thread.
+        Chaining: Supports chaining of multiple tasks that depend on the result of the previous one.
+        Exception Handling: Provides built-in support for exception handling in asynchronous computations.
+        Manual Completion: You can manually complete a CompletableFuture with a result or an exception, allowing more control.
+        Combining Futures: You can combine multiple CompletableFuture instances in various ways (e.g., thenCombine(), allOf(), anyOf()).
+        Composition: Supports combining multiple futures or chaining tasks to avoid nested callbacks, making it easier to handle complex workflows
+
+    Problems CompletableFuture Solves
+
+        Asynchronous Task Management:
+
+        Problem with Future: When using Future, you're often stuck in a situation where you have to block the calling thread using get().
+        This creates performance bottlenecks in multi-threaded applications, especially when you need to handle multiple independent tasks.
+        Solution with CompletableFuture: CompletableFuture provides an easier way to manage multiple asynchronous tasks by allowing you to chain
+        them and execute them without blocking. It also allows you to execute code when a task completes using methods like thenApply(),
+        thenAccept(), or thenCompose(). These methods provide a non-blocking, more functional approach to asynchronous programming.
+
+    2.Combining Multiple Asynchronous Tasks:
+
+        Problem with Future: If you need to wait for several asynchronous tasks to finish and then combine the results, you would need complex
+        logic or nested callbacks with Future. This leads to callback hell.
+        Solution with CompletableFuture: CompletableFuture makes it easier to combine multiple asynchronous tasks using methods like thenCombine(),
+        allOf(), and anyOf(). You can wait for all tasks to finish or combine their results in a clean, readable way.
+
+    3.Manual Completion of Tasks:
+
+        Problem with Future: A Future is automatically completed once the task is done, and you cannot manually complete it or handle special completion cases.
+        Solution with CompletableFuture: With CompletableFuture, you can manually complete a task using complete() or completeExceptionally()
+        if certain conditions are met, allowing for more control over the task's lifecycle.
+
+    4.Exception Handling:
+
+        Problem with Future: If an exception occurs during the computation of a Future, it is wrapped in an ExecutionException and is only
+         accessible after calling get(). Handling exceptions becomes complex when you need to handle multiple asynchronous tasks.
+        Solution with CompletableFuture: CompletableFuture provides methods like exceptionally() and handle() to handle exceptions in
+        asynchronous computations. These methods allow you to provide fallback values or perform actions when an exception occurs,
+         avoiding the need for explicit try-catch blocks.
+
+    5.Readable and Maintainable Code:
+
+        Problem with Future: Using Future for complex asynchronous tasks often leads to nested code and callback hell, especially when there are dependent tasks.
+        Solution with CompletableFuture: With methods like thenApply(), thenCompose(), and thenCombine(), CompletableFuture allows for clean,
+        readable, and maintainable code when dealing with multiple asynchronous tasks. It also supports functional-style programming,
+        making the code more declarative and concise
+
+    Methods:
+        1. supplyAsync():: static <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier);
+        Description:
+
+        Executes the given Supplier asynchronously and returns a CompletableFuture representing the result.
+        Real-Time Use Case:
+
+        In an e-commerce platform, a product details page can be loaded asynchronously.
+        You might want to load product details, images, and recommendations asynchronously
+
+        import java.util.concurrent.*;
+
+        public class CompletableFutureExample {
+            public static void main(String[] args) throws ExecutionException, InterruptedException {
+                ExecutorService executor = Executors.newFixedThreadPool(1);
+
+                // Asynchronously fetching product details
+                CompletableFuture<String> productDetails = CompletableFuture.supplyAsync(() -> {
+                    try {
+                        Thread.sleep(1000); // Simulating network call
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    return "Product Details: Laptop";
+                }, executor);
+
+                System.out.println(productDetails.get());  // Output: Product Details: Laptop
+                executor.shutdown();
+            }
+        }
+
+        Output::
+        Product Details: Laptop
+
+        Explanation::
+        The supplyAsync() method runs the task asynchronously and returns a CompletableFuture. In this case, it simulates fetching product details
+
+        2. thenApply() :: <U> CompletableFuture<U> thenApply(Function<? super T, ? extends U> fn);
+            Description:
+
+            Transforms the result of a CompletableFuture when it is completed. It allows chaining functions to be executed when the original task finishes.
+            Real-Time Use Case:
+
+            In the previous example, after fetching product details, you might want to apply a discount and display the discounted price
+
+            import java.util.concurrent.*;
+            import java.util.function.Function;
+
+            public class CompletableFutureExample {
+                public static void main(String[] args) throws ExecutionException, InterruptedException {
+                    ExecutorService executor = Executors.newFixedThreadPool(1);
+
+                    // Asynchronously fetching product details
+                    CompletableFuture<String> productDetails = CompletableFuture.supplyAsync(() -> {
+                        try {
+                            Thread.sleep(1000); // Simulating network call
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        return "Product Details: Laptop";
+                    }, executor);
+
+                    // Applying a discount on the fetched product details
+                    CompletableFuture<String> discountedProductDetails = productDetails.thenApply(details -> {
+                        return details + " - Discounted Price: $900";
+                    });
+
+                    System.out.println(discountedProductDetails.get());  // Output: Product Details: Laptop - Discounted Price: $900
+                    executor.shutdown();
+                }
+            }
+
+            Output:
+            Product Details: Laptop - Discounted Price: $900
+
+            Explanation:
+            Here, the thenApply() method transforms the result of the original CompletableFuture (which is the product details) by adding a discounted price
+
+        3. thenCompose() :: <U> CompletableFuture<U> thenCompose(Function<? super T, ? extends CompletableFuture<U>> fn);
+            Description:
+
+            Chains two asynchronous operations where the result of the first operation is used to initiate a second operation. It's like performing two dependent async tasks.
+            Real-Time Use Case:
+
+            Once the product details are fetched, you need to fetch related recommendations. The result of the first task (product details) is passed to initiate the second task (fetching recommendations).
+            Code Example:
+
+            import java.util.concurrent.*;
+            import java.util.function.Function;
+
+            public class CompletableFutureExample {
+                public static void main(String[] args) throws ExecutionException, InterruptedException {
+                    ExecutorService executor = Executors.newFixedThreadPool(1);
+
+                    // Asynchronously fetching product details
+                    CompletableFuture<String> productDetails = CompletableFuture.supplyAsync(() -> {
+                        try {
+                            Thread.sleep(1000); // Simulating network call
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        return "Product Details: Laptop";
+                    }, executor);
+
+                    // Using thenCompose to fetch recommendations after getting product details
+                    CompletableFuture<String> recommendations = productDetails.thenCompose(details -> {
+                        return CompletableFuture.supplyAsync(() -> {
+                            try {
+                                Thread.sleep(1000); // Simulating recommendation fetching
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            return "Recommendations: Mouse, Keyboard";
+                        }, executor);
+                    });
+
+                    System.out.println(recommendations.get());  // Output: Recommendations: Mouse, Keyboard
+                    executor.shutdown();
+                }
+            }
+
+            Output::
+            Recommendations: Mouse, Keyboard
+
+            Explanation::
+            thenCompose() allows us to chain dependent asynchronous tasks. The second task (fetching recommendations)
+            starts only after the first one (fetching product details) is complete
+
+        4. thenAccept() :: void thenAccept(Consumer<? super T> action);
+            Description:
+
+            Similar to thenApply(), but it doesn't return a new CompletableFuture. It performs an action (a Consumer) with the result of the computation.
+            Real-Time Use Case:
+
+            You may need to log the result of the product details fetch operation without further modifying the data
+
+            import java.util.concurrent.*;
+            import java.util.function.Consumer;
+
+            public class CompletableFutureExample {
+                public static void main(String[] args) throws ExecutionException, InterruptedException {
+                    ExecutorService executor = Executors.newFixedThreadPool(1);
+
+                    // Asynchronously fetching product details
+                    CompletableFuture<String> productDetails = CompletableFuture.supplyAsync(() -> {
+                        try {
+                            Thread.sleep(1000); // Simulating network call
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        return "Product Details: Laptop";
+                    }, executor);
+
+                    // Consuming the result without returning a new value
+                    productDetails.thenAccept(details -> {
+                        System.out.println("Logging: " + details); // Logging the product details
+                    });
+
+                    executor.shutdown();
+                }
+            }
+
+            Output::
+            Logging: Product Details: Laptop
+
+            Explanation::
+            The thenAccept() method is used here to simply log the product details, without returning any result.
+
+        5. exceptionally() :: CompletableFuture<T> exceptionally(Function<Throwable, ? extends T> handler);
+            Description:
+
+            Handles exceptions in asynchronous computations. If the computation fails, it will handle the exception and return a fallback value.
+            Real-Time Use Case:
+
+            If fetching product details fails, you might want to provide a default product message or retry the operation
+
+            import java.util.concurrent.*;
+            import java.util.function.Function;
+
+            public class CompletableFutureExample {
+                public static void main(String[] args) throws ExecutionException, InterruptedException {
+                    ExecutorService executor = Executors.newFixedThreadPool(1);
+
+                    // Asynchronously fetching product details with a failure scenario
+                    CompletableFuture<String> productDetails = CompletableFuture.supplyAsync(() -> {
+                        if (true) { // Simulating an error
+                            throw new RuntimeException("Failed to fetch product details");
+                        }
+                        return "Product Details: Laptop";
+                    }, executor);
+
+                    // Handling the exception and providing a fallback value
+                    CompletableFuture<String> fallback = productDetails.exceptionally(ex -> {
+                        return "Default Product: Placeholder";
+                    });
+
+                    System.out.println(fallback.get());  // Output: Default Product: Placeholder
+                    executor.shutdown();
+                }
+            }
+
+            Output::
+            Default Product: Placeholder
+
+            Explanation::
+            exceptionally() catches the exception and provides a fallback value if something goes wrong during the asynchronous computation
+
+        6.join():: T join();
+            Description:
+
+            Blocks until the computation completes and retrieves the result. Unlike get(), join() wraps any exception in a CompletionException instead of ExecutionException.
+            Real-Time Use Case:
+
+            You may want to block the thread and wait for the result of multiple independent asynchronous tasks and then combine the results
+
+            import java.util.concurrent.*;
+
+            public class CompletableFutureExample {
+                public static void main(String[] args) {
+                    ExecutorService executor = Executors.newFixedThreadPool(1);
+
+                    // Asynchronously fetching product details
+                    CompletableFuture<String> productDetails = CompletableFuture.supplyAsync(() -> {
+                        try {
+                            Thread.sleep(1000); // Simulating network call
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        return "Product Details: Laptop";
+                    }, executor);
+
+                    // Using join() to wait for the result
+                    System.out.println(productDetails.join());  // Output: Product Details: Laptop
+
+                    executor.shutdown();
+                }
+            }
+            output::
+            Product Details: Laptop
+
+            Explanation:
+            The join() method waits until the result is available and returns it. If an exception occurs, it wraps it in a CompletionException

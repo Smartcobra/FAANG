@@ -112,4 +112,38 @@ No, private methods cannot be overridden because they are not visible to subclas
 
    Here, Document implements both Printable and Showable interfaces, thereby achieving multiple inheritance behavior without ambiguity.
 
-5.
+5.  Why Isn’t My HashMap Key Being Found?
+        import java.util.HashMap;
+        import java.util.Objects;
+        class Key {
+            private String id;
+            public Key(String id) {
+                    this.id = id;
+                }
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                Key key = (Key) o;
+                return Objects.equals(id, key.id);
+            }
+        }
+        public class HashMapDemo {
+            public static void main(String[] args) {
+                HashMap<Key, String> map = new HashMap<>();
+                map.put(new Key("1"), "Value1");
+                System.out.println(map.get(new Key("1")));
+            }
+        }
+
+            Will it print “Value1”?
+            If not, why?
+            How would you fix it?
+
+           Will it print “Value1”? No, it will print null.
+           Why? While the equals method is correctly overridden, the hashCode method is not. In HashMap, keys are stored in buckets based on their hash codes. Without a proper hashCode implementation, the new Key("1") does not map to the same bucket as the original key.
+           How to fix it? Add a proper hashCode implementation:
+
+       @Override public int hashCode() {
+           return Objects.hash(id);
+       }

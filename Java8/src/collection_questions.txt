@@ -69,19 +69,19 @@ Use `Collections.synchronizedList()`,`Collections.synchronizedSet()`, or `Collec
 `BlockingQueue` is a type of queue that supports operations that wait for the queue to become non-empty when retrieving an element and wait for space to become available when storing an element.
  Main implementations include `ArrayBlockingQueue`, `LinkedBlockingQueue`, and `PriorityBlockingQueue`.
 
- 19. What are the advantages of using the `NavigableMap` and `NavigableSet` interfaces?
+19. What are the advantages of using the `NavigableMap` and `NavigableSet` interfaces?
  They provide methods for navigation, such as getting the closest matches for keys or elements. For example, `floorEntry()`, `ceilingEntry()`, `lowerEntry()`, and `higherEntry()` in `NavigableMap`.
 
- 20. How does `TreeSet` ensure that elements are sorted?
+20. How does `TreeSet` ensure that elements are sorted?
  `TreeSet` uses a `NavigableMap` (specifically a `TreeMap`) to store elements. Elements are sorted according to their natural ordering or by a comparator provided at set creation time.
 
- 26. Explain the concept of `immutability` in collections. How can you create an immutable collection?
+26. Explain the concept of `immutability` in collections. How can you create an immutable collection?
  An immutable collection cannot be modified after it’s created. Use `Collections.unmodifiableList()`, `Collections.unmodifiableSet()`, etc., or use the `List.of()`, `Set.of()`, and `Map.of()` methods introduced in Java 9.
 
- 27. What are `WeakHashMap` and its use cases?
+27. What are `WeakHashMap` and its use cases?
  `WeakHashMap` uses weak references for its keys, allowing them to be garbage collected when there are no other strong references. It is useful for implementing memory-sensitive caches.
 
- 28. Use the `stream()` method and `filter()`:
+28. Use the `stream()` method and `filter()`:
  List<String> list = Arrays.asList("A", "B", "C", "D");
  List<String> filteredList = list.stream()
   .filter(s -> s.startsWith("A"))
@@ -296,3 +296,160 @@ public class PriorityQueueExample {
     }
 }
 
+45. You have a collection of user data that is read frequently but updated rarely. Which collection would you choose, and why?
+    Use CopyOnWriteArrayList.
+
+        Why: It provides thread-safety with better performance for read-heavy operations since reads are lock-free. However, it creates a new copy of the underlying array for every write operation, making it less efficient for write-heavy scenarios.
+
+    Example:
+
+    CopyOnWriteArrayList<String> users = new CopyOnWriteArrayList<>();
+    users.add("Alice");
+    users.add("Bob");
+    // Safe iteration
+    for (String user : users) {
+        System.out.println(user);
+        users.add("Charlie"); // No ConcurrentModificationException
+    }
+
+46. How would you design a lightweight cache where the keys expire automatically when they are no longer referenced elsewhere in the application?
+    Use WeakHashMap.
+
+        Why: The keys in WeakHashMap are stored as weak references, allowing them to be garbage-collected when not referenced elsewhere.
+
+    Example:
+
+    Map<Object, String> cache = new WeakHashMap<>();
+    Object key = new Object();
+    cache.put(key, "Cached Data");
+    key = null; // Key is no longer referenced
+    System.gc(); // Garbage collector clears the key
+    System.out.println(cache); // Output: {}
+
+47. You have a list of transactions that must always remain sorted by amount. How would you achieve this?
+    Use a PriorityQueue or TreeSet.
+
+        PriorityQueue: For dynamic sorting where duplicate transactions are allowed.
+        TreeSet: If you need unique transactions sorted by a custom comparator.
+
+    Code Example with PriorityQueue:
+
+    PriorityQueue<Transaction> transactions = new PriorityQueue<>(Comparator.comparing(Transaction::getAmount));
+    transactions.add(new Transaction(100));
+    transactions.add(new Transaction(50));
+    transactions.add(new Transaction(150));
+    while (!transactions.isEmpty()) {
+        System.out.println(transactions.poll().getAmount()); // Output: 50, 100, 150
+    }
+
+48. You are building a real-time leaderboard where scores are updated concurrently. Which collection would you choose?
+
+    Use ConcurrentSkipListMap.
+
+        Why: It provides thread-safe, sorted key-value mappings and is efficient for concurrent access.
+
+    Code Example:
+
+    ConcurrentSkipListMap<Integer, String> leaderboard = new ConcurrentSkipListMap<>(Comparator.reverseOrder());
+    leaderboard.put(100, "Alice");
+    leaderboard.put(200, "Bob");
+    leaderboard.put(150, "Charlie");
+    leaderboard.forEach((score, player) -> System.out.println(player + ": " + score));
+
+49. How would you manage a collection of event listeners in a memory-sensitive application where listeners can be garbage-collected?
+
+    Use WeakHashMap with listener objects as keys.
+
+    Code Example:
+
+    Map<Object, EventListener> listeners = new WeakHashMap<>();
+    Object listenerKey = new Object();
+    listeners.put(listenerKey, new EventListener());
+    listenerKey = null; // Allow listener to be garbage-collected
+    System.gc();
+    System.out.println(listeners.size()); // Output: 0
+
+50. You have a list of configuration parameters that should not be modified at runtime. How do you ensure immutability?
+    Use List.of() (Java 9+) or Collections.unmodifiableList().
+
+    Example:
+
+    List<String> config = List.of("Param1", "Param2", "Param3"); // Immutable
+    // config.add("Param4"); // Throws UnsupportedOperationException
+
+51. You need to process a large dataset, remove duplicates, and ensure the data remains sorted. Which collection do you use?
+
+    Use a TreeSet.
+
+    Example:
+
+    Set<Integer> data = new TreeSet<>();
+    data.add(10);
+    data.add(5);
+    data.add(10);
+    data.add(20);
+    System.out.println(data); // Output: [5, 10, 20]
+
+52. How would you group a list of employees by their departments in an efficient and thread-safe manner?
+
+    Use ConcurrentHashMap with Collectors.groupingBy().
+
+    Example:
+
+    List<Employee> employees = List.of(
+        new Employee("Alice", "HR"),
+        new Employee("Bob", "IT"),
+        new Employee("Charlie", "HR")
+    );
+    Map<String, List<Employee>> grouped = employees.stream()
+        .collect(Collectors.groupingByConcurrent(Employee::getDepartment));
+    grouped.forEach((dept, empList) -> System.out.println(dept + ": " + empList));
+
+53. You are processing a stream of events and need to maintain a real-time frequency count. Which collection do you use?
+
+    Use ConcurrentHashMap with merge().
+
+    Example:
+
+    ConcurrentHashMap<String, Integer> eventCount = new ConcurrentHashMap<>();
+    eventCount.merge("eventA", 1, Integer::sum);
+    eventCount.merge("eventA", 1, Integer::sum);
+    eventCount.merge("eventB", 1, Integer::sum);
+    System.out.println(eventCount); // Output: {eventA=2, eventB=1}
+
+54. How do you process a large dataset while maintaining thread safety and efficiency?
+
+    Use parallel streams or Collectors.toConcurrentMap().
+
+    Example:
+
+    List<String> data = List.of("apple", "banana", "apple", "orange");
+    Map<String, Long> frequency = data.parallelStream()
+        .collect(Collectors.groupingByConcurrent(Function.identity(), Collectors.counting()));
+    System.out.println(frequency); // Output: {apple=2, banana=1, orange=1}
+
+55. How do you sort a list of employees by department, then by name?
+
+    Use Comparator with thenComparing().
+
+    Code Example:
+
+    List<Employee> employees = List.of(
+        new Employee("Alice", "HR"),
+        new Employee("Charlie", "IT"),
+        new Employee("Bob", "HR")
+    );
+    employees.sort(Comparator.comparing(Employee::getDepartment).thenComparing(Employee::getName));
+    employees.forEach(System.out::println);
+
+56. How do you handle paginated data efficiently for a collection of a million records?
+
+    Use subList() for in-memory pagination or consider lazy fetching with streams.
+
+    Example:
+
+    List<String> data = IntStream.range(0, 1000000).mapToObj(String::valueOf).collect(Collectors.toList());
+    int pageSize = 10;
+    int pageNumber = 2;
+    List<String> page = data.subList((pageNumber - 1) * pageSize, pageNumber * pageSize);
+    System.out.println(page);

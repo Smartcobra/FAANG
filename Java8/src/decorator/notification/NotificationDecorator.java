@@ -1,4 +1,4 @@
-package decorator;
+package decorator.notification;
 
 public class NotificationDecorator implements Notification {
     protected Notification notification;

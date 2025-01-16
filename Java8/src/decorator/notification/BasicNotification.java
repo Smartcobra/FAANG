@@ -1,4 +1,4 @@
-package decorator;
+package decorator.notification;
 
 public class BasicNotification implements Notification {
     @Override

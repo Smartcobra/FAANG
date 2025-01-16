@@ -1,4 +1,4 @@
-package decorator;
+package decorator.notification;
 
 class PushNotification extends NotificationDecorator {
     public PushNotification(Notification notification) {
