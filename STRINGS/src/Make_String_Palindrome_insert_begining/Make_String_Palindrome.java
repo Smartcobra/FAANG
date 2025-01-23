@@ -1,5 +1,9 @@
-package Make_String_Palindrome;
+package Make_String_Palindrome_insert_begining;
+/*
+Given a string A of size N consisting only of lowercase alphabets. The only operation allowed is to insert characters in the beginning of the string.
 
+Find and return how many minimum characters are needed to be inserted to make the string a palindrome string.
+ */
 ///https://www.scaler.com/academy/mentee-dashboard/class/29548/homework/problems/363/hints?navref=cl_pb_nv_tb
 public class Make_String_Palindrome {
 

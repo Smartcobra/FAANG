@@ -1,6 +1,4 @@
-package Make_String_Palindrome;
-
-import java.util.Arrays;
+package Make_String_Palindrome_insert_begining;
 
 public class UsingKMP {
     public static int solve(String str) {

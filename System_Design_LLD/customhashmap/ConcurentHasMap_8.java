@@ -1,6 +1,6 @@
 import java.util.concurrent.atomic.AtomicReference;
 
-public class CustomConcurrentHashMapCAS<K, V> {
+public class CustomConcurrentHashMapCAS<K, V> { //CAS
     private final int bucketCount;
     private final AtomicReference<Node<K, V>>[] buckets;
 

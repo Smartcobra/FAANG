@@ -1,4 +1,4 @@
-package Make_String_Palindrome;
+package Make_String_Palindrome_insert_begining;
 
 import java.util.Arrays;
 

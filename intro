@@ -1,23 +1,41 @@
-I am a highly skilled and versatile Full Stack Developer with over a decade of experience designing, developing, and
- delivering robust, scalable, and user-focused software solutions. My expertise lies in leveraging modern web development
- technologies, with a strong focus on Java Spring Boot for back-end development and React for creating dynamic and responsive front-end interfaces.
+I am a highly skilled and versatile Full Stack Developer with over a decade of experience designing,
+developing, and delivering robust, scalable, and user-focused software solutions.
+My expertise lies in leveraging modern web development technologies, with a strong
+focus on Java Spring Boot for back-end development and React for creating dynamic and responsive
+front-end interfaces.
 
 Throughout my career, I have consistently demonstrated a deep understanding of software architecture, design patterns, and agile methodologies.
 I specialize in building end-to-end systems, integrating secure APIs, optimizing database performance, and ensuring seamless user experiences. My ability to adapt to evolving technologies and deliver production-grade solutions has been a cornerstone of my success.
 Key Highlights:
 
-    Back-End Expertise: Extensive experience in building RESTful APIs, microservices, and enterprise-grade applications using Java Spring Boot.
-    Front-End Development: Proficient in developing interactive and responsive UI components using React, Redux, and modern JavaScript/TypeScript.
-    Database Management: Skilled in working with relational databases (MySQL, PostgreSQL) and NoSQL solutions (MongoDB, Redis).
-    DevOps & CI/CD: Hands-on experience with Docker, Kubernetes, Jenkins, and cloud platforms like AWS and Azure for deployment and scalability.
-    Team Leadership: Proven ability to mentor teams, lead projects, and collaborate with cross-functional stakeholders to deliver high-quality software.
+    Back-End Expertise: Extensive experience in building RESTful APIs, microservices,
+    and enterprise-grade applications using Java Spring Boot.
 
- My deep understanding of microservices principles, including loose coupling, domain-driven design, and event-driven architecture, enables me to craft solutions that are efficient, fault-tolerant, and highly available.
- I am well-versed in the end-to-end development lifecycle, from design and implementation to deployment and monitoring in production environments.
+    Front-End Development: Proficient in developing interactive and responsive UI components using React,
+     Redux, and modern JavaScript/TypeScript.
 
- Microservices Development: Expertise in developing RESTful APIs and asynchronous messaging systems using Java Spring Boot and tools like Kafka and RabbitMQ.
- Cloud-Native Solutions: Proficient in deploying microservices to cloud platforms like AWS, Azure, or Google Cloud, and leveraging tools such as Kubernetes and Docker.
- Database Expertise: Skilled in working with both SQL and NoSQL databases (e.g., MySQL, PostgreSQL, MongoDB) for designing highly efficient data storage solutions.
- DevOps Integration: Hands-on experience with CI/CD pipelines using Jenkins, GitHub Actions, and GitLab CI, ensuring seamless code integration and deployment.
- Observability & Monitoring: Strong knowledge of monitoring and debugging distributed systems using tools like Prometheus, Grafana, and ELK Stack (Elasticsearch, Logstash, Kibana).
- Scalability & Resilience: Adept at implementing scalability patterns such as circuit breakers, retries, and load balancing for resilient systems.
+    Database Management: Skilled in working with relational databases (MySQL, PostgreSQL)
+    and NoSQL solutions (MongoDB, Redis).
+    DevOps & CI/CD: Hands-on experience with Docker, Kubernetes, Jenkins, and cloud platforms
+    like AWS for deployment and scalability.
+    Team Leadership: Proven ability to mentor teams, lead projects,
+    and collaborate with cross-functional stakeholders to deliver high-quality software.
+
+ My deep understanding of microservices principles, including loose coupling,
+ domain-driven design, and event-driven architecture, enables me to craft solutions that are efficient,
+ fault-tolerant, and highly available.
+ I am well-versed in the end-to-end development lifecycle,
+ from design and implementation to deployment and monitoring in production environments.
+
+ Microservices Development: Expertise in developing RESTful APIs and asynchronous messaging systems
+ using Java Spring Boot and tools like Kafka and RabbitMQ.
+ Cloud-Native Solutions: Proficient in deploying microservices to cloud platforms like AWS,
+  digital ocean and leveraging tools such as Kubernetes and Docker.
+ Database Expertise: Skilled in working with both SQL and NoSQL databases
+ (e.g., MySQL, PostgreSQL, MongoDB) for designing highly efficient data storage solutions.
+ DevOps Integration: Hands-on experience with CI/CD pipelines using Jenkins,
+ GitHub Actions, and GitLab CI, ensuring seamless code integration and deployment.
+ Observability & Monitoring: Strong knowledge of monitoring and debugging
+ distributed systems using tools like Prometheus, Grafana, and ELK Stack (Elasticsearch, Logstash, Kibana).
+ Scalability & Resilience: Adept at implementing scalability patterns such as circuit
+ breakers, retries, and load balancing for resilient systems.

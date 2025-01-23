@@ -1,0 +1,46 @@
+The CAP theorem (also known as Brewer's theorem) is a fundamental principle in distributed systems that states:
+
+It is impossible for a distributed data system to simultaneously guarantee all three of the following:
+
+    Consistency (C): Every read receives the most recent write or an error.
+    Availability (A): Every request (read or write) receives a response, regardless of
+    the state of the system.
+    Partition Tolerance (P): The system continues to operate despite an arbitrary number of
+    messages being delayed or lost between nodes in the system.
+
+Why is it impossible to achieve all three simultaneously?
+
+When a network partition occurs (communication between nodes fails), the system must make a trade-off between:
+
+    Consistency: Ensuring that all nodes agree on the same data, even if it means rejecting some requests.
+    Availability: Ensuring the system responds to requests, even if some nodes may not have the latest data.
+
+You must choose between:
+
+    CA (Consistency + Availability): Systems like relational databases prioritize consistency and availability over partition tolerance but can fail in the presence of network partitions.
+    AP (Availability + Partition Tolerance): Systems like DynamoDB or Cassandra favor availability and partition tolerance but may return stale data.
+    CP (Consistency + Partition Tolerance): Systems like HBase or MongoDB prioritize consistency and partition tolerance but may sacrifice availability during a partition.
+
+Real-World Implications:
+
+    No distributed system is immune to network partitions, so you must make a trade-off depending on your application requirements.
+    Systems like banking prioritize consistency (to prevent money mismanagement).
+    Systems like e-commerce prioritize availability (so users can still browse and purchase even during network issues).
+
+
+Database Sharding-------
+Database sharding is a method of horizontally partitioning a database to improve performance,
+scalability, and manageability by dividing a large database into smaller, more manageable pieces
+called shards. Each shard is an independent database that contains a subset of the data, and
+together they represent the complete dataset.
+Key Concepts of Sharding:
+
+    Shard Key:
+        A specific column or set of columns in the database used to determine how data is distributed across shards.
+        For example, in a user database, the shard key could be user_id.
+
+    Horizontal Partitioning:
+        Instead of storing all data in a single database, rows are distributed across multiple databases based on the shard key.
+
+    Independent Databases:
+        Each shard operates as an independent database and can reside on separate servers, improving parallel processing and fault tolerance.

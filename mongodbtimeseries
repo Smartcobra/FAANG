@@ -1,0 +1,198 @@
+What is a time series?
+
+A time series represents a series of observations of well-defined data items obtained through
+repeated measurements over time. Each entry is preceded and followed by another and has a timestamp
+that determines the order of the data.
+
+Time series data is generally composed of three components:
+
+    Time when the data point was recorded
+    Metadata (also know as source), which is a label or tag that uniquely identifies a series and rarely changes
+    Measurements (also know as metrics or values), which are the data points tracked at increments in time (seconds, minutes, hours, days, months, etc.) Generally these are key-value pairs that change over time.
+
+    For example in a weather data scenario, the metric could be the temperature while the metadata
+    could be the sensor identifier and the location.
+
+MongoDB Time Serie Collections
+MongoDB is a document database used to build highly available and scalable applications. It uses a JSON-like format to store documents,
+making easy for developers to store structured or unstructured data.
+
+
+Create, populate and query time series collections
+
+To create a time series collection you can use db.createCollection() command and specify the following time series related parameters:
+
+    timeField, the name of the field that contains the date in each time series document.
+    metaField (optional), the name of the field that contains metadata in each time series document.
+    granularity (optional), can be “seconds”, “minutes”, “hours”. By default is set to “seconds” for high-frequency ingestion.
+
+# Create 'weather' collection
+db.createCollection(
+    "weather",
+    {
+       timeseries: {
+          timeField: "timestamp",
+          metaField: "metadata",
+          granularity: "hours"
+       }
+    }
+)
+
+Once you have created the collection you can populate it. Each measurement inserted should be a single measurement, either as individual documents or batches of documents with one measure per document. MongoDB optimizes the data, as it stores data ordered by time (as opposed to normal collections where data are stored in “natural order”, that usually coincide with the inserting order).
+
+# Insert many documents at once in the collection
+db.weather.insertMany( [
+   {
+      "metadata": { "sensorId": 5578, "type": "temperature" },
+      "timestamp": ISODate("2021-05-18T00:00:00.000Z"),
+      "temp": 12
+   },
+   {
+      "metadata": { "sensorId": 5578, "type": "temperature" },
+      "timestamp": ISODate("2021-05-18T04:00:00.000Z"),
+      "temp": 11
+   },
+   {
+      "metadata": { "sensorId": 5578, "type": "temperature" },
+      "timestamp": ISODate("2021-05-18T08:00:00.000Z"),
+      "temp": 11
+   },
+   {
+      "metadata": { "sensorId": 5578, "type": "temperature" },
+      "timestamp": ISODate("2021-05-18T12:00:00.000Z"),
+      "temp": 12
+   }
+] )
+
+On the documentation you can find some best practice useful when you need to create a time series collection.
+
+Once data are in the collection you can easily query them in many different ways.
+You can use db.collection.findOne() or db.collection.findMany() to retrieve one or more documents according to the given input filters. You can retrieve a specific measurement or multiple observations in a specific range of time.
+
+# Find a specific document using its timestamp
+db.weather.findOne({
+   "timestamp": ISODate("2021-05-18T00:00:00.000Z")
+})
+
+As in any other MongoDB collections you can perform aggregation pipeline. Aggregation pipelines process multiple documents and return computed results. Thanks to aggregation you can group multiple documents together; perform operations on the grouped data to return a single result; analyze data changes over time.
+
+# Aggregate pipeline to compute the average daily temperature
+db.weather.aggregate( [
+   {
+      # 1. Split timestamp to date component (year, month, day)
+      $project: {
+         date: {
+            $dateToParts: { date: "$timestamp" }
+         },
+         temp: 1
+      }
+   },
+   {
+      # 2. Group data according to the date
+      $group: {
+         _id: {
+            date: {
+               year: "$date.year",
+               month: "$date.month",
+               day: "$date.day"
+            }
+         },
+        # 3. Compute average temperature using "temp" field
+         avgTmp: { $avg: "$temp" }
+      }
+   }
+] )
+
+To improve query performance secondary indexes on the metaField and/or the timeField can be added.
+Automatic delete or archiving documents
+
+After a certain time period time series data might not be so relevant and you might want to delete or archive old data to keep the collections as small as possible, improving performance and reducing costs.
+
+If you would like to remove data after a certain time has passed you can use the expireAfterSeconds option that enable the automatic deletion of documents by specifying the number of seconds after which documents expire. This parameter can be set or modified at any point during or after collection creation, so if the requirement change, you can easily modify or update the Time To Live (TTL) for your date.
+
+# Create 'weather' collection with TTL option
+db.createCollection(
+    "weather",
+    {
+       timeseries: {
+          timeField: "timestamp",
+          metaField: "metadata",
+          granularity: "hours"
+       },
+       expireAfterSeconds: 86400 # TTL option
+    }
+)
+
+# or set/modify TTL option after collection's creation
+db.runCommand({
+   collMod: "weather",
+   expireAfterSeconds: 86400 # TTL option
+})
+
+Another option for handling old data is to tier it into operational and online archive storage. Using Atlas Online Archive you can automatically archive data from your Atlas cluster to a MongoDB managed Data Lake. For details information see the official MongoDB documentation on how configuring online archives.
+Deal with missing data
+
+Time series data frequently exhibit gaps for a number of reasons, including measurement failures, formatting problems, human errors or a lack of information to record. On the other hand, time series data must be continuous to perform analytics and guarantee accurate outcome.
+MongoDB time series interpolation
+
+From version 5.3 MongoDB introduces gap filling, to make easier to handle missing data and to allow to bring valuable insight to light. Gap filling is possible thanks to$densify and $fill commands.
+
+The $densify command creates new documents to eliminate the gaps in the time or numeric domain at the required granularity level.
+
+The $fill command provides the actual values or data for the new entries. Missing data points can be populated with a fixed values or with a value based on the surrounding documents using linear interpolation or using the value of last or next observation.
+
+Given a collection with the following two documents, representing the temperature of a given sensor at 8AM and 10AM of 18th of May:
+
+[
+     {
+      "metadata": { "sensorId": 5578, "type": "temperature" },
+      "timestamp": ISODate("2021-05-18T08:00:00.000Z"),
+      "temp": 10
+   },
+   {
+      "metadata": { "sensorId": 5578, "type": "temperature" },
+      "timestamp": ISODate("2021-05-18T10:00:00.000Z"),
+      "temp": 15
+   }
+]
+
+This function produces an hourly view of the temperature. When temperature data is missing it should be interpolated linearly:
+
+[
+  { $densify: {
+      field: "timestamp",
+      partitionByFields: ["metadata.sensorId"],
+      range: {
+        step: 1,
+        unit: "hour",
+        bounds: "partition"
+      }
+  } },
+  { $fill: {
+    partitionByFields: ["metadata.sensorId"],
+    sortBy: {"timestamp": 1},
+    output: {
+      temp: {method: "linear"}
+    }
+  } }
+]
+
+In this way the following document is created at 9AM with a value of 12.5 for the field temperature:
+
+{
+    "metadata": { "sensorId": 5578, "type": "temperature" },
+    "timestamp": ISODate("2021-05-18T09:00:00.000Z"),
+    "temp": 12.5
+ }
+
+Time series collections limitations
+
+Time series collection have some limitations:
+
+    some feature like Atlas Search, GraphQL API, database triggers are not supported;
+    you cannot use $out or $merge aggregation pipeline stages to add data from another collection to a time series collection;
+    you can only set the collection type when you create a collection: an existing collection cannot become a time series collection and, in the same way, a time series collection cannot be converted into a different collection type;
+    you cannot write to time series collections in transactions;
+    time series collections are writable non-materialized views. Limitations for views apply to time series collections.
+
+At the following link all time series limitations are reported in details.
