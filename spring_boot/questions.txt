@@ -260,3 +260,75 @@ public static void main(String[] args) throws ExecutionException, InterruptedExc
   @SpringBootApplication is a convenience annotation that combines three annotations: @Configuration (marks the class as a source of bean definitions),
   @EnableAutoConfiguration (enables Spring Boot’s auto-configuration mechanism), and
   @ComponentScan (scans the package of the annotated class for Spring components).
+
+Q18. What are the stages of the Spring bean lifecycle?
+        1.Instantiation: Spring creates the bean instance.
+        2.Property Population: Dependencies are injected (via setter or constructor injection).
+        3.BeanPostProcessor — Before Initialization: postProcessBeforeInitialization is called.
+        4.Initialization: @PostConstruct methods or InitializingBean.afterPropertiesSet() are invoked.
+        5.BeanPostProcessor — After Initialization: postProcessAfterInitialization is called.
+        6.Ready for Use: The bean is now available for use.
+        7.Destruction: @PreDestroy methods or DisposableBean.destroy() are called before the bean is removed.
+
+Q19. Customizing the Lifecycle
+    @PostConstruct and @PreDestroy:
+    @Component public class MyBean {
+        @PostConstruct
+        public void init() {
+            System.out.println("Initializing bean");
+        }
+        @PreDestroy
+        public void destroy() {
+            System.out.println("Destroying bean");
+        }
+    }
+
+    InitializingBean and DisposableBean:
+    @Component public class MyBean implements InitializingBean, DisposableBean {
+         @Override
+         public void afterPropertiesSet() {
+             System.out.println("Properties set");
+         }
+         @Override
+         public void destroy() {
+                System.out.println("Cleanup");
+         }
+    }
+
+    Custom Init and Destroy Methods:
+    @Bean(initMethod = "init", destroyMethod = "cleanup")
+    public MyBean myBean() {
+        return new MyBean();
+    }
+
+20. What is Spring Boot, and how is it different from the traditional Spring Framework?
+        Spring Boot is a microservice-based framework built on top of the Spring Framework.
+        It simplifies configuration by offering opinionated defaults and embedded servers (Tomcat, Jetty).
+        Unlike traditional Spring, it eliminates boilerplate code, XML configuration, and manual server setup.
+
+21. Explain the concept of auto-configuration in Spring Boot.
+       Auto-configuration enables Spring Boot to automatically configure beans based on dependencies in the classpath.
+        Mention @EnableAutoConfiguration and how it works in conjunction with spring.factories.
+        Discuss how you can exclude specific auto-configurations if needed using properties or annotations.
+
+22. What are Spring Boot starters? Why are they important?
+        Starters are pre-configured Maven/Gradle dependencies that simplify project setup.
+        Examples: spring-boot-starter-web, spring-boot-starter-data-jpa.
+        They bundle dependencies and configurations, reducing setup complexity.
+
+23. How does Spring Boot handle application properties and profiles?
+        Explain the use of application.properties or application.yml for configuration.
+        Discuss profiles (spring.profiles.active) for environment-specific settings.
+        Highlight externalized configuration and property hierarchy.
+
+24. Describe the Spring Boot Actuator and its use cases.
+        Spring Boot Actuator provides production-ready features like monitoring and metrics.
+        Built-in endpoints like /actuator/health and /actuator/metrics.
+        Custom endpoints can be added for specific monitoring needs.
+
+25. What are the different ways to deploy a Spring Boot application?
+        Embedded server deployment (JAR files) and external server deployment (WAR files).
+        Deploying on cloud platforms like AWS, Azure, GCP, and Kubernetes.
+        Containerizing with Docker and orchestrating with tools like Helm.
+
+26. How does Spring Boot support microservices architecture?

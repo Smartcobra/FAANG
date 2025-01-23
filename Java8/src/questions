@@ -147,3 +147,96 @@ No, private methods cannot be overridden because they are not visible to subclas
        @Override public int hashCode() {
            return Objects.hash(id);
        }
+
+6. How to resolve issues with reflection and cloning in Singleton?
+    Prevent Reflection: Reflection can be used to call the private constructor of a singleton class and create multiple instances.
+    To prevent this, you can modify the constructor to throw an exception if an instance already exists.
+    public class Singleton {
+          private static Singleton instance;
+          private Singleton() {
+                   if (instance != null) {
+                    throw new IllegalStateException("Instance already created!");
+                    }
+          }
+    public static Singleton getInstance() {
+        if (instance == null) {
+            instance = new Singleton();
+        }
+            return instance;
+        }
+    }
+
+    Prevent Cloning: The clone() method can also break the Singleton pattern by allowing an object to be cloned, effectively creating multiple instances.
+    To avoid this, you need to override the clone() method and throw a CloneNotSupportedException.
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+    throw new CloneNotSupportedException();
+    }
+
+
+7. How would you implement logging in Java using Decorators?
+    The Decorator Pattern allows you to dynamically add behavior to an object without modifying its code. This is useful for adding logging functionality to existing classes.
+
+    Here's how you could implement logging using the Decorator Pattern:
+    interface Processor {
+        void process(String data);
+        }
+        class SimpleProcessor implements Processor {
+        @Override
+        public void process(String data) {
+            System.out.println("Processing: " + data);
+            }
+        }
+    class LoggingDecorator implements Processor {
+           private final Processor wrapped;
+            public LoggingDecorator(Processor p) {
+                this.wrapped = p;
+            }
+        @Override
+        public void process(String data) {
+            System.out.println("Logging before processing: " + data);
+            wrapped.process(data);
+            System.out.println("Logging after processing: " + data);
+        }
+    }
+
+8. Custom Class Loaders for Modular Applications
+    ClassLoader customLoader = new URLClassLoader(new URL[]{new URL("file:/path/to/classes/")});
+    Class<?> clazz = customLoader.loadClass("com.example.MyClass");
+
+    Why use it? Allows on-the-fly updates to your application without restarting.
+
+9. Use Reflection for Dynamic Behavior.
+    Reflection enables runtime inspection and modification of code.
+    Method method = obj.getClass().getDeclaredMethod("methodName");
+    method.setAccessible(true);
+    method.invoke(obj);
+
+    Why use it? Ideal for building frameworks and libraries. Use sparingly to avoid performance hits.
+
+10. Embrace Optional for Safer Code
+    Say goodbye to NullPointerException by using Optional.
+
+    Optional<String> name = Optional.ofNullable(user.getName());
+    name.ifPresent(System.out::println);
+
+    Why use it? Encourages thoughtful handling of missing or null values.
+
+11. Try-With-Resources for Cleaner Code
+
+    Automatically manage resources like files or sockets with this Java feature.
+
+    try (BufferedReader reader = new BufferedReader(new FileReader("file.txt"))) {
+        System.out.println(reader.readLine());
+    }
+
+    Why use it? Prevents resource leaks and simplifies error handling.
+
+12. Asynchronous Programming with CompletableFuture
+
+    Write non-blocking code using CompletableFuture for responsive applications.
+
+    CompletableFuture.supplyAsync(() -> "Hello")
+                     .thenApply(String::toUpperCase)
+                     .thenAccept(System.out::println);

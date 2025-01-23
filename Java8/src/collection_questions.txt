@@ -16,7 +16,7 @@ The core interfaces are:
 - `LinkedList` uses a doubly-linked list, providing faster insertions and deletions but slower random access.
 
 4. What is the difference between `HashSet` and `TreeSet`?
- `HashSet` uses a hash table for storage and does not guarantee any order of elements.
+-  `HashSet` uses a hash table for storage and does not guarantee any order of elements.
 - `TreeSet` uses a red-black tree and guarantees that elements are sorted in natural order or by a specified comparator.
 
 5. What are the differences between `HashMap`, `LinkedHashMap`, and `TreeMap`?
@@ -25,7 +25,8 @@ The core interfaces are:
 - `TreeMap` stores elements in a sorted order, either by natural ordering or a specified comparator.
 
 6. How does `HashMap` work internally?
-`HashMap` uses an array of buckets, where each bucket is a linked list. The key’s hash code determines the bucket. In case of collisions, new entries are added to the linked list in the bucket.
+`HashMap` uses an array of buckets, where each bucket is a linked list. The key’s hash code determines the bucket.
+In case of collisions, new entries are added to the linked list in the bucket.
 From Java 8, linked lists are replaced by balanced trees when the bucket size exceeds a certain threshold for better performance.
 
 7. What is the difference between `HashMap` and `Hashtable`?
@@ -33,7 +34,8 @@ From Java 8, linked lists are replaced by balanced trees when the bucket size ex
 - `Hashtable` is synchronized and does not allow null keys or values.
 
 8. What is a `ConcurrentHashMap` and how is it different from `HashMap`?
-`ConcurrentHashMap` is a thread-safe implementation of `HashMap`. It allows concurrent read and write operations by dividing the map into segments, reducing lock contention.
+`ConcurrentHashMap` is a thread-safe implementation of `HashMap`.
+It allows concurrent read and write operations by dividing the map into segments, reducing lock contention.
 
 9. What are the differences between `Comparable` and `Comparator`?
 - `Comparable` is an interface that defines a natural ordering of objects by implementing the `compareTo()` method.
@@ -47,7 +49,8 @@ From Java 8, linked lists are replaced by balanced trees when the bucket size ex
 `Collection` is the root interface in the collection hierarchy. It represents a group of objects known as elements and includes methods for adding, removing, and querying elements.
 
 12. How do you synchronize a collection in Java?
-You can use synchronized wrappers provided by the `Collections` class, such as `Collections.synchronizedList()`, `Collections.synchronizedSet()`, etc., or use concurrent collections from the `java.util.concurrent` package.
+You can use synchronized wrappers provided by the `Collections` class, such as `Collections.synchronizedList()`,
+`Collections.synchronizedSet()`, etc., or use concurrent collections from the `java.util.concurrent` package.
 
 13. What is the `Queue` interface and its main implementations?
 `Queue` represents a collection designed for holding elements prior to processing. Main implementations include `LinkedList`, `PriorityQueue`, and `ArrayBlockingQueue`.
@@ -60,20 +63,23 @@ You can use synchronized wrappers provided by the `Collections` class, such as `
 - `ListIterator` extends `Iterator` and can traverse the list in both directions (forward and backward) and allows modification of elements during iteration.
 
 16. What is the `fail-fast` behavior of an iterator?
-`Fail-fast` iterators throw a `ConcurrentModificationException` if the collection is modified after the iterator is created, except through the iterator’s own remove method.
+`Fail-fast` iterators throw a `ConcurrentModificationException` if the collection is modified after the iterator is created,
+  except through the iterator’s own remove method.
 
 17. How can you create a synchronized collection from a non-synchronized collection?
 Use `Collections.synchronizedList()`,`Collections.synchronizedSet()`, or `Collections.synchronizedMap()` to create synchronized versions of non-synchronized collections.
 
 18. What are `BlockingQueue` and its main implementations?
-`BlockingQueue` is a type of queue that supports operations that wait for the queue to become non-empty when retrieving an element and wait for space to become available when storing an element.
- Main implementations include `ArrayBlockingQueue`, `LinkedBlockingQueue`, and `PriorityBlockingQueue`.
+`BlockingQueue` is a type of queue that supports operations that wait for the queue to become non-empty when retrieving an element and wait
+for space to become available when storing an element. Main implementations include `ArrayBlockingQueue`, `LinkedBlockingQueue`, and `PriorityBlockingQueue`.
 
 19. What are the advantages of using the `NavigableMap` and `NavigableSet` interfaces?
- They provide methods for navigation, such as getting the closest matches for keys or elements. For example, `floorEntry()`, `ceilingEntry()`, `lowerEntry()`, and `higherEntry()` in `NavigableMap`.
+ They provide methods for navigation, such as getting the closest matches for keys or elements.
+ For example, `floorEntry()`, `ceilingEntry()`, `lowerEntry()`, and `higherEntry()` in `NavigableMap`.
 
 20. How does `TreeSet` ensure that elements are sorted?
- `TreeSet` uses a `NavigableMap` (specifically a `TreeMap`) to store elements. Elements are sorted according to their natural ordering or by a comparator provided at set creation time.
+ `TreeSet` uses a `NavigableMap` (specifically a `TreeMap`) to store elements.
+ Elements are sorted according to their natural ordering or by a comparator provided at set creation time.
 
 26. Explain the concept of `immutability` in collections. How can you create an immutable collection?
  An immutable collection cannot be modified after it’s created. Use `Collections.unmodifiableList()`, `Collections.unmodifiableSet()`, etc., or use the `List.of()`, `Set.of()`, and `Map.of()` methods introduced in Java 9.
@@ -88,7 +94,8 @@ Use `Collections.synchronizedList()`,`Collections.synchronizedSet()`, or `Collec
   .collect(Collectors.toList());
 
 29. What is a `PriorityQueue` and how does it work?
-`PriorityQueue` is a queue that orders elements based on their natural ordering or by a comparator provided at queue construction time. It provides O(log(n)) time complexity for the enqueuing and dequeuing methods.
+`PriorityQueue` is a queue that orders elements based on their natural ordering or by a comparator provided at queue construction time.
+It provides O(log(n)) time complexity for the enqueuing and dequeuing methods.
 
 30. What is the difference between `peek()`, `poll()`, and `remove()` in a `Queue`?
 - `peek()`: Retrieves, but does not remove, the head of the queue, returning `null` if the queue is empty.
@@ -117,21 +124,19 @@ HashMap works using an array of nodes, where each node represents a key-value pa
 — remove(): Computes the bucket index, searches and removes the entry with the matching key.
 
 33. What is the purpose of IdentityHashMap?
-IdentityHashMap is a Map implementation that uses reference equality (==) instead of object equality (equals()) for comparing keys and values. Its purposes include:
-
+IdentityHashMap is a Map implementation that uses reference equality (==) instead of object equality (equals()) for comparing keys and values.
+Its purposes include:
 - Identity-based Comparison: Used when distinct instances of keys are required, even if they are logically equivalent.
 - Memory-sensitive Caches: Suitable for scenarios where key identity is important.
 
 34. How does ConcurrentHashMap ensure thread safety?
 ConcurrentHashMap ensures thread safety through several mechanisms:
-
 - Segmented Locking: Initially divided the map into segments, each of which could be locked independently (in Java 7 and earlier). In Java 8 and later, segments are replaced by finer-grained internal data structures and algorithms.
 - Non-blocking Algorithms: Utilizes CAS (Compare-And-Swap) and other non-blocking algorithms to manage concurrent access.
 - Concurrency Level: Allows specifying the concurrency level, determining the number of threads that can concurrently modify the map.
 
 35. What is the WeakHashMap class used for?
 WeakHashMap is a map-based implementation that uses weak references for its keys. Entries in a WeakHashMap can be garbage collected when their keys are no longer in use. It is useful for:
-
 - Memory-sensitive Caches: Automatically removes entries when the keys are no longer referenced elsewhere.
 - Preventing Memory Leaks: Avoids holding strong references to keys, allowing them to be garbage collected.
 
@@ -143,7 +148,7 @@ WeakHashMap is a map-based implementation that uses weak references for its keys
 HashMap uses buckets to store key-value pairs. A bucket can contain multiple entries if multiple keys hash to the same index. Initially, these entries are stored as a linked list.
 If the number of entries in a bucket exceeds a threshold (default 8), the list is converted into a balanced tree to optimize retrieval times.
 HashMap uses buckets to store key-value pairs. A bucket can contain multiple entries if multiple keys hash to the same index. Initially, these entries are stored as a linked list.
- If the number of entries in a bucket exceeds a threshold (default 8), the list is converted into a balanced tree to optimize retrieval times.
+If the number of entries in a bucket exceeds a threshold (default 8), the list is converted into a balanced tree to optimize retrieval times.
 
 38. Can you implement a custom Comparator to sort a list of objects by multiple fields?
 import java.util.*;
