@@ -4,6 +4,6 @@ package House_Robber_II;
 public class Solution {
 
     public int rob(int[] nums) {
-
+ return 0;
     }
 }

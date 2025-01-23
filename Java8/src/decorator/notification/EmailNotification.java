@@ -1,4 +1,4 @@
-package decorator;
+package decorator.notification;
 
 class EmailNotification extends NotificationDecorator {
     public EmailNotification(Notification notification) {

@@ -1,0 +1,148 @@
+How Does the Annotation Work Then?
+
+    The real "magic" happens when:
+
+        Spring AOP detects the annotation (via the @Around advice).
+        The logic written in the LogExecutionTimeAspect class is executed automatically for methods marked with @LogExecutionTime
+
+    Step-by-Step Breakdown
+    1. Marker Annotation
+
+    The custom annotation @LogExecutionTime is defined as a marker
+
+    @Retention(RetentionPolicy.RUNTIME)  // Makes it available at runtime
+    @Target(ElementType.METHOD)          // Can only be applied to methods
+    public @interface LogExecutionTime {
+    }
+
+    This does nothing by itself
+    2. Aspect for Logic
+
+    The Aspect class contains the actual logic to handle this annotation
+
+    @Aspect
+    @Component
+    public class LogExecutionTimeAspect {
+
+        @Around("@annotation(LogExecutionTime)") // Watches for methods with @LogExecutionTime
+        public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+            long startTime = System.currentTimeMillis();  // Start time logging
+
+            Object result = joinPoint.proceed();          // Execute the actual method
+
+            long endTime = System.currentTimeMillis();    // End time logging
+            System.out.println(joinPoint.getSignature() + " executed in " + (endTime - startTime) + " ms");
+            return result;  // Return the method's result
+        }
+    }
+
+    3. How Spring AOP Connects It
+
+        The @Aspect annotation marks the class as an Aspect (part of Spring AOP).
+        The @Around annotation tells Spring:
+        Watch for methods with @LogExecutionTime.
+        Execute the logic in logExecutionTime() before and after the method runs.
+        joinPoint.proceed() executes the method itself.
+
+    When we use custom annotations, it is compulsory to create AOP
+
+    No, creating an Aspect-Oriented Programming (AOP) component is not mandatory every time you use custom annotations in Spring Boot. Custom annotations can serve different purposes, depending on your use case. Here's an explanation of scenarios where AOP is and isn't required
+    When You Need AOP with Custom Annotations
+
+    You need AOP when your custom annotation is meant to:
+
+        Trigger cross-cutting logic (like logging, validation, transaction management, etc.).
+        Apply logic dynamically to multiple methods or components without modifying their implementation
+
+    Example: Logging Execution Time
+
+    We used AOP in the earlier example with the @LogExecutionTime annotation because it:
+
+        Injects logic dynamically around methods without touching their code.
+        Handles the behavior using an Aspect.
+
+    AOP is necessary when annotations are meant to dynamically alter the behavior of annotated methods or fields
+    When You DON'T Need AOP
+
+    You don't need AOP if the annotation itself is used to:
+
+        Provide metadata to classes, methods, or fields (e.g., configuration, documentation).
+        Work with custom logic directly in your code without dynamic behavior injection.
+
+    Example: Field-Level Validation or Metadata
+
+    Let's say you want to create a @Mask annotation to mask sensitive data in logs.
+
+        Define the Annotation
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public @interface Mask {
+    }
+
+    2.Use the Annotation:
+
+    public class User {
+        @Mask
+        private String ssn;
+
+        private String name;
+
+        // Getters and Setters
+    }
+
+    3.Process the Annotation Without AOP: Write code to process fields annotated with @Mask using reflection:
+
+    import java.lang.reflect.Field;
+
+    public class MaskProcessor {
+        public static void process(Object obj) throws IllegalAccessException {
+            Field[] fields = obj.getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(Mask.class)) {
+                    field.setAccessible(true);
+                    Object value = field.get(obj);
+                    if (value instanceof String) {
+                        field.set(obj, maskString((String) value));
+                    }
+                }
+            }
+        }
+
+        private static String maskString(String value) {
+            return "*****"; // Simple masking logic
+        }
+    }
+
+    run the Logic:
+
+    public static void main(String[] args) throws IllegalAccessException {
+        User user = new User();
+        user.setName("John Doe");
+        user.setSsn("123-45-6789");
+
+        System.out.println("Before Masking: " + user.getSsn());
+        MaskProcessor.process(user);
+        System.out.println("After Masking: " + user.getSsn());
+    }
+
+    Here, you didn't use AOP because the annotation is processed manually using reflection
+    Can Custom Annotations Work Without Reflection or AOP?
+
+    No, custom annotations themselves do not perform any logic. They need some form of processing, and this is typically done using either:
+
+        Reflection:
+
+        Used to examine the annotations at runtime and apply logic (like in the previous examples, where fields are masked based on the @Mask annotation).
+
+        AOP (Aspect-Oriented Programming):
+
+        Used to define "aspects" (like logging, security checks, or transactions) that are applied automatically to methods or classes with a custom annotation, without modifying the actual logic of the methods.
+
+    Example Without Reflection or AOP?
+
+    If you want to use annotations without reflection or AOP, you would have to manually check and handle the annotations yourself, which somewhat defeats the purpose of using annotations. Annotations are typically used to decouple behavior and logic, making your code cleaner and easier to maintain.
+
+    For example:
+
+    You could manually inspect the annotations within a method, but this means you would still be doing something very close to reflection.

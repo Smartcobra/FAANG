@@ -1,0 +1,25 @@
+How to design?
+
+    Data Structure: Use a ConcurrentHashMap to track requests per user.
+    Fixed Time Window: Maintain a fixed window (e.g., 1 second) for rate-limiting.
+    Threshold: Define a maximum number of requests per window per user.
+    Thread-Safety: Ensure thread-safe operations for concurrency.
+
+
+
+nternals:
+
+Data Structure:
+
+    A ConcurrentHashMap maps each user (userId) to a UserRequestTracker.
+    UserRequestTracker keeps track of the request count and the start time of the window.
+
+Rate Limiting:
+
+    Each request checks if the current time exceeds the window size for the user.
+    If yes, the tracker resets; otherwise, the request count increments.
+    If the count exceeds the maxRequests, the request is rejected.
+
+Concurrency:
+
+    The synchronized block ensures thread safety while checking/updating the tracker.
