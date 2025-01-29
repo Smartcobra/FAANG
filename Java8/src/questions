@@ -5,11 +5,11 @@ Explanation:
 
 No, private methods cannot be overridden because they are not visible to subclasses. However,
  if you define a method with the same name in a subclass, it is considered method hiding, not overriding.
-
+-----
 2. Can You Catch an Exception Thrown in a Static Block?
  Exceptions thrown in a static block can only be caught within a static initializer block using a try-catch. Otherwise,
  the program will fail to load the class.
-
+----
 3. Class Loader :
     A class loader is a tool that Java uses to load different classes (pieces of code) into the memory of your computer when a Java program is running. It’s like a librarian who helps the computer to find and “read” the right books (classes) that the program needs to use.
 
@@ -18,13 +18,15 @@ No, private methods cannot be overridden because they are not visible to subclas
         Bootstrap class loader: this is the first class loader that starts working when you run a Java program.
         It loads the most basic classes that Java needs to run, such as classes for working with numbers or strings.
         These classes are located in the <JAVA_HOME>/lib directory.
+
         Extension class loader: this class loader loads additional classes that extend the functionality of Java,
          such as classes for working with databases or XML files. These classes are located in the <JAVA_HOME>/lib/ext directory.
+
         System class loader: Also know as application class loader. This class loader loads classes from the classpath
         specified by the CLASSPATH environment variable or the -classpath command-line option. It loads classes that you or other
         developers have created for your program.
 
-
+----
 3. Interface VS Abstract class:
     Abstract class :
          Cannot be instantiated: You cannot create an object of an abstract class directly.
@@ -206,7 +208,7 @@ No, private methods cannot be overridden because they are not visible to subclas
     Class<?> clazz = customLoader.loadClass("com.example.MyClass");
 
     Why use it? Allows on-the-fly updates to your application without restarting.
-
+----
 9. Use Reflection for Dynamic Behavior.
     Reflection enables runtime inspection and modification of code.
     Method method = obj.getClass().getDeclaredMethod("methodName");
@@ -214,7 +216,7 @@ No, private methods cannot be overridden because they are not visible to subclas
     method.invoke(obj);
 
     Why use it? Ideal for building frameworks and libraries. Use sparingly to avoid performance hits.
-
+---
 10. Embrace Optional for Safer Code
     Say goodbye to NullPointerException by using Optional.
 
@@ -222,9 +224,8 @@ No, private methods cannot be overridden because they are not visible to subclas
     name.ifPresent(System.out::println);
 
     Why use it? Encourages thoughtful handling of missing or null values.
-
+-----
 11. Try-With-Resources for Cleaner Code
-
     Automatically manage resources like files or sockets with this Java feature.
 
     try (BufferedReader reader = new BufferedReader(new FileReader("file.txt"))) {
@@ -232,11 +233,12 @@ No, private methods cannot be overridden because they are not visible to subclas
     }
 
     Why use it? Prevents resource leaks and simplifies error handling.
-
+-----
 12. Asynchronous Programming with CompletableFuture
-
     Write non-blocking code using CompletableFuture for responsive applications.
 
     CompletableFuture.supplyAsync(() -> "Hello")
                      .thenApply(String::toUpperCase)
                      .thenAccept(System.out::println);
+
+

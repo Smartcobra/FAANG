@@ -1,0 +1,86 @@
+1. Using React.memo
+    React.memo is a higher-order component that helps optimize functional components by memoizing their output. This means that if the props have not changed, React.memo will prevent the component from re-rendering.
+
+    How to Use:
+
+    Wrap your functional component with React.memo. This will compare the previous props with the next props and only re-render if they have changed.
+
+    import React from 'react';
+
+    const ChildComponent = React.memo(({ prop1, prop2 }) => {
+      console.log('ChildComponent rendered');
+      return (
+        <div>
+          {prop1} - {prop2}
+        </div>
+      );
+    });
+
+2. Optimize Prop Functions with useCallback
+
+   What It Is: useCallback is a React hook that memoizes callback functions, ensuring that a function reference remains stable across renders unless its dependencies change.
+
+   How to Use: Define your callback functions with useCallback. Provide an array of dependencies to control when the function should be re-created.
+
+   import React, { useCallback } from 'react';
+
+   const ParentComponent = () => {
+     const handleClick = useCallback(() => {
+       console.log('Button clicked');
+     }, []); // Dependencies array
+
+     return <ChildComponent onClick={handleClick} />;
+   };
+
+3. Memoize Expensive Calculations with useMemo
+
+   What It Is: useMemo is a React hook that memoizes expensive calculations or derived data. It only recalculates the result when its dependencies change.
+
+   How to Use: Wrap your expensive calculations or derived data with useMemo and provide a list of dependencies.
+
+   import React, { useMemo } from 'react';
+
+   const ParentComponent = () => {
+     const expensiveValue = useMemo(() => {
+       return expensiveCalculation(); // Replace with your actual calculation
+     }, [dependencies]); // Dependencies array
+
+     return <ChildComponent value={expensiveValue} />;
+   };
+
+
+4. Avoid Inline Functions and Objects
+
+   What It Is: Passing inline functions or objects as props can cause child components to re-render because each inline function or object creates a new reference on every render.
+
+   How to Use: Define functions and objects outside the render method or use useCallback and useMemo to avoid inline declarations.
+
+   const ParentComponent = () => {
+     const handleClick = useCallback(() => {
+       console.log('Button clicked');
+     }, []);
+
+     const memoizedObject = useMemo(() => ({ key: 'value' }), []);
+
+     return <ChildComponent onClick={handleClick} data={memoizedObject} />;
+   };
+
+5. Leverage Immutable Data Structures
+
+   What It Is: Using immutable data structures or libraries that support immutability helps in detecting changes easily because it ensures that changes are represented by new references.
+
+   How to Use: Consider using libraries like Immutable.js or Immer for managing immutable state.
+
+   import produce from 'immer';
+
+   const ParentComponent = () => {
+     const [state, setState] = React.useState(initialState);
+
+     const updateState = () => {
+       setState(currentState => produce(currentState, draft => {
+         draft.someProperty = 'newValue';
+       }));
+     };
+
+     return <ChildComponent state={state} onUpdate={updateState} />;
+   };

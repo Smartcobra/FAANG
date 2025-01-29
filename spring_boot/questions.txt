@@ -331,4 +331,377 @@ Q19. Customizing the Lifecycle
         Deploying on cloud platforms like AWS, Azure, GCP, and Kubernetes.
         Containerizing with Docker and orchestrating with tools like Helm.
 
-26. How does Spring Boot support microservices architecture?
+26. What is a Bean? What are the differences between normal Bean vs Spring Bean?
+    A bean is an object that is instantiated, assembled, and managed by a container.
+    In the context of Java, a bean is a reusable software component that adheres to specific conventions (e.g., having a no-argument constructor, being serializable, and providing getters and setters).
+    In Spring, a bean is any object that is managed by the Spring IoC (Inversion of Control) container.
+
+    Example of a Normal Bean:
+    public class NormalBean {
+        private String name;
+
+    public NormalBean() {}
+        public String getName() {
+            return name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    Example of a Spring Bean:
+    Using @Component:
+    @Component
+    public class SpringBean {
+        private String name;
+
+    public SpringBean() {}
+        public String getName() {
+            return name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    Defined in a configuration class:
+    @Configuration
+    public class AppConfig {
+        @Bean
+        public SpringBean springBean() {
+            return new SpringBean();
+        }
+    }
+
+27. How do you secure your microservices?
+    Below are some of the ways to secure your microservices:
+    1. Authentication and Authorization:
+
+    Why:
+        To ensure only legitimate users or systems access the services.
+
+    How:
+        Implement OAuth2.0 with tokens for users and system authentication.
+        Centralize user identity management with solutions like Keycloak or Okta.
+
+    2. API Gateway:
+        Acts as the central entry point for requests and enforces security.
+        Use gateways like Kong, AWS API Gateway, or Spring Cloud Gateway for:
+
+        Authenticating requests.
+        Enforcing rate limits.
+        Applying access control policies.
+
+    3. Secure Communication:
+        Use TLS/SSL to encrypt all traffic between:
+        Clients and microservices.
+        Inter-microservice communication (using mutual TLS if possible).
+
+    4. Service Mesh:
+        A service mesh (e.g., Istio, Linkerd) provides:
+        Built-in mTLS for service-to-service communication.
+        Fine-grained traffic control policies.
+        Observability and logging features.
+
+    5. Centralized Logging and Monitoring:
+        Enable early detection of breaches or anomalies by:
+        Logging security events (e.g., failed logins).
+        Using monitoring tools (e.g., Prometheus, ELK Stack, or Splunk).
+
+    6. Secure Secrets Management:
+        Do not hard-code secrets like passwords or API keys in code.
+        Use secret management tools:
+        AWS Secrets Manager, Azure Key Vault, or HashiCorp Vault.
+
+28. Suppose you've a controller annotation and then you perform DB operation in it. What will happen in that case?
+    If you perform database operations directly inside a controller in a Spring application, it can technically work, but it's considered a bad practice.
+    What Happens:
+        The controller will still handle the HTTP request and call the repository for the database operation. For example,
+        you might inject a repository directly into the controller like this:
+    @RestController
+    public class UserController {
+        @Autowired
+        private UserRepository userRepository;
+
+        @GetMapping("/getUser/{id}")
+        public User getUserById(@PathVariable Long id) {
+            return userRepository.findById(id).orElse(null);
+        }
+    }
+
+        This would work, but the controller is now doing more than just handling HTTP requests — it's also managing business logic and directly interacting with the database.
+
+    Why It's a Bad Practice:
+        Violation of Separation of Concerns (SoC): A controller's primary responsibility is to handle HTTP requests and responses. By including database operations, you're blurring the lines between the different layers of your application.
+        Harder to Maintain and Test: Controllers become bloated with business logic, making them harder to maintain and test. For example, you can't easily test the business logic separately without involving the HTTP layer.
+        Poor Scalability: As your application grows, this approach makes it difficult to scale, since controllers will need to handle more responsibilities. This leads to tightly coupled code, which is harder to refactor.
+        Lack of Transaction Management: If you don't manage transactions properly (for example, using @Transactional), you risk running into issues with partial updates, especially if the database operations involve multiple steps.
+
+    Correct Approach:
+
+    The best practice is to delegate database operations to the service layer. Here's the right way to structure it:
+        Controller: Handles incoming requests and delegates to the service layer
+        @RestController
+        public class UserController {
+            @Autowired
+            private UserService userService;
+
+            @GetMapping("/getUser/{id}")
+            public User getUserById(@PathVariable Long id) {
+                return userService.getUserById(id);
+            }
+        }
+    Service Layer: Contains business logic and interacts with the repository layer.
+        @Service
+        public class UserService {
+            @Autowired
+            private UserRepository userRepository;
+
+            public User getUserById(Long id) {
+                return userRepository.findById(id).orElse(null);
+            }
+        }
+        @Repository
+        public interface UserRepository extends JpaRepository<User, Long> {
+        }
+
+        Why This Is Better:
+            Separation of Concerns: Each layer has its distinct responsibility — controllers handle requests, services contain business logic, and repositories manage data access.
+            Testability: Business logic in services can be tested independently of the web layer.
+            Scalability: As the application grows, this structure helps with maintainability and avoids bloated controllers.
+            Transaction Management: You can easily use @Transactional at the service layer to manage transactions effectively.
+
+29. What are the benefits of using DAO layer?
+    The DAO (Data Access Object) layer provides a structured way of interacting with a data source, like a database, while abstracting the underlying data persistence mechanism.
+
+    Using a DAO layer offers several benefits, especially in terms of maintainability, flexibility, and decoupling of concerns in your application. Below are some of them:
+    1. Separation of Concerns
+        The DAO layer separates the data access logic from the business logic, allowing each layer to focus on its specific responsibility.
+        Benefit: This leads to cleaner code, as your business logic does not need to worry about how the data is retrieved, stored, or updated.
+
+    2. Maintainability
+        Since the data access logic is centralized in one layer, changes to the underlying data store (such as switching from one database to another) can be made in just the DAO layer without impacting the rest of the application.
+        Benefit: Easier to maintain and refactor the application as the data access logic is isolated and doesn't spread across the application.
+
+    3. Code Reusability
+        The DAO layer allows you to encapsulate common data access operations (like save, update, delete, and find) in reusable methods.
+        Benefit: This leads to less duplication of code, as any part of your application that needs to interact with the database can reuse the DAO layer.
+
+    4. Data Source Independence
+        The DAO layer abstracts the underlying data source. If you need to switch from one database (e.g., MySQL) to another (e.g., MongoDB), you can modify the DAO layer with minimal changes to the business logic.
+        Benefit: Decoupling the data source from the rest of the application allows for greater flexibility in choosing or changing data stores.
+
+    5. Simplified Unit Testing
+        The DAO layer can be easily mocked or stubbed in unit tests, allowing you to test the business logic in isolation without needing an actual database connection.
+        Benefit: It improves testability by enabling you to simulate different data access scenarios without the overhead of setting up a database.
+
+    6. Transaction Management
+        The DAO layer allows for better handling of transactions, especially when dealing with multiple database operations in a single transaction.
+        Benefit: It simplifies transaction management by centralizing it in the DAO, and you can easily use @Transactional in a service layer to ensure consistency.
+
+    7. Encapsulation and Security
+        The DAO layer acts as a gatekeeper between the database and the rest of the application, controlling access to the data and hiding the complexities of direct database access (such as SQL queries, connections, etc.).
+        Benefit: This improves security and reduces the risk of exposing sensitive database logic or vulnerabilities (e.g., SQL injection).
+
+    8. Improved Readability
+        By abstracting the complexity of database queries and data handling into the DAO layer, your codebase becomes more readable and focused on higher-level operations.
+        Benefit: Better organization of code, as the business logic is not cluttered with low-level database interactions.
+
+    9. Flexibility with Data Handling
+        The DAO layer can offer more flexible methods for complex querying, including custom SQL or specific data transformations.
+        Benefit: You can handle data operations in a customizable way, without cluttering the service layer or business logic.
+
+    Example of DAO Layer Usage
+
+    public class UserDAO {
+        private EntityManager entityManager;
+
+        public UserDAO(EntityManager entityManager) {
+            this.entityManager = entityManager;
+        }
+        // Save operation
+        public void saveUser(User user) {
+            entityManager.persist(user);
+        }
+        // Find operation
+        public User findUserById(Long id) {
+            return entityManager.find(User.class, id);
+        }
+        // Delete operation
+        public void deleteUser(Long id) {
+            User user = findUserById(id);
+            if (user != null) {
+                entityManager.remove(user);
+            }
+        }
+    }
+
+
+30. How do you measure DB performance?
+    Below are some of the ways to measure database performance:
+    1. Query Performance
+        Measure execution time and use EXPLAIN plans to optimize queries.
+
+    2. Response Time
+        Track round-trip time for queries, aiming for low latency.
+
+    3. Throughput
+        Monitor how many queries the database handles per second/minute.
+
+    4. Database Connections
+        Monitor the number of active connections and optimize connection pooling.
+
+    5. Disk I/O
+        Measure read/write speeds, queue length, and disk throughput.
+
+    6. CPU Usage
+        Track CPU utilization to ensure the database is not overburdened.
+
+    7. Memory Usage
+        Monitor memory consumption to avoid excessive usage leading to slowdowns.
+
+    8. Lock Contention
+        Track lock conflicts and deadlocks to avoid delays.
+
+    9. Cache Hit Ratio
+        Monitor cache hit ratios to ensure frequently accessed data is cached.
+
+    10. Network Latency
+        Measure round-trip time for data transfer between the application and database.
+
+    11. Slow Query Logs
+        Capture and analyze slow queries for optimization.
+
+    12. Index Optimization
+        Ensure efficient indexing and monitor index fragmentation.
+
+    13. Query Execution Plan:
+        Mentioned briefly but should include advice on using query profiling tools like EXPLAIN in SQL databases.
+
+    14. Database Schema Design:
+        Optimizing schema design impacts performance and should be addressed.
+
+    By tracking these metrics using monitoring tools (e.g., Prometheus, New Relic, MySQL's EXPLAIN, Query profiling),
+    you can spot and address performance bottlenecks.
+
+31. How would you design a scalable database? What challenges do you foresee, and how would you mitigate them?
+    To design a scalable database, we need to focus on both horizontal and vertical scalability, ensuring the system can handle growing data volumes and traffic efficiently.
+
+    Here's how to approach it:
+        Database Schema Design
+        Start with a normalized schema to eliminate redundancy and ensure consistency.
+        For performance-critical applications, we can selectively denormalize certain tables to optimize read-heavy operations.
+
+    2. Horizontal Scaling
+        Implement sharding to distribute data across multiple nodes. For example, we can shard based on user ID or geographic regions to evenly distribute the load.
+        Partition large tables logically, such as by time ranges (e.g., monthly partitions for a logging system).
+
+    3. Replication
+        Use master-slave replication where the master handles writes, and the replicas handle reads, improving both performance and reliability.
+        In more complex systems, multi-master replication can be used to handle writes from multiple locations.
+
+    4. Caching
+        Integrate caching solutions like Redis or Memcached to store frequently accessed data in memory, reducing the load on the database.
+        Use query-level caching for expensive operations to further enhance performance.
+
+    5. Load Balancing
+        Add a load balancer to distribute queries across multiple database instances, ensuring no single node becomes a bottleneck.
+
+    6. Asynchronous Processing
+        For write-intensive operations, we can leverage message queues like Kafka or RabbitMQ to handle tasks asynchronously, reducing the immediate load on the database.
+
+    7. Cloud or Distributed Databases
+        For large-scale applications, we can consider databases like Cassandra, CockroachDB, or MongoDB that are inherently distributed and designed for horizontal scaling.
+        Alternatively, use managed cloud services like AWS RDS or Google Cloud SQL that offer built-in scaling and fault tolerance.
+
+    8. Monitoring and Optimization
+        Regularly monitor database metrics like query performance, CPU usage, memory utilization, and disk I/O using tools like Prometheus or Grafana.
+        Continuously optimize slow queries and ensure indexes are up to date.
+
+    9. Archiving and Data Management
+        Archive older, less-used data to a separate storage system to keep the active dataset manageable. This helps maintain fast query performance on current data.
+
+    By combining these strategies, the database can handle increased traffic, maintain low latency, and remain resilient as the system grows.
+    Challenges:
+
+        Data Consistency: In distributed databases, maintaining strong consistency can be challenging. We can use appropriate consistency models, like eventual consistency where acceptable.
+        Shard Management: Resharding as data grows can be complex. To mitigate this, we can plan sharding keys carefully from the beginning.
+        Query Optimization: Complex joins across shards or replicas can slow down performance. We can design queries and schema to minimize such operations.
+
+    Proactively monitoring and iterating on the design would help address these challenges effectively.
+
+32. How do you handle exceptions in Spring Boot application?
+       Exception handling in a Spring Boot application can be managed in an organized way using several key approaches:
+       1. Using @ControllerAdvice and @ExceptionHandler
+
+           @ControllerAdvice is used to define a global exception handler for the entire application, combined with @ExceptionHandler to specify how to handle particular exceptions.
+           Example:
+           @RestControllerAdvice
+           public class GlobalExceptionHandler {
+
+           @ExceptionHandler(ResourceNotFoundException.class)
+               public ResponseEntity<String> handleResourceNotFound(ResourceNotFoundException ex) {
+                   return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+               }
+               @ExceptionHandler(Exception.class)
+               public ResponseEntity<String> handleGenericException(Exception ex) {
+                   return new ResponseEntity<>("An unexpected error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+               }
+           }
+       2. Using @ResponseStatus Annotation
+
+           The @ResponseStatus annotation maps exceptions to specific HTTP status codes.
+           Example:
+           @ResponseStatus(HttpStatus.NOT_FOUND)
+           public class ResourceNotFoundException extends RuntimeException {
+               public ResourceNotFoundException(String message) {
+                   super(message);
+               }
+           }
+
+       3. Custom Error Response Structure
+
+           For detailed error responses, create a custom error object containing fields like timestamp, error code, and message.
+           Example:
+           public class ErrorResponse {
+               private String timestamp;
+               private String message;
+               private String details;
+
+               // Getters and setters
+           }
+         This custom object can be returned from the global exception handler:
+         @ExceptionHandler(Exception.class)
+         public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex, WebRequest request) {
+             ErrorResponse error = new ErrorResponse();
+             error.setTimestamp(LocalDateTime.now().toString());
+             error.setMessage(ex.getMessage());
+             error.setDetails(request.getDescription(false));
+
+             return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+         }
+       3. Handling Validation Exceptions
+
+           When using @Valid or @Validated, Spring automatically throws MethodArgumentNotValidException for validation failures. This can be handled as follows:
+
+       @ExceptionHandler(MethodArgumentNotValidException.class)
+       public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
+           String errors = ex.getBindingResult().getAllErrors().stream()
+                             .map(ObjectError::getDefaultMessage)
+                             .collect(Collectors.joining(", "));
+           return new ResponseEntity<>("Validation failed: " + errors, HttpStatus.BAD_REQUEST);
+       }
+      5. Logging Exceptions
+
+          All exceptions can be logged using SLF4J or a similar framework to ensure proper monitoring and debugging.
+
+      private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+      @ExceptionHandler(Exception.class)
+      public ResponseEntity<String> handleGenericException(Exception ex) {
+          logger.error("An error occurred: ", ex);
+          return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+
+      6. Fallback for Unhandled Exceptions
+          A fallback mechanism ensures unhandled exceptions are caught and returned with a generic error response.

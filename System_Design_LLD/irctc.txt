@@ -1,0 +1,175 @@
+Why Design IRCTC?
+    IRCTC is a highly complex system managing:
+
+        Millions of users.
+        Real-time train search.
+        Concurrent ticket bookings.
+        Seat reusability.
+
+    Designing such a system is a good exercise to understand large-scale, real-time applications.
+
+    Functional Requirements (Simplified)
+         1. User Profile Management:
+            Each user should have a profile with personal details (name, age, contact info, etc.).
+
+         2. Train Search:
+            Users can search for trains by:
+            Train number.
+            Source and destination stations.
+
+         3.Seat Availability:
+            Users can view the number of available seats for a train based on their source and destination.
+
+         4. Ticket Booking:
+            Users can book tickets.
+            The system must handle multiple users booking simultaneously (concurrent bookings).
+            Seats can be reused for different portions of the journey (e.g., a seat booked from Station A to Station B can be rebooked from Station C to Station D).
+
+         5. Ticket Cancellation:
+            Users can cancel booked tickets, and the seat becomes available for others.
+
+    Assumptions
+        A train runs once daily from source to destination.
+        Reverse journeys are treated as a separate train.
+        No preferences for berths or coaches.
+        Only confirmed tickets are supported (no waitlisting).
+
+    Database Selection:
+        We use a Relational Database (RDBMS) because:
+            1. Structured Data:
+            Train schedules, user profiles, and bookings are well-defined and tabular.
+
+            2. Transaction Management:
+            Booking and cancellations require atomicity (no partial transactions).
+
+            3.Consistency:
+            Ensures no double-booking or seat conflicts.
+
+    Core Database Tables:
+         1. Users Table:
+            Stores user details (ID, name, email, etc.).
+
+         2. Trains Table:
+            Stores train details (train ID, name, source, destination, and schedule).
+
+         3. Seats Table
+            Stores seat details for each train (seat ID, train ID, station range, availability).
+
+         4. Bookings Table:
+            Stores booking details (booking ID, user ID, train ID, seat ID, source, destination).
+
+    Key Design Points
+        Use locking mechanisms or transactions to handle multiple users booking the same seat at the same time.
+        Seat Reusability:
+        Track seat availability for specific station ranges to allow rebooking.
+        Scalability:
+        Use indexing for faster train search and seat availability checks.
+
+    Tables and Columns
+    1. User
+        UserId (PK): varchar
+        UserName: varchar
+        Email: varchar
+        PhNo: varchar
+        Address: varchar
+
+    2. Train
+        TrainId (PK): varchar
+        TrainName: varchar
+        SeatCount: varchar
+        CoachCount: varchar
+        RunsOnDays: varchar
+
+    3. Station
+        StationId (PK): varchar
+        PlatformCount: integer
+        StationName: varchar
+
+    4. Route
+        RouteId (PK): varchar
+        TrainId (FK): varchar
+        StationId (FK): varchar
+        ArrivalTime: datetime
+        DepartureTime: datetime
+        Date: date
+
+    5. StationToSeatMapping
+        Id (PK): varchar
+        TrainId (FK): varchar
+        StationId (FK): varchar
+        SeatsBooked: array
+        Date: date
+
+    6. Booking
+        BookingId (PK): varchar
+        TrainId (FK): varchar
+        From_station (FK): varchar
+        To_station (FK): varchar
+        UserId (FK): varchar
+        SeatId (FK): varchar
+        Status: varchar
+        Date: date
+
+Routes Table
+        RouteId(PK)	    TrainId (FK)	StationId (FK)	ArrivalTime	    DepartureTime	    Date
+            R1	            T1	        Delhi	        9:00	           9:02	          02-04-2022
+            R2	            T1	        Bhopal	        12:00	            12:03	       02-04-2022
+            R3	            T1	        Indore	        14:00	            14:04	        02-04-2022
+            R4	            T2	        Delhi	        10:00	            10:04	        02-04-2022
+            R5	            T2	        Bhopal	        13:00	            13:04	        02-04-2022
+Query: Search for trains running from Delhi to Bhopal.
+    SELECT R1.trainId, R1.arrivaltime, R1.departuretime
+    FROM "Routes" AS R1
+    INNER JOIN "Routes" AS R2 ON R1.trainid = R2.trainid
+    WHERE R1.stationid = 'Delhi'
+      AND R2.stationid = 'Bhopal'
+      AND R1.date = '02-04-2022';
+
+    SELECT *
+        FROM "Routes"
+        WHERE trainid = 'trainId'
+        ORDER BY arrivaltime;
+
+Seat Availability, Booking, and Reusability Logic:
+    1. Store train information in trains table with seatCount
+
+        TrainId	    TrainName	    SeatCount	    CoachCount	    RunsOnDays
+        Train1	    Design Express	    5	            1	        1100000 (Runs on Sun Mon)
+
+    2. How seat booking will look like:
+    Step 1: Check whether the seat is available between Delhi and Allahabad for Train T.
+    Let’s say we get a request to book a train from Delhi to Allahabad for a train T.
+    (User would have searched all the trains and selected the one they want the booking on using previous logic)
+            Step 1: Check whether the seat is available between Delhi and Allahabad for Train T.
+            Id (PK)	    TrainId (FK)	    StationId (FK)	    Seats (Array)	        Date
+            1	        Train1	                Delhi	            []	            02-04-2022
+            2	        Train1	                Kanpur	            []	            02-04-2022
+            3	        Train1	                Allahabad	        []	            02-04-2022
+    To check if a booking can be made between a source and destination, we need to verify seat availability for the train on that route.
+    This involves checking all the stations between the source and destination in the Routes table and counting how many seats
+    have already been allocated in the StationToSeatMapping table. If the number of allocated seats is less than the total available seats (SeatCount),
+    the booking can proceed.
+
+    For example, if SeatCount is 5 and currently allocated seats are 0 (as shown in the example), we can safely allot a seat to the user since 0 < 5.
+    This ensures fair seat allocation while supporting partial bookings.
+
+    Step 2: Allot the seat if the condition is satisfied and add an entry in booking table and StationToSeatMapping.
+    StationToSeatMapping
+    Id (PK)	        TrainId (FK)	        StationId (FK)	        Seats(Array)	                                            Date
+    1	            Train1	                    Delhi	            [1] One seat booked from Delhi to Allahabad	            02-04-2022
+    2	            Train1	                    Kanpur	            [1]	                                                    02-04-2022
+    3	            Train1	                    Allahabad	        []	                                                    02-04-2022
+(A user booked a seat from Delhi to Allahabad. Seat number 1 was allotted to the user.)
+
+
+    BookingId	        TrainId	        UserId	        From_station	        To_station	        SeatId	        Status
+        B1	            Train1	        Aditi	            Delhi	            Allahabad	            1	        Confirm
+
+    The number of available seats for a given route is calculated as:
+
+    Available Seats = Total Seats — (Seats already booked between the source and destination).
+
+    This ensures we only consider seats that are free for the entire segment of the journey between the source and destination stations.
+    If the available seats are greater than zero, a booking can be made.
+
+    3. SEAT REUSABILITY (PARTIAL SEAT BOOKING)

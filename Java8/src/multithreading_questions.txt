@@ -896,3 +896,81 @@ public class ForkJoinExample {
 
             Explanation:
             The join() method waits until the result is available and returns it. If an exception occurs, it wraps it in a CompletionException
+
+26. Differences Between shutdown() and shutdownNow()
+    Explanation:
+    ExecutorService provides methods to manage thread pools:
+
+    1.shutdown():
+        Prevents new tasks from being submitted.
+        Allows currently running tasks to complete.
+
+    2. shutdownNow():
+        Attempts to stop all running tasks immediately.
+        Interrupts threads performing blocking operations.
+
+27. Stopping Threads in Java
+        Preferred Method: Always use graceful termination to stop threads. This can be achieved using techniques like:
+
+        Volatile flags: Threads monitor a shared flag to exit safely.
+        Interrupt mechanism: Especially useful for stopping threads in blocking operations (e.g., sleep() or wait()).
+
+      2. Avoid Thread.stop(): It is unsafe and deprecated as it can lead to inconsistent states, resource corruption, and deadlocks.
+
+      Real-World Scenarios:
+        Background services (e.g., batch processing jobs) often require graceful shutdown to ensure resources are released and processes are not left incomplete.
+        Thread pools managed via ExecutorService provide controlled shutdown methods (shutdown() and shutdownNow()) for safe task management.
+
+        Key Takeaway: Ensure that thread termination is controlled, predictable, and resource-safe. This practice not only prevents application instability but also maintains the integrity of shared resources
+
+
+28. Suppose you have 2 threads. One of them prints (1,2,3…) and the other one prints (A,B,C,..). How will you ensure that they run in a sequence, so that it prints (1,A,2,B…)?
+    To achieve this sequence of alternating outputs (1, A, 2, B, ...) from two threads, we can use synchronization mechanisms like a shared lock (ReentrantLock or synchronized) and a condition variable (wait/notify) to coordinate the execution of the threads.
+
+    Here's how we can implement this in Java:
+    class AlternatingPrinter {
+
+      private final Object lock = new Object();
+      private boolean numberTurn = true; // Indicates whether it's the number thread's turn
+
+      public static void main(String[] args) {
+            AlternatingPrinter printer = new AlternatingPrinter();
+            Thread numberThread = new Thread(() -> printer.printNumbers());
+            Thread letterThread = new Thread(() -> printer.printLetters());
+            numberThread.start();
+            letterThread.start();
+        }
+       public void printNumbers() {
+            for (int i = 1; i <= 26; i++) { // Adjust the range as needed
+                synchronized (lock) {
+                    while (!numberTurn) {
+                        try {
+                            lock.wait(); // Wait until it's this thread's turn
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                    System.out.print(i + " ");
+                    numberTurn = false; // Pass the turn to the letter thread
+                    lock.notifyAll(); // Notify the waiting thread
+                }
+            }
+        }
+       public void printLetters() {
+            for (char c = 'A'; c <= 'Z'; c++) { // Adjust the range as needed
+                synchronized (lock) {
+                    while (numberTurn) {
+                        try {
+                            lock.wait(); // Wait until it's this thread's turn
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                    System.out.print(c + " ");
+                    numberTurn = true; // Pass the turn to the number thread
+                    lock.notifyAll(); // Notify the waiting thread
+                }
+            }
+        }
+    }
+

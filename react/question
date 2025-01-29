@@ -730,3 +730,23 @@
     Memoization is a technique used to cache the results of expensive function calls and return the cached result when the same inputs occur again.
      It can be implemented using a simple object or a Map to store cached results.
 
+27. Explain how the Context API works in React and provide an example of sharing state across multiple components.
+    The Context API allows you to pass data through the component tree without having to pass props down manually at every level.
+    import React, { createContext, useState, useContext } from 'react';
+    const MyContext = createContext();
+    function ParentComponent() {
+        const [value, setValue] = useState('Hello, World!');
+        return (
+            <MyContext.Provider value={{ value, setValue }}>
+                <ChildComponent />
+            </MyContext.Provider>
+        );
+    }
+    function ChildComponent() {
+        const { value } = useContext(MyContext);
+        return <div>{value}</div>;
+    }
+
+28. React Fiber
+    React Fiber is a re-implementation of the React core algorithm for reconciliation, improving the ability to split rendering work into units and manage work prioritization for smooth user interactions.
+

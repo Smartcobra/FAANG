@@ -82,4 +82,116 @@
         Secure communication using TLS/SSL.
         Validate and sanitize inputs to prevent injection attacks.
         Use API gateways for security.
-18.
+
+18. What is content negotiation in microservices?
+    Content negotiation in microservices refers to the process where a client and a server agree on the format of data to be exchanged during an HTTP request/response.
+
+    It enables a microservice to deliver responses in multiple formats, such as JSON, XML, or plain text, based on the client's preference or capability.
+    Content Negotiation Working
+
+    1. Client Preference: The client specifies its preferred data format(s) using HTTP headers:
+
+        Accept header: Specifies the media types the client can handle, eg) Accept: application/json, application/xml.
+        Content-Type header: Specifies the format of the data sent in the request body, eg) Content-Type: application/json.
+
+    2. Server Response: The server analyzes the Accept header and determines the best format it can provide. If multiple formats are supported, the server chooses the most appropriate one based on priority.
+
+    3. Response: The server sends the response in the agreed-upon format, along with the Content-Type header indicating the media type, eg) Content-Type: application/json.
+    Types of Content Negotiation
+
+        Server-Driven Negotiation: The server decides the response format based on the Accept header from the client.
+        Client-Driven Negotiation: The client requests specific formats through query parameters, such as ?format=json.
+        Agent-Driven Negotiation: Intermediary software or a proxy negotiates the content format.
+
+    Benefits in Microservices
+
+        Flexibility: Supports diverse client applications by delivering data in formats they understand.
+        Interoperability: Enhances integration with systems using different data formats.
+        Scalability: Allows services to evolve without breaking client compatibility by adding or deprecating formats.
+
+    Example
+
+    Suppose a client sends the following request to a microservice:
+
+    GET /users HTTP/1.1
+    Accept: application/json
+
+        If the server supports JSON, it responds:
+
+    HTTP/1.1 200 OK Content-Type: application/json
+    {
+    "id": 1,
+    "name": "Shivam Srivastava"
+    }
+
+        If the server cannot provide JSON, it might return:
+
+    HTTP/1.1 406 Not Acceptable
+
+    Content negotiation ensures microservices can adapt to the needs of various clients, making them more versatile and interoperable.
+
+19. What is Dependency Injection and what are it's advantages?
+    Dependency Injection (DI) is a design pattern used in object-oriented programming to achieve Inversion of Control (IoC).
+    It involves providing an object (called the dependent object) with its dependencies (other objects it depends on) from the outside,
+    instead of the dependent object instantiating them itself.
+    This approach decouples the creation of objects from their behavior, making the code more modular, testable, and maintainable.
+    Dependency Injection Working
+
+    At its core, DI involves:
+        Dependencies: The objects or resources a class needs to function.
+        Injection: The process of passing these dependencies to the dependent object.
+
+    DI can be implemented in three main ways:
+        Constructor Injection: Dependencies are passed to the object via its constructor.
+        Setter Injection: Dependencies are set through public setter methods.
+        Interface Injection: The dependency provides an injector method that the dependent class uses to receive its dependencies (less common).
+
+    Example
+
+    Without DI:
+    public class Service {
+        private Repository repository = new Repository(); // Tight coupling
+
+        public void performService() {
+            repository.save();
+        }
+    }
+
+    With DI:
+    public class Service {
+        private Repository repository;
+
+        public Service(Repository repository) { // Constructor Injection
+            this.repository = repository;
+        }
+        public void performService() {
+            repository.save();
+        }
+    }
+
+    Here, the Repository object is passed from outside, making Service independent of its creation logic.
+    Advantages
+        Loose Coupling:
+        Classes are no longer responsible for creating their own dependencies, which makes the code more modular and easier to manage.
+
+    2. Improved Testability:
+        Dependencies can be easily mocked or stubbed for unit testing, as they are passed from outside rather than being hardcoded inside the class.
+
+    3. Easier Maintenance:
+        If a dependency changes (e.g., swapping a database implementation), you only need to update the dependency injection configuration, not the dependent class.
+
+    4. Reusability:
+        Dependencies can be reused across different classes, promoting a more DRY (Don't Repeat Yourself) codebase.
+
+    5. Scalability:
+        Adding new functionality or dependencies becomes easier, as the code is modular and not tightly coupled.
+
+    6. Adherence to SOLID Principles:
+        Promotes the Single Responsibility Principle by separating the creation of dependencies from the use of dependencies.
+        Encourages the Dependency Inversion Principle, as classes depend on abstractions (interfaces) rather than concrete implementations.
+
+    7. Configuration Flexibility:
+        DI allows dynamic injection of dependencies based on runtime configurations, making the code adaptable to different environments (e.g., development, production).
+
+    8. Better Code Readability:
+        By delegating dependency management to a DI container or framework, the main code becomes cleaner and more focused on business logic.

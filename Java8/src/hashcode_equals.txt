@@ -1,0 +1,73 @@
+hashCode() and equals() are methods from the Object class that are used for comparing objects and storing them efficiently in collections like
+HashMap, HashSet, and HashTable.
+
+equals() ::
+    Used to compare the contents of two objects for equality.
+    Default implementation in Object class checks reference equality (i.e., ==).
+    It should be overridden to provide meaningful equality comparison.
+
+hashCode() ::
+    Returns an integer hash code that represents the object.
+    Objects that are equal according to equals() must return the same hash code.
+    Used in hash-based collections to efficiently store and retrieve objects.
+
+
+Key Rules for equals() and hashCode()
+    If two objects are equal (equals() returns true), their hashCode() must be the same.
+    If two objects have the same hashCode(), they may or may not be equal.
+    If equals() is overridden, hashCode() should also be overridden to maintain consistency.
+
+------
+import java.util.Objects;
+
+class Employee {
+    private int id;
+    private String name;
+
+    public Employee(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    // Overriding equals() method
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;  // Check same reference
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Employee employee = (Employee) obj;
+        return id == employee.id && Objects.equals(name, employee.name);
+    }
+
+    // Overriding hashCode() method
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{id=" + id + ", name='" + name + "'}";
+    }
+}
+
+public class HashCodeEqualsExample {
+    public static void main(String[] args) {
+        Employee e1 = new Employee(1, "Alice");
+        Employee e2 = new Employee(1, "Alice");
+        Employee e3 = new Employee(2, "Bob");
+
+        System.out.println("e1 equals e2: " + e1.equals(e2)); // true
+        System.out.println("e1 equals e3: " + e1.equals(e3)); // false
+        System.out.println("e1 hashCode: " + e1.hashCode());
+        System.out.println("e2 hashCode: " + e2.hashCode());
+        System.out.println("e3 hashCode: " + e3.hashCode());
+
+        // HashSet example
+        java.util.Set<Employee> employees = new java.util.HashSet<>();
+        employees.add(e1);
+        employees.add(e2);
+        employees.add(e3);
+
+        System.out.println("Employees in HashSet: " + employees);
+    }
+}

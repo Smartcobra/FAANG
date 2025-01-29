@@ -1,0 +1,73 @@
+@Conditional annotation:
+    The @Conditional annotation in spring is used to conditionally create a bean, configuration or component based on a specified condition.
+    In the specified condition, we write custom logic to determine whether bean should be created or not.
+    This is useful for creating beans only when certain conditions are met, such as the presence of a specified class, property, or environment variable.
+
+Usage of the @Conditional annotation
+    Method Level: It can be applied on a method annotated with @Bean in the configuration class,
+                  the @Conditional annotation indicates that the bean would be created if condition is met.
+    @Bean
+    @Conditional(SomeCondition.class)
+    public CustomBean customBean() {
+      return new CustomBean();
+    }
+
+    Class Level: It can be applied on a @Configuration class, it conditionally creates all @Bean within that class.
+    @Configuration
+    @Conditional(SomeCondition.class)
+    public class AppConfig {
+      // All beans methods
+    }
+
+    Component Level: This annotation can also be applied directly on @Component, @Service, and @Repository classes.
+    @Component
+    @Conditional(SomeCondition.class)
+    public class TestComponent {
+      // component code here
+    }
+
+    The condition is defined by implementing the Condition interface. This interface has a single method matches that returns a
+    boolean indicating whether the condition is met.
+    @FunctionalInterface
+    public interface Condition {
+
+     boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata);
+
+    }
+
+
+2. Explain the use of @ConditionalOnClass annotation?
+    The @ConditionalOnClass annotation in spring boot is used to conditionally create a bean based on the presence of a specific class in the class path.
+    It is used to create optional dependencies in the Spring Boot application.
+
+    The @ConditionalOnClass annotation has two attributes.
+    @Target({ElementType.TYPE, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
+    @Conditional({OnClassCondition.class})
+    public @interface ConditionalOnClass {
+        Class<?>[] value() default {};
+        String[] name() default {};
+    }
+
+    value: This is used to specify the classes that must be present on the class path.
+    @ConditionalOnClass(value=RabbitMq.class)
+    name: This is used to specify the class names that must be present on the class path.
+    @ConditionalOnClass(name="com.learn.conditional.annotations.queues.RabbitMq")
+
+
+3. Explain the use of @ConditionalOnMissingClass annotation?
+   The @ConditionalOnMissingClass annotation in spring boot is used to conditionally create a bean only if certain classes are not present on the class path.
+    It is used to create default dependency in the Spring Boot application.
+
+   The @ConditionalOnMissingClass annotation has a single attribute.
+
+    @Target({ElementType.TYPE, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
+    @Conditional({OnClassCondition.class})
+    public @interface ConditionalOnMissingClass {
+        String[] value() default {};
+    }
+
+    value: This is used to specify the class names that must be present on the class path.

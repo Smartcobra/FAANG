@@ -7,7 +7,7 @@
 
     Short-circuit operations: Leverage operations like findFirst(), limit(), or anyMatch() to reduce the amount of data processed in the pipeline,
     thereby saving memory and improving performance.
-
+----
 2. Explain how BiFunction, BiConsumer, and BiPredicate are different from their single-parameter counterparts, and give a scenario where you would use them.
     BiFunction<T, U, R>: Takes two parameters (T and U) and returns a result (R). It's useful when you need to combine two values into a third one.
      For instance, adding two numbers or merging two objects into a new one.
@@ -17,7 +17,7 @@
 
     BiPredicate<T, U>: Takes two parameters and returns a boolean. It's helpful in cases like comparing two objects or checking relationships between
     them, such as verifying if two strings are anagrams.
-
+----
 3.  How would you implement a custom FunctionalInterface that takes three arguments and returns a result? How does this differ from built-in interfaces?
 
         @FunctionalInterface
@@ -30,32 +30,27 @@
     TriFunction<Integer, Integer, Integer, Integer> sum = (a, b, c) -> a + b + c;
 
     int result = sum.apply(1, 2, 3); // result = 6
-
+----
 4. In what scenarios might you prefer using method references (::) over lambda expressions in Java 8? Can you provide a performance comparison between the two?
     Method references (::) can often enhance code readability by avoiding the verbosity of lambda expressions, especially when you want to reuse an
     existing method without creating a new lambda.
 
     For example:
-
     Method reference: String::toUpperCase
-
     Lambda expression: (s) -> s.toUpperCase()
 
     While method references make the code cleaner and more readable, there is typically no significant performance difference between method
     references and lambda expressions. Both are converted into similar bytecode, and any performance variance is likely negligible, as the JVM
     optimizes both similarly under the hood.
-
+---
 5. Explain the use of the BinaryOperator<T> interface. When would you choose BinaryOperator over BiFunction?
     The BinaryOperator<T> interface is a specialization of BiFunction<T, T, T>, where both inputs and the output are of the same type. You would opt for BinaryOperator in scenarios where both the input types and result type are the same. It is often used in tasks like summing numbers, concatenating strings, or merging collections.
 
     Example:
-
     BinaryOperator<Integer> sum = (a, b) -> a + b;
-
     int result = sum.apply(5, 10); // result = 15
-
     In contrast, BiFunction<T, U, R> is more generic and should be used when the input types or return type differ.
-
+---
 6. What are the major new features in Java 8?
     Answer: Java 8 introduced several key features including:
         Lambda expressions
@@ -63,27 +58,25 @@
         New Date and Time API
         Default and static methods in interfaces
         Optional class
-
+---
 7. Explain Lambda expressions in Java 8.
     Lambda expressions are a new way to define anonymous functions, which are not bound to an identifier. T
     hey are particularly useful in instances where a method takes another method as an argument.
 
     Code Example:
-
     List<String> names = Arrays.asList("John", "Jane", "Jack");
     names.forEach(name -> System.out.println(name));
-
+---
 8. How does the Stream API work in Java 8?
    Answer: The Stream API provides a high-level abstraction for processing sequences of elements, supporting sequential and parallel operations. Streams
    can be created from collections and support operations like map, filter, and reduce.
 
    Code Example:
-
    List<String> names = Arrays.asList("John", "Jane", "Jack");
    List<String> uppercaseNames = names.stream()
                                       .map(String::toUpperCase)
                                       .collect(Collectors.toList());
-
+---
 9. What are default methods? Why were they introduced in Java 8?
     Answer: Default methods are methods in an interface that have an implementation. They were introduced to provide backward compatibility for old
     interfaces so new methods can be added without affecting implementing classes.
@@ -93,18 +86,17 @@
             System.out.println("New default method");
         }
     }
-
+---
 10. Explain the Optional class in Java 8.
     Answer: Optional<T> is a container object which may or may not contain a non-null value. It is used to represent optional values that are either
     there or not there, helping avoid null checks and NullPointerException.
     Optional<String> optional = Optional.of("hello");
     optional.ifPresent(System.out::println);
-
+---
 11. What is a functional interface? Can you give an example?
     Answer: A functional interface is an interface that contains only one abstract method. They can have multiple default methods. Lambda expressions are often used to provide the implementation of the abstract method of a functional interface.
 
     Code Example:
-
     @FunctionalInterface
     interface Converter<F, T> {
         T convert(F from);
@@ -112,13 +104,12 @@
 
     Converter<String, Integer> converter = Integer::valueOf;
     int num = converter.convert("5");
-
+---
 12. Explain the differences between map and flatMap in the Stream API.
     Answer: map transforms each element of the stream using a function, whereas flatMap can transform each element into zero, one, or
     multiple elements by flattening the streams resulting from the transformation.
 
     Code Example:
-
     List<List<String>> namesNested = Arrays.asList(
       Arrays.asList("John", "Jane"),
       Arrays.asList("Jack")
@@ -126,95 +117,81 @@
     List<String> flatNames = namesNested.stream()
                                         .flatMap(List::stream)
                                         .collect(Collectors.toList());
-
+---
 13. What are the advantages of using Streams?
     Answer: Streams provide a high level of abstraction for performing operations on collections of data (such as querying, filtering, and transforming),
     supporting both sequential and parallel execution, improving readability and maintainability.
-
+---
 14. How does forEach differ from the traditional for loop?
 
     Answer: forEach is an internal iterator that abstracts the iteration process, allowing parallel execution and cleaner syntax, whereas a traditional for loop is an external iterator where the iteration details are handled manually by the programmer.
 
     Code Example:
-
     List<String> names = Arrays.asList("John", "Jane", "Jack");
         names.forEach(System.out::println); // forEach
         for(String name : names) { // traditional for loop
         System.out.println(name);
     }
-
+---
 15. What is the Collectors class in Java 8?
 
     Answer: The Collectors class in the java.util.stream package provides reduction operations, such as accumulating elements into collections, summarizing elements according to various criteria, etc.
 
     Code Example:
-
     List<String> names = Arrays.asList("John", "Jane", "Jack");
     String result = names.stream().collect(Collectors.joining(", "));
-
+---
 16. How do you create a parallel stream and what are the considerations for using them?
 
     Answer: A parallel stream can be created by calling parallelStream() on a collection. While parallel streams can provide improved performance by utilizing multiple cores of the computer's CPU, they are best used when dealing with a large amount of data and operations that can be independently executed. However, care must be taken as not all operations are faster using parallel streams, and improper use can lead to performance degradation and issues like race conditions.
 
     Code Example:
-
     List<String> names = Arrays.asList("John", "Jane", "Jack");
     List<String> result = names.parallelStream()
                                 .filter(s -> s.startsWith("J"))
                                 .collect(Collectors.toList());
-
+---
 17. What are the improvements to the Java Collections API in Java 8?
-
     Answer: Java 8 added new methods to the Collections API including forEach, removeIf, replaceAll, and several new methods in Map such as
      getOrDefault, putIfAbsent, forEach, computeIfAbsent, computeIfPresent, and merge.
-
+----
 18. Describe the reduce operation on a stream.
-
     Answer: The reduce operation combines the elements of a stream to produce a single summary result. This operation takes a binary operator as a parameter and iteratively applies it to combine all elements of the stream.
 
     Code Example:
-
     List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
     int sum = numbers.stream().reduce(0, Integer::sum);
-
+----
 19. Explain the difference between findFirst and findAny.
-
     Answer: Both findFirst and findAny return an Optional describing some element of the stream. findFirst returns the first element in the stream, which is particularly meaningful in ordered streams. findAny may return any element from the stream, and its behavior is non-deterministic. It is typically used for performance optimization under parallel computation.
 
     Code Example:
-
     List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
     Optional<Integer> any = numbers.stream().findAny();
     Optional<Integer> first = numbers.stream().findFirst();
-
+----
 20. What are the benefits of using the Optional class?
-
     Answer: The Optional class is used to avoid NullPointerException in Java applications. It provides a clear and explicit way to deal with the absence of a value and helps in writing clean and bug-free code by forcing the developer to actively think about the case where a value may be missing.
 
     Code Example:
-
     List<String> names = Arrays.asList("John", "Jane", "Jack", "Doe");
     List<String> filteredNames = names.stream()
                                       .filter(name -> name.startsWith("J"))
                                       .collect(Collectors.toList());
-
+----
 21. What is a Predicate in Java 8, and how do you use it?
-
     Answer: A Predicate is a functional interface that represents a boolean-valued function of one argument. It is often used for filtering or matching.
 
     Code Example:
-
     List<String> names = Arrays.asList("John", "Jane", "Jack", "Doe");
     List<String> filteredNames = names.stream()
                                       .filter(name -> name.startsWith("J"))
                                       .collect(Collectors.toList());
-
+---
 22. How do you handle exceptions in Lambda expressions?
-
     Answer: Handling exceptions in Lambda expressions can be tricky since they do not allow throwing checked exceptions without catching them. Typically, you need to wrap them in a runtime exception or handle them within the lambda.
 
     Code Example:
-
     List<Integer> integers = Arrays.asList(3, 9, 7, 0, 10, 20);
     integers.forEach(i -> {
         try {
@@ -223,30 +200,26 @@
             System.err.println("Arithmetic Exception encountered: " + e.getMessage());
         }
     });
-
+----
 23. How do you sort a stream?
-
     Answer: Streams can be sorted using the sorted() method, which sorts according to natural order unless a comparator is provided.
-
     Code Example:
-
     List<String> names = Arrays.asList("John", "Jane", "Jack", "Doe");
     List<String> sortedNames = names.stream()
                                     .sorted()
                                     .collect(Collectors.toList());
-
+----
 24. Explain the difference between peek and forEach in a stream.
 
     Answer: peek is mainly used for debugging purposes since it allows viewing each element in the stream without altering it. forEach, on the other hand, is a terminal operation that is generally used to perform an action on each element of the stream.
 
     Code Example:
-
     List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);
     numbers.stream()
            .peek(num -> System.out.println("Will filter number: " + num))
            .filter(x -> x > 3)
            .forEach(System.out::println);
-
+----
 25. What is the anyMatch, allMatch, and noneMatch operations?
 
     Answer: These operations are short-circuiting terminal operations to evaluate streams based on certain predicates:
@@ -260,11 +233,10 @@
     boolean anyMatch = names.stream().anyMatch(name -> name.startsWith("J"));
     boolean allMatch = names.stream().allMatch(name -> name.length() > 3);
     boolean noneMatch = names.stream().noneMatch(name -> name.endsWith("x"));
-
+----
 26. How can you convert an array to a Stream?
 
     Answer: Arrays can be converted to streams using the Arrays.stream method.
-
     Code Example:
 
     int[] numbers = {1, 2, 3, 4, 5};

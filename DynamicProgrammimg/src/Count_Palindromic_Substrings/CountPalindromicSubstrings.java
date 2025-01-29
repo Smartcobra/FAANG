@@ -5,7 +5,7 @@ public class CountPalindromicSubstrings {
     public int countSubstrings(String s) {
         int n = s.length(), ans = 0;
 
-        if (n <= 0)
+        if (n == 0)
             return 0;
 
         boolean[][] dp = new boolean[n][n];

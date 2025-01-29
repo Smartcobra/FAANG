@@ -1,0 +1,143 @@
+Collectors.groupingBy()
+
+Suppose you have a list of Person objects, and you want to group them by their age.
+    List people = Arrays.asList(new Person("John", 25),
+                                new Person("Alice", 30),
+                                new Person("Bob", 25),
+                                new Person("Eve", 30));
+    Map<Integer, List> peopleByAge = people.
+                                     stream().
+                                     collect(
+                                        Collectors.groupingBy(Person::getAge)
+                                     );
+    System.out.println(peopleByAge);
+    //output :
+        {25=[Person{name='John', age=25}, Person{name='Bob', age=25}],
+        30=[Person{name='Alice', age=30}, Person{name='Eve', age=30}]}
+
+----
+Let's say you want to group people into three categories: "young" (under 25), "adult" (25–50), and "senior" (over 50).
+    Map<String, List> peopleByAge = people.
+                                    stream().
+                                    collect(
+                                    Collectors.groupingBy(
+                                      person -> {
+                                        if (person.getAge() < 25) {
+                                          return "young";
+                                        } else if (person.getAge() < 50) {
+                                          return "adult";
+                                        } else {
+                                          return "senior";
+                                        }
+                                      }
+                                      )
+                                    );
+
+         ::: You can also use method references to make the code more concise and readable.
+         public static String getAgeRange(Person person) {
+           if (person.getAge() < 25) {
+             return "young";
+           } else if (person.getAge() < 50) {
+             return "adult";
+           } else {
+             return "senior";
+           }
+         }
+         Map<String, List> peopleByAgeRange = people.
+                                              stream().
+                                              collect(
+                                                Collectors.groupingBy(
+                                                  this::getAgeRange
+                                                )
+                                              );
+---
+You want to group these employees by department, and then further group them by team within each department.
+        List employees = Arrays.asList(
+                                 new Employee("John", "Sales", "North"),
+                                 new Employee("Alice", "Sales", "South"),
+                                 new Employee("Bob", "Marketing", "East"),
+                                 new Employee("Charlie", "Marketing", "West") );
+        Map<String, Map<String, List>> result = employees.
+                                                stream().
+                                                collect(
+                                                  Collectors.groupingBy(
+                                                       Employee::getDepartment,
+                                                            Collectors.groupingBy(
+                                                                    Employee::getTeam)
+                                                   )
+                                                 );
+        ::: output-
+                { "Sales": { "North": [Employee("John", "Sales", "North")],
+                             "South": [Employee("Alice", "Sales", "South")]
+                           },
+                  "Marketing": { "East": [Employee("Bob", "Marketing", "East")],
+                                  "West": [Employee("Charlie", "Marketing", "West")]
+                                }
+                }
+----
+Downstream Collectors:
+------------------
+This collector returns the count of elements in each group, which can be incredibly useful for data analysis and aggregation.
+        Map<String, Long> countByDepartment = employees.
+                                              stream().
+                                              collect(
+                                                 Collectors.groupingBy(
+                                                   Employee::getDepartment,
+                                                   Collectors.counting()
+                                                 )
+                                              );
+-----
+ want to calculate the total salary for each department:
+    Map<String, Double> salaryByDepartment = employees.
+                                             stream().
+                                             collect(
+                                               Collectors.groupingBy(
+                                                 Employee::getDepartment,
+                                                 Collectors.mapping(
+                                                   Employee::getSalary,
+                                                   Collectors.summingDouble(
+                                                     Double::doubleValue
+                                                   )
+                                                 )
+                                               )
+                                             );
+
+-----
+Real-World Applications and Examples
+        List orders = Arrays.asList(
+                             new Order("North", 100),
+                             new Order("South", 200),
+                             new Order("North", 150),
+                             new Order("East", 50)
+                      );
+        Map<String, Double> salesByRegion = orders.
+                                            stream().
+                                            collect(
+                                              Collectors.groupingBy(
+                                                Order::getRegion,
+                                                Collectors.summingDouble(
+                                                  Order::getAmount
+                                                )
+                                               )
+                                             );
+   System.out.println(salesByRegion); // {North=250.0, South=200.0, East=50.0}
+
+-----
+ student management system, and you need to group students by their department and then by their major.
+    List students = Arrays.asList(
+                        new Student("John", "CS", "AI"),
+                        new Student("Jane", "CS", "ML"),
+                        new Student("Bob", "EE", "Robotics")
+                    );
+    Map<String, Map<String, List>> stByDepAndMajor = students.
+                                                     stream().
+                                                     collect(
+                                                      Collectors.groupingBy(
+                                                        Student::getDepartment,
+                                                        Collectors.groupingBy(
+                                                          Student::getMajor
+                                                        )
+                                                      )
+                                                     );
+    System.out.println(studentsByDepartmentAndMajor);
+    // {CS={AI=[John], ML=[Jane]}, EE={Robotics=[Bob]}}

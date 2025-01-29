@@ -1,0 +1,105 @@
+What is Spring Bean?
+    At its core, a Spring Bean is simply a Java object that is instantiated, configured, and managed by the Spring Inversion of Control (IoC) container.
+
+    The IoC container uses configuration metadata (defined in XML, annotations, or Java code) to determine how beans should be created, wired together,
+    and managed. This management includes the bean’s lifecycle — from its creation, potential initialization (e.g., using @PostConstruct), usage,
+    and eventual destruction (e.g., using @PreDestroy).
+
+
+    Each Spring Bean also has a scope, which defines its lifecycle and visibility within the application.
+    Let’s dive deeper into the concept of scopes and the most common types of Spring Bean scopes.
+
+    Importance of Bean Scopes
+    The scope of a bean determines its lifecycle — how many instances of a bean are created and how they are shared or isolated within the application context.
+    Choosing the appropriate scope for a bean is essential to:
+        Optimize memory usage
+        Prevent unintended data sharing
+        Improve performance
+        Ensure thread safety
+-------
+    Singleton Scope
+    Singleton is the default scope. Only one instance of the bean is created per Spring container, regardless of how many times it is requested.
+    This instance is shared across the entire application. The singleton bean is accessible globally within the application context.
+    @Component
+    @Scope("singleton")
+    public class SingletonBean {
+        // Singleton scoped bean
+    }
+
+    <bean id="accountService" class="com.something.DefaultAccountService"/>
+    <!-- The following is equivalent, though redundant (singleton scope is the default) -->
+    <bean id="accountService" class="com.something.DefaultAccountService" scope="singleton"/>
+
+    Singleton beans are great for stateless services, but be careful with stateful data because it will be shared across all requests and users
+
+    Stateless means the bean doesn’t hold any data specific to any single client. It performs its function without retaining client-specific information between calls.
+
+    Singleton beans are shared across threads, so developers must ensure thread safety when accessing and modifying shared state within singleton beans.
+
+    Singleton beans are created once and reused, which can optimize memory usage and application performance if used appropriately.
+
+    Spring Singleton vs. GoF Singleton:-----------------
+    Spring’s singleton scope is per-container and per-bean definition. It ensures that only one instance of a bean is created per container,
+    not per ClassLoader as defined in the Gang of Four Singleton pattern.
+
+------
+Prototype Scope:
+        In Prototype scope, a new bean instance is created each time it is requested from the Spring container.
+        Prototype-scoped beans are created anew each time they are requested from the Spring container. In Spring,
+         the Prototype scope means that every time you request a bean, either by injecting it into another bean or by calling getBean() on the container,
+         a new instance of that bean is created.
+
+        This be useful for beans that hold user-specific data
+
+        @Component
+        @Scope("prototype")
+        public class PrototypeBean {
+            // Prototype scoped bean
+
+        Use Prototype scope for beans that hold state or data that should not be shared across multiple clients or threads.
+        I’ve used prototype beans for objects that require a fresh state each time, like temporary objects in a service.
+
+        Unlike Singleton beans where Spring manages the lifecycle (creation, initialization, destruction), Spring does not manage
+        Prototype beans beyond instantiation. Initialization callback methods (like @PostConstruct) are still called, but destruction callbacks
+        (like @PreDestroy) are not managed by Spring for Prototype beans. Cleaning up resources is the responsibility of the client code. Spring’s
+        role with Prototype-scoped beans is akin to the Java new operator. Spring handles the instantiation and initial setup, but subsequent
+        lifecycle management and cleanup are up to the client code.
+
+        Prototype scope can lead to performance issues if not managed properly, as creating new instances frequently can be resource-intensive.
+
+        ---Singleton Beans with Prototype-Bean Dependencies:
+        When you inject a Prototype-scoped bean into a Singleton-scoped bean, Spring resolves this dependency at the time of Singleton bean instantiation.
+        The Singleton bean gets injected with a single instance of the Prototype bean.
+        This instance remains unchanged throughout the Singleton bean’s lifecycle.
+
+        Meaning…
+        If your Singleton bean needs to interact with the Prototype bean and requires a new instance of the Prototype bean
+        each time (rather than the same instance), direct dependency injection won’t suffice.
+
+        This is because Spring injects the Prototype bean instance into the Singleton bean only once, during initialization.
+
+        ---Request Scope
+        The Request scope in Spring means that a new instance of a bean is created for each HTTP request. Each request gets its own separate instance of the bean,
+        which is discarded once the request processing completes.
+
+        Each HTTP request gets its own instance of the bean.
+        This ensures that each request is handled independently, with no risk of data leakage or unintended state sharing between requests.
+        I’ve used this in a project where we had to process user input in a web form. It ensured each user got their own instance of the form bean.
+
+        @Component
+        @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+        public class RequestScopedBean {
+            // Request scoped bean
+        }
+
+        Proxy mode creates a proxy around the scoped bean, ensuring that the correct instance is used based on the current request or session.
+
+        ----Session Scope
+        In the Session scope, a new bean instance is created for each HTTP session. The bean persists for the duration of the session and is discarded when the session ends.
+
+        @Component
+        @Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+        public class SessionScopedBean {
+            // Session scoped bean
+        }
+        Beans used to store user preferences or session-specific data.
