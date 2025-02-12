@@ -1,0 +1,27 @@
+Hardware & Environment Setup
+
+For context, here's the machine I used for testing:
+
+    OS: Ubuntu 22.04 LTS
+    CPU: 12-core AMD Ryzen 9 5900X
+    RAM: 64 GB DDR4
+    Storage: 2 TB NVMe SSD
+
+1. What Is the One Billion Row Challenge?
+
+The challenge is as simple as it is daunting:
+
+    You have a dataset containing 1,000,000,000 rows.
+    Each row includes:
+    A string identifier (e.g., PROPERTY_A)
+    A floating-point value (e.g., 123456.78)
+    You must compute the minimum, average, and maximum price for each unique property.
+
+task-example :
+    PROPERTY_A;123456.78
+output:
+    {
+      PROPERTY_A=100000.0/175000.0/250000.0,
+      PROPERTY_B=95000.0/210500.4/399999.9,
+      ...
+    }

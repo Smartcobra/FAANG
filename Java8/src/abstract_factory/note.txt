@@ -1,0 +1,32 @@
+What is the Abstract Factory Pattern?
+
+The Abstract Factory Pattern is a creational design pattern that provides an interface for creating families of related or dependent objects without specifying their concrete classes.
+Key Concepts:
+
+    Factory: A factory is a class or method that creates objects. It’s like a machine that manufactures things (like buttons, cars, etc.).
+    Abstract Factory: Instead of creating objects directly, you ask the abstract factory to create related objects for you.
+
+Real-world Example: Vehicle Factory
+
+Imagine you want to create a vehicle (like a car or truck). There are different types of vehicles that can have different parts (like wheels, engines, and seats), and each vehicle type might have specific parts.
+
+You don’t want to manually pick every part for every vehicle. Instead, you want to ask a factory to give you a complete vehicle (car or truck) with all the parts pre-assembled.
+Key Parts of the Example:
+
+    Vehicle Types (Car, Truck)
+    Parts (Wheels, Engine, Seats)
+
+Step-by-Step Explanation of the Abstract Factory Pattern::
+    Abstract Products: These are the parts that make up the vehicle. In this case, we’ll create interfaces for Wheels, Engine, and Seats.
+    Concrete Products: These are the specific types of parts. For example, CarWheels, TruckWheels, etc.
+    Abstract Factory: This factory defines methods to create these parts (Wheels, Engine, Seats). It’s the generic factory that allows you to create parts for a specific vehicle type.
+    Concrete Factories: These are the specific factories that create the parts for a car or a truck
+
+
+Summary of What Happened:
+
+    Abstract Products: We defined the parts of a vehicle as interfaces — Wheel, Engine, and Seat.
+    Concrete Products: We created specific types of parts for both Car and Truck.
+    Abstract Factory: We created a VehicleFactory interface, which has methods to create the parts (Wheel, Engine, Seat) for the vehicle.
+    Concrete Factories: The CarFactory and TruckFactory implement the VehicleFactory interface. They know how to create the parts for their respective vehicles.
+    Client Code: The client uses the factory to get a full set of parts for a car or truck without knowing the details of how each part is created.

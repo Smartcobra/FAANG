@@ -1,0 +1,17 @@
+You have a 10 GB bank transaction log file that contains records of individual transactions. Your task is to process the file,
+filter out transactions where the amount is higher than 10,000, and then sum up the amounts. Since the file is large,
+the goal is to process it efficiently using parallelism to speed up the computation
+
+How Parallel Streams Work
+    Splitting the Data:::  When you use a parallel stream, Java will automatically partition the data into chunks that can be processed independently.
+    These partitions are processed on multiple CPU cores.
+    Parallel Processing:::  Each chunk of data is processed in parallel by different threads. Java uses the Fork/Join framework under the hood to achieve parallelism.
+    Combining Results:::  Once all chunks are processed, the results are combined (reduced) to produce the final outcome. In your case,
+    it would be summing the amounts of transactions that are greater than 10,000.
+
+
+Steps to Process the 10 GB File Using Parallel Streams
+    Read the File in Parallel: You can use Files.lines() to read the file, which will stream the lines of the file lazily (without loading the entire file into memory at once). After that, the stream can be converted to a parallel stream using .parallel().
+    Parse and Filter: Each line in the transaction log contains transaction details, such as the transaction amount. You will need to parse each line, extract the amount, and filter out transactions where the amount is greater than 10,000.
+    Summing the Amounts: After filtering, you sum up the transaction amounts using a terminal operation like reduce() or sum().
+

@@ -1,0 +1,56 @@
+String class is immutable, meaning once a String object is created, its value cannot be changed
+
+Reasons for String Immutability
+    Security
+        Strings are widely used in security-sensitive areas, such as usernames, passwords, and URLs.
+        If String were mutable, someone could change its contents and compromise security (e.g., modifying a database URL or file path during execution).
+
+        Example:
+            String password = "securePass";
+            // If mutable, a hacker could change password's value in memory
+
+    String Pool Optimization
+        Java has a String Pool in the heap memory that stores String literals to save memory.
+        If String were mutable, modifying one reference would affect all references pointing to the same object.
+
+        Example:
+            String s1 = "hello";
+            String s2 = "hello";  // Points to the same object in the pool
+            If s1 were changed, s2 would also be affected, leading to unpredictable behavior.
+
+    Thread Safety
+        Since String is immutable, multiple threads can use the same String instance without synchronization issues.
+        This reduces bugs and improves performance in multithreading environments.
+
+        Example:
+        String shared = "data";  // No need for synchronization
+
+    Efficient Hashing (Caching hashCode)
+        The hashCode() of a String is computed only once and stored internally.
+        If String were mutable, hashCode() would change every time, affecting hash-based collections like HashMap and HashSet.
+
+        Example:
+        String key = "user";
+        int hash = key.hashCode();  // Cached for future use
+
+    Class Loading Stability
+        Java class names are loaded using String. If String were mutable, an attacker could change the class name dynamically, causing security breaches.
+
+        Example:
+        Class.forName("com.app.Login");
+
+Proof that String is Immutable
+
+public class StringImmutableTest {
+    public static void main(String[] args) {
+        String s1 = "Hello";
+        s1.concat(" World");  // This doesn't change s1
+        System.out.println(s1);  // Output: Hello
+
+        // Proper way to modify
+        String s2 = s1.concat(" World");
+        System.out.println(s2);  // Output: Hello World
+    }
+}
+
+🔹 s1 remains "Hello" because concat() creates a new String object instead of modifying s1.
