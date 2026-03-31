@@ -9,7 +9,7 @@ No, private methods cannot be overridden because they are not visible to subclas
 2. Can You Catch an Exception Thrown in a Static Block?
  Exceptions thrown in a static block can only be caught within a static initializer block using a try-catch. Otherwise,
  the program will fail to load the class.
-----
+------------------------------------------------------------------------------
 3. Class Loader :
     A class loader is a tool that Java uses to load different classes (pieces of code) into the memory of your computer when a Java program is running. It’s like a librarian who helps the computer to find and “read” the right books (classes) that the program needs to use.
 
@@ -26,7 +26,7 @@ No, private methods cannot be overridden because they are not visible to subclas
         specified by the CLASSPATH environment variable or the -classpath command-line option. It loads classes that you or other
         developers have created for your program.
 
-----
+----------------------------------------------------------------------
 3. Interface VS Abstract class:
     Abstract class :
          Cannot be instantiated: You cannot create an object of an abstract class directly.
@@ -76,7 +76,7 @@ No, private methods cannot be overridden because they are not visible to subclas
             System.out.println("The duck swims.");
         }
     }
-
+-------------------------------------------------------------------------------------------------
 4.  Multiple Inheritance in Java and How It Is Achieved via Interfaces
 
    Java doesn’t support multiple inheritance (a class cannot extend more than one class). This restriction exists to avoid the “diamond problem”, which arises when a class inherits from two classes that both provide different implementations of the same method. This could create ambiguity about which method to use.
@@ -202,13 +202,13 @@ No, private methods cannot be overridden because they are not visible to subclas
             System.out.println("Logging after processing: " + data);
         }
     }
-
+------------------------------------------------------------
 8. Custom Class Loaders for Modular Applications
     ClassLoader customLoader = new URLClassLoader(new URL[]{new URL("file:/path/to/classes/")});
     Class<?> clazz = customLoader.loadClass("com.example.MyClass");
 
     Why use it? Allows on-the-fly updates to your application without restarting.
-----
+----------------------------------------------------------------------------
 9. Use Reflection for Dynamic Behavior.
     Reflection enables runtime inspection and modification of code.
     Method method = obj.getClass().getDeclaredMethod("methodName");
@@ -224,7 +224,7 @@ No, private methods cannot be overridden because they are not visible to subclas
     name.ifPresent(System.out::println);
 
     Why use it? Encourages thoughtful handling of missing or null values.
------
+----------------------------------------------
 11. Try-With-Resources for Cleaner Code
     Automatically manage resources like files or sockets with this Java feature.
 
@@ -233,7 +233,7 @@ No, private methods cannot be overridden because they are not visible to subclas
     }
 
     Why use it? Prevents resource leaks and simplifies error handling.
------
+-------------------------------------------------------
 12. Asynchronous Programming with CompletableFuture
     Write non-blocking code using CompletableFuture for responsive applications.
 
