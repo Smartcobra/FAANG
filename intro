@@ -45,3 +45,67 @@ In recent years, I’ve expanded my focus into AI/ML and have been actively work
 including Retrieval-Augmented Generation (RAG) systems, LLM integrations, embedding pipelines, and vector search architectures.
 I’ve been involved in designing and deploying production-grade AI solutions with a strong emphasis on scalability, security,
 observability, and reliability.
+
+
+AI-- IN Evernorth
+Traditional health insurance systems rely on static, one-size-fits-all plans and manual claim verification processes, which result in:
+
+Poor personalization of insurance coverage
+High out-of-pocket costs for customers
+Inefficient premium pricing models
+Limited fraud detection capabilities
+Slow and manual decision-making workflows
+
+Proposed Solution
+We propose a Multi-Agent Generative AI Architecture that:
+
+Dynamically analyzes healthcare usage, claims history, and behavioral data
+Automatically generates personalized insurance plans
+Uses AI-driven pricing models for premium optimization
+Enables real-time fraud detection and risk assessment
+Continuously learns from user behavior and system feedback
+
+                    +----------------------------------+
+                    |  MEMBER / INSURER PORTAL         |
+                    |  (Web / Mobile / API Gateway)    |
+                    +----------------+-----------------+
+                                     |
+                                     v
+                    +----------------------------------+
+                    |   ORCHESTRATOR AGENT (OA)        |
+                    | (Central Coordinator & Router)   |
+                    +----------------+-----------------+
+                                     |
+        -------------------------------------------------------------
+        |            |               |               |               |
+        v            v               v               v               v
+
++----------------+  +----------------+  +----------------+  +----------------------+
+| MEMBER         |  | PLAN           |  | PREMIUM        |  | MEMBER INTERACTION   |
+| PROFILING      |  | GENERATION     |  | OPTIMIZATION   |  | AGENT (MIA)          |
+| AGENT (MPA)    |  | AGENT (PGA)    |  | AGENT (POA)    |  | (Conversational AI)  |
++----------------+  +----------------+  +----------------+  +----------------------+
+        |
+        v
++----------------+
+| RISK SCORING   |
+| AGENT (RSA)    |
++----------------+
+                                     |
+                                     v
+
+                    +--------------------------------------+
+                    |  CONTINUOUS LEARNING AGENT (CLA)     |
+                    +--------------------------------------+
+
+                                     |
+                                     v
+
+                    +--------------------------------------+
+                    |  SHARED DATA & KNOWLEDGE LAYER       |
+                    |--------------------------------------|
+                    | • Vector DB (Embeddings)             |
+                    | • Feature Store                      |
+                    | • Claims History DB                  |
+                    | • Member Knowledge Graph             |
+                    +--------------------------------------+
