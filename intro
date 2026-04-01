@@ -49,6 +49,10 @@ observability, and reliability.
 
 AI-- IN Evernorth
 Traditional health insurance systems rely on static, one-size-fits-all plans and manual claim verification processes, which result in:
+The system is built around an orchestrator agent that coordinates multiple specialized agents like profiling, risk scoring, plan generation,
+and pricing. Each agent performs a focused task, and all of them share a common data layer including vector DB and claims history.
+A continuous learning agent ensures the system improves over time, while a conversational agent interacts with users.
+This modular multi-agent design ensures scalability, explainability, and adaptability.”
 
 Poor personalization of insurance coverage
 High out-of-pocket costs for customers
