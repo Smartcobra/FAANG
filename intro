@@ -39,3 +39,9 @@ Key Highlights:
  distributed systems using tools like Prometheus, Grafana, and ELK Stack (Elasticsearch, Logstash, Kibana).
  Scalability & Resilience: Adept at implementing scalability patterns such as circuit
  breakers, retries, and load balancing for resilient systems.
+
+
+In recent years, I’ve expanded my focus into AI/ML and have been actively working on end-to-end Machine Learning pipelines,
+including Retrieval-Augmented Generation (RAG) systems, LLM integrations, embedding pipelines, and vector search architectures.
+I’ve been involved in designing and deploying production-grade AI solutions with a strong emphasis on scalability, security,
+observability, and reliability.
