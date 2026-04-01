@@ -103,7 +103,8 @@ public class BirdExample {
         ((Walkable) penguin).walk();
     }
 }
-. How to resolve issues with reflection and cloning in Singleton?
+-----------------------------------------------------------------
+Q.How to resolve issues with reflection and cloning in Singleton?
     Prevent Reflection: Reflection can be used to call the private constructor of a singleton class and create multiple instances.
     To prevent this, you can modify the constructor to throw an exception if an instance already exists.
     public class Singleton {
@@ -128,3 +129,29 @@ public class BirdExample {
     protected Object clone() throws CloneNotSupportedException {
     throw new CloneNotSupportedException();
     }
+
+-------------------
+Design patterns can be categorized into three main types:
+1. Creational Patterns: These patterns focus on object creation mechanisms, providing ways to create objects in a manner that is flexible,
+decoupled from their concrete implementations, and suited to the specific requirements of the application. Examples include the Singleton pattern,
+Factory pattern, and Builder pattern.
+
+2. Structural Patterns: These patterns deal with the composition of classes and objects to form larger structures while keeping them flexible and
+efficient. They help ensure that classes and objects can work together effectively to achieve a common goal. Examples include the Adapter pattern,
+Decorator pattern, and Composite pattern.
+
+3. Behavioral Patterns: These patterns focus on the interactions and communication between objects and classes. They provide solutions for
+effectively managing the flow of control, responsibilities, and behavior between objects. Examples include the Observer pattern, Strategy pattern,
+and Command pattern.
+
+
+----------------------------
+Difference between decorator and strategy pattern:
+The Decorator pattern and the Strategy pattern are both design patterns used to enhance the functionality of objects, but they serve
+different purposes and are implemented differently.
+Decorator → extends behavior
+Strategy → switches behavior
+“For a notification system, I would use the Strategy Pattern to handle multiple notification channels like email, SMS, and push. Additionally,
+I would combine it with Factory for object creation, Observer for event-driven triggers, and optionally Decorator for cross-cutting concerns
+like retries and logging.”
+

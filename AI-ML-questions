@@ -1,0 +1,227 @@
+Question: What is Retrieval Augmented Generation (RAG), and why is it crucial in the context of large language models (LLMs)?
+    Retrieval Augmented Generation (RAG) is an advanced technique that significantly enhances the capabilities of large language models (LLMs).
+    While LLMs are incredibly powerful in generating human-like text, they are limited to the information they were trained on,
+    which often cuts off at a certain point in time. This limitation means that LLMs might not have access to the most recent data or
+    private datasets that are essential for specific tasks. RAG addresses this issue by allowing the model to retrieve relevant information
+    from external data sources, including databases, documents, or APIs, and integrate this information into the model’s prompt during the
+    generation process. This integration enables LLMs to generate responses that are informed by the latest data or proprietary information,
+    making RAG indispensable for applications that require reasoning over up-to-date or specialized datasets.
+
+Question: What are the two primary components of a Retrieval Augmented Generation (RAG) application, and how do they function together?
+    Indexing: This component is responsible for the initial preparation of data, which involves ingesting and organizing it for efficient
+    retrieval. During this phase, data from various sources is loaded into the system, often using document loaders.
+    The data is then split into manageable chunks, a process that is crucial because it makes large documents easier to search and ensures
+    they fit within the context window of LLMs. These chunks are then stored in a format optimized for retrieval, typically using a VectorStore
+    alongside an Embeddings model. This step is usually performed offline.
+
+    Retrieval and Generation: This component is responsible for fetching relevant information from the indexed data in response to user queries. When a query is
+    received, the system uses the same Embeddings model to convert the query into a vector representation. It then searches the VectorStore
+    for chunks of data that are semantically similar to the query. The retrieved chunks are then integrated into the prompt for the LLM,
+    allowing it to generate a response that is informed by the most relevant and up-to-date information available in the indexed data.
+
+Question: How does the indexing process work in a RAG application, and why is it essential for the system’s performance?
+    The indexing process in a RAG application involves several crucial steps that prepare the data for efficient retrieval and
+    subsequent use by the language model:
+
+    Loading: Data is first loaded into the system using document loaders, which can handle various data formats and sources.
+    Splitting: The loaded data is then split into smaller, more manageable chunks. This step is critical because large documents are
+        difficult to search through and may exceed the context window limitations of LLMs, making it hard for the model to process them effectively.
+    Storing: These chunks are stored in a VectorStore, where they are indexed using an Embeddings model. The Embeddings model converts
+        the text data into high-dimensional vectors that capture the semantic meaning of the text, allowing for efficient similarity
+        searches during the retrieval phase.
+
+Question:Why is it necessary to split documents into smaller chunks during the indexing process in a RAG system, and what benefits does this provide?
+    Splitting documents into smaller chunks during the indexing process in a RAG system is necessary for several reasons:
+
+    Manageability: Large documents can be unwieldy and difficult to search through. By breaking them into smaller chunks, it becomes easier to
+    manage and navigate the data.
+
+    Context Window Limitations: LLMs have a limited context window, which means they can only process a certain amount of text at a time.
+    If a document is too large, it may exceed this limit, making it impossible for the model to effectively utilize the information
+    contained within it.
+
+    Improved Retrieval: Smaller chunks allow for more precise retrieval of relevant information. When a query is made, the system can search
+    for specific chunks that are semantically similar to the query, rather than having to sift through an entire document.
+
+    Enhanced Performance: By working with smaller chunks, the system can operate more efficiently, as it reduces the computational load on
+    the LLM and allows for faster retrieval and generation of responses.
+
+Question:What are the essential dependencies for working with LangChain, and how can they be installed to ensure smooth operation?
+    langchain: The core LangChain package, which provides the foundational tools and interfaces for building RAG applications.
+    langchain_community: A package that includes additional community-contributed tools and extensions that can enhance LangChain’s functionality.
+    langchain_chroma: A package that supports the integration of LangChain with Chroma, a popular vector store used for managing
+    embeddings and performing similarity searches.
+
+Question: How do the WebBaseLoader and RecursiveCharacterTextSplitter contribute to the LangChain RAG setup, and what are their specific roles?
+    WebBaseLoader: This tool is used to load the content of specific webpages into the application. It parses the webpage and extracts the
+    relevant text, making it accessible for further processing and indexing within the RAG system. This loader is particularly useful for
+    applications that need to integrate web-based data into their knowledge base.
+
+    RecursiveCharacterTextSplitter: After the content is loaded, the RecursiveCharacterTextSplitter takes over to split this content into
+    smaller chunks based on specified parameters, such as chunk size and overlap. This splitter works recursively, ensuring that each chunk is
+    appropriately sized for efficient retrieval and processing within the context window of the LLM.
+    The resulting chunks are then indexed and used by the application to retrieve and generate answers to user queries.
+
+Question: What is the role of the Chroma vector store in a LangChain RAG application, and how does it facilitate efficient retrieval of information?
+    The Chroma vector store plays a critical role in a LangChain RAG application by providing an efficient and scalable way to manage and retrieve
+    embeddings. When documents are processed and split into chunks, they are converted into vector representations (embeddings) using an Embeddings model.
+    These embeddings capture the semantic meaning of the text, allowing for more accurate retrieval based on similarity rather than exact matches.
+
+    The Chroma vector store organizes these embeddings in a way that enables fast similarity searches. When a user query is received, it is also converted
+    into an embedding, and the Chroma vector store can quickly identify which chunks of data are most semantically similar to the query. This facilitates
+    efficient retrieval of relevant information, which can then be integrated into the prompt for the LLM to generate informed responses.
+
+Question: What is vector embeddings?
+    Vector embeddings are numerical representations of text data that capture the semantic meaning of the text.
+    They are typically generated using machine learning models, such as word2vec, GloVe, or transformer-based models like BERT.
+    Each piece of text (e.g., a word, sentence, or document) is transformed into a high-dimensional vector,
+    where similar meanings are represented by vectors that are close to each other in the vector space.
+    This allows for efficient similarity searches and comparisons between different pieces of text based on their semantic content rather
+    than just their surface form.
+
+Question: What is the difference between exact match and embedding similarity in LLM evaluation?
+    Exact match requires the LLM’s response to match the expected output word-for-word, which can be too rigid and fail to capture correct
+    answers that are phrased differently. Embedding similarity, on the other hand, converts both the response and expected output into vector representations and measures their cosine similarity.
+    This allows for a more flexible evaluation that can recognize semantically correct answers even if they are not identical in wording.
+
+
+
+
+
+
+
+Question:What is golden datasets?
+“Golden datasets act as versioned ground-truth benchmarks for LLM evaluation.
+
+    In production, we maintain them in  S3 with versioning. Each test case includes query, context, expected output, and metadata.
+
+    The evaluation pipeline runs automatically and scores outputs across multiple dimensions—semantic correctness using embeddings,
+    grounding validation against retrieved context, and qualitative scoring using LLM-as-a-judge.
+
+    These evaluations are integrated into CI/CD pipelines for regression testing, and we monitor metrics like accuracy,
+    hallucination rate, and grounding score in dashboards.
+
+    We also continuously update the dataset using real user failures, making the system adaptive and improving over time.”
+
+Question: How do you handle non-exact answers?
+    Use embedding similarity or LLM-as-judge instead of exact match.
+
+
+Question: What is grounding checks?
+    Grounding checks ensure that an LLM’s response is supported by the provided context rather than hallucinated. In production,
+     we validate responses using semantic similarity, citation verification,and LLM-as-a-judge techniques,
+     and compute a grounding score to ensure factual reliability, especially in RAG systems.
+
+Question: What is Hallucination Scoring in LLMs?
+    Hallucination scoring quantifies how much of an LLM’s response is unsupported or fabricated. In production, we break responses into claims,
+     validate each against context or knowledge sources,and compute a percentage of unsupported claims. Advanced systems use embedding similarity
+     and LLM-as-a-judge to improve accuracy.
+
+Question: How do you use LLM-as-a-judge for evaluation?
+    LLM-as-a-judge involves prompting a separate LLM to evaluate the quality of another LLM’s response. In production, we design specific prompts
+     that ask the judge LLM to assess semantic correctness, grounding, and overall quality. The judge provides qualitative scores or feedback,
+     which we aggregate into our evaluation metrics for continuous improvement.
+
+Question: How do you integrate evaluation into CI/CD pipelines?
+    We automate the evaluation process by integrating it into our CI/CD pipelines.
+    Whenever new code is pushed, the pipeline triggers the evaluation of the LLM against our golden datasets.
+    We run tests that check for accuracy, hallucination rates, and grounding scores.
+    The results are then reported back to developers, allowing them to identify and address any regressions or issues before deployment.
+
+Question: How do you update golden datasets over time?
+    We continuously update our golden datasets by incorporating real user failures and feedback.
+    Whenever a user encounters an issue or provides feedback on an LLM response, we analyze the case and add it to our dataset with the correct query, context, expected output, and metadata.
+    This iterative process allows us to adapt our evaluation benchmarks and improve the performance of our LLMs over time.
+
+Question: What metrics do you monitor in dashboards for LLM evaluation?
+    We monitor several key metrics in our dashboards for LLM evaluation, including accuracy, hallucination rate, and grounding score.
+    Accuracy measures how often the LLM’s responses match the expected output.
+    Hallucination rate quantifies the percentage of unsupported or fabricated claims in the responses.
+    Grounding score assesses how well the LLM’s responses are supported by the provided context.
+    By tracking these metrics, we can identify trends, detect regressions, and make informed decisions about model improvements.
+
+Question: What is Automated model-graded evaluations.
+    Automated model-graded evaluations involve using an LLM to automatically assess the quality of another LLM’s responses.
+    In this approach, we design specific prompts that ask the evaluating LLM to grade responses based on criteria such as semantic correctness, grounding, and overall quality.
+    The evaluating LLM provides qualitative scores or feedback, which we then aggregate into our evaluation metrics.
+    This method allows for scalable and consistent evaluation of LLM performance without relying solely on human judgment.
+
+Question: What is the role of embedding similarity in LLM evaluation?
+    Embedding similarity plays a crucial role in LLM evaluation by providing a way to measure the semantic similarity between the LLM’s response and the expected output or context.
+    Instead of relying on exact string matches, we convert both the response and the expected output into vector representations (embeddings) and calculate their cosine similarity.
+    This allows us to capture nuances in language and meaning, providing a more flexible and accurate assessment of the LLM’s performance, especially when dealing with non-exact answers.
+
+Question: What is observability for AI systems
+    AI observability must capture semantic correctness and model behavior,
+    not just system health—so we combine telemetry with evaluation frameworks like golden datasets and hallucination scoring.
+    Example-FastAPI + OpenTelemetry + Grafana
+
+Question: What is Chunking in LLM / RAG systems?
+    Chunking is the process of splitting large documents into smaller pieces (chunks) so that LLMs can process, embed, and retrieve them efficiently.
+    Types:
+    Fixed-size chunking: Splitting text into equal-sized chunks, which is simple but may break sentences or ideas.
+    Semantic chunking: Using natural language processing techniques to split text at logical boundaries (e.g., paragraphs, sentences), preserving meaning but more complex to implement.
+    Overlapping chunking: Creating chunks that overlap with each other to ensure important context is not lost, which can improve retrieval but increases redundancy and storage requirements.
+        The choice of chunking method depends on the specific use case, the nature of the documents, and the requirements of the LLM or RAG system being used.
+    Recursive Chunking: This method involves recursively splitting documents into smaller chunks until they reach a manageable size for processing. It combines the benefits of fixed-size and semantic chunking by ensuring that chunks are both appropriately sized and semantically coherent.
+        This approach can help maintain context while optimizing for performance in LLMs and RAG systems.
+
+Question: What are Guardrails in AI / LLM Systems?
+    Guardrails are safety and validation mechanisms around LLMs that ensure outputs are accurate, safe, and compliant. In production,
+    they include input validation, output filtering, grounding checks, and policy enforcement. T
+    hey are critical for preventing hallucinations, prompt injection, and sensitive data leakage.
+
+    Example: A guardrail might involve validating user inputs to prevent malicious prompts, filtering outputs to remove harmful content,
+    and enforcing policies that restrict certain types of responses. By implementing guardrails, we can enhance the reliability
+    and safety of LLM-based applications.
+    Framework: Guardrails AI
+
+Question: What is PII Filtering in AI Systems?
+    PII (Personally Identifiable Information) filtering is the process of detecting, masking,or blocking sensitive personal data in user
+    inputs or model outputs.
+
+Question: What is DLP (Data Loss Prevention) in AI Systems?
+    DLP (Data Loss Prevention) in AI systems involves implementing strategies and technologies to prevent the unauthorized access, sharing,
+    or leakage of sensitive data. This includes monitoring data flows, enforcing access controls, and using encryption to protect data at
+    rest and in transit.
+    DLP is crucial for ensuring compliance with data protection regulations and safeguarding user privacy in AI applications.
+    User Input
+       ↓
+    DLP Scanner (Detect sensitive data)
+       ↓
+    Policy Engine (Allow / Mask / Block)
+       ↓
+    LLM (if safe)
+       ↓
+    Output DLP Filter
+       ↓
+    Logging (secure / redacted)
+
+Question: What is the Agentic Enrichment Loop, and why is it important?
+    Answer: The Agentic Enrichment Loop is an iterative refinement process that enhances AI decision-making and prevents hallucinations.
+    It involves:
+    Augmenting the Prompt — Adding contextual data to improve response accuracy.
+    Initial LLM Pass — Generating a preliminary response.
+    Tool Invocation — Calling external APIs or databases for additional knowledge.
+    Contextual Updates — Integrating new data into the response.
+    Augmented LLM Call — Generating a refined response.
+    Iteration Until Optimal — Repeating the process until accuracy is maximized.
+
+Question: What is tools in agentic ai?
+    Tools in agentic AI refer to external APIs, databases, or services that an AI agent can invoke to access additional information or
+     perform specific tasks. These tools enhance the agent’s capabilities by providing access to up-to-date data, specialized knowledge, or
+     computational resources that the LLM alone may not possess. Examples of tools include search engines, knowledge graphs, calculators,
+     and domain-specific APIs. By integrating tools into the Agentic Enrichment Loop, the AI agent can generate more accurate
+     and informed responses while reducing the likelihood of hallucinations.
+
+Question: What is resource in agentic ai?
+    Resources in agentic AI refer to the various data sources, knowledge bases, or computational assets that an AI agent can utilize during
+    the enrichment process. These resources can include structured databases, unstructured document repositories, real-time data feeds,
+    or even other AI models. By leveraging these resources, the AI agent can access a broader range of information and insights,
+    which can be integrated into the response generation process to enhance accuracy and relevance.
+
+Question: What is the difference between RAG and Agentic AI?
+    RAG (Retrieval Augmented Generation) focuses on enhancing LLMs by retrieving relevant information from external sources to inform responses.
+    Agentic AI, on the other hand, involves an iterative enrichment process where the AI agent can invoke tools and update its context to
+    refine its responses over multiple iterations. While RAG is primarily about integrating retrieved data into a single generation step,
+    Agentic AI emphasizes continuous improvement through multiple interactions with tools and context updates.

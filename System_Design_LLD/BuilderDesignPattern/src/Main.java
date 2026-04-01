@@ -1,5 +1,10 @@
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        ComputerBuilder desktopBuilder = new DesktopComputerBuilder();
+        ComputerDirector director = new ComputerDirector(desktopBuilder);
+        Computer desktop = director.constructComputer();
+
+        // Access the constructed Computer object
+        System.out.println(desktop);
     }
 }
