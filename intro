@@ -113,3 +113,30 @@ Continuously learns from user behavior and system feedback
                     | • Claims History DB                  |
                     | • Member Knowledge Graph             |
                     +--------------------------------------+
+
+
+
+
+----------------------------------------------------------------------------------                    ---
+“Hi, I’m Parsuram Pradhan, and I have around 12 years of experience building scalable backend and full-stack systems, primarily using Python,
+ FastAPI, Springboot, React, PostgreSQL, Redis, and cloud-native architectures.
+
+Over the last few years, my focus has shifted heavily toward applied Generative AI and intelligent platform engineering.
+I’ve been building AI-powered systems such as RAG-based validation platforms, LLM-driven PR code reviewers, AI-assisted automation workflows,
+and real-time microservice architectures integrating OpenAI models.
+
+One of my core strengths is taking AI solutions from prototype to production.
+I’m comfortable across the entire lifecycle — designing APIs, retrieval pipelines, vector search integration, prompt engineering, observability,
+evaluation strategies, caching, CI/CD, and scaling systems reliably in production.
+
+Over the past two-plus years I've moved deliberately into applied AI. My most impactful project was
+building a RAG-based [internal tool] that served [200+ users], where I owned everything from chunking strategy and embedding
+model selection to the retrieval layer, evaluation framework, and production observability.
+
+Business problem
+Architecture decisions
+Trade-offs
+Scaling/reliability
+AI evaluation
+Production challenges
+Impact

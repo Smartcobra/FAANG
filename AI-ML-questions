@@ -85,22 +85,13 @@ Question: What is the difference between exact match and embedding similarity in
     This allows for a more flexible evaluation that can recognize semantically correct answers even if they are not identical in wording.
 
 
-
-
-
-
-
 Question:What is golden datasets?
 “Golden datasets act as versioned ground-truth benchmarks for LLM evaluation.
-
     In production, we maintain them in  S3 with versioning. Each test case includes query, context, expected output, and metadata.
-
     The evaluation pipeline runs automatically and scores outputs across multiple dimensions—semantic correctness using embeddings,
     grounding validation against retrieved context, and qualitative scoring using LLM-as-a-judge.
-
     These evaluations are integrated into CI/CD pipelines for regression testing, and we monitor metrics like accuracy,
     hallucination rate, and grounding score in dashboards.
-
     We also continuously update the dataset using real user failures, making the system adaptive and improving over time.”
 
 Question: How do you handle non-exact answers?
@@ -225,3 +216,41 @@ Question: What is the difference between RAG and Agentic AI?
     Agentic AI, on the other hand, involves an iterative enrichment process where the AI agent can invoke tools and update its context to
     refine its responses over multiple iterations. While RAG is primarily about integrating retrieved data into a single generation step,
     Agentic AI emphasizes continuous improvement through multiple interactions with tools and context updates.
+
+Question: How would you evaluate a production GenAI system?
+    Define business success metrics
+    Build golden evaluation datasets
+    Measure:
+        correctness
+        relevance
+        faithfulness
+        latency
+        cost
+    Use automated offline evals
+    Add online human feedback loops
+    Continuously monitor regressions
+    Compare prompts/models using A/B testing
+
+Question: Compare Prompts and Models Using A/B Testing
+    A/B testing involves comparing two versions of a prompt or model to determine which one performs better based on predefined metrics.
+    In the context of GenAI systems, you would:
+        Define the variants: Create two different prompts or models that you want to compare.
+        Randomly assign users: Split your user base randomly into two groups, where one group interacts with variant A and the other with variant B.
+        Collect data: Gather performance data based on your success metrics (e.g., accuracy, user satisfaction, engagement).
+        Analyze results: Use statistical analysis to determine if there is a significant difference in performance between the two variants.
+        Make informed decisions: Based on the results, decide whether to adopt one variant over the other or to iterate further.
+
+                          ┌────────────┐
+        User Request ───► │ Router     │
+                          └─────┬──────┘
+                                │
+                  ┌─────────────┴─────────────┐
+                  │                           │
+             Variant A                   Variant B
+         (Prompt/Model A)            (Prompt/Model B)
+                  │                           │
+                  └─────────────┬─────────────┘
+                                │
+                          Evaluation Layer
+                                │
+                         Metrics Dashboard
